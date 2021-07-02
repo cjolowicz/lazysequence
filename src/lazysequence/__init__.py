@@ -1,11 +1,11 @@
 """Lazy sequences.
 
->>> from lazysequence import LazySequence
+>>> from lazysequence import lazysequence
 >>>
 >>> def load_records():
 ...     yield from [1, 2, 3, 4, 5, 6]  # pretend each iteration is expensive
 ...
->>> records = LazySequence(load_records())
+>>> records = lazysequence(load_records())
 >>> if not records:
 ...     raise SystemExit("no records found")
 ...
@@ -40,7 +40,7 @@ from typing import Union
 _T_co = TypeVar("_T_co", covariant=True)
 
 
-class LazySequence(Sequence[_T_co]):
+class _LazySequence(Sequence[_T_co]):
     """A lazy sequence provides sequence operations on an iterable."""
 
     def __init__(
@@ -92,7 +92,7 @@ class LazySequence(Sequence[_T_co]):
     def __getitem__(self, index: Union[int, slice]) -> Union[_T_co, Sequence[_T_co]]:
         """Return the item at the given index."""
         if isinstance(index, slice):
-            return LazySequence(
+            return _LazySequence(
                 self[position] for position in range(*index.indices(len(self)))
             )
 
@@ -110,7 +110,7 @@ class LazySequence(Sequence[_T_co]):
             if index == position:
                 return item
 
-        raise IndexError("LazySequence index out of range")
+        raise IndexError("lazysequence index out of range")
 
 
-lazysequence = LazySequence
+lazysequence = _LazySequence

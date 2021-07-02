@@ -29,12 +29,12 @@ lazysequence
 
 .. code:: python
 
-   from lazysequence import LazySequence
+   from lazysequence import lazysequence
 
    def load_records():
        yield from [1, 2, 3, 4, 5, 6]  # pretend each iteration is expensive
 
-   records = LazySequence(load_records())
+   records = lazysequence(load_records())
    if not records:
        raise SystemExit("no records found")
 
