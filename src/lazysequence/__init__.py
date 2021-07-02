@@ -26,6 +26,8 @@ record 4
 record 5
 record 6
 """
+from __future__ import annotations
+
 from collections import deque
 from typing import Callable
 from typing import Iterable
@@ -96,10 +98,12 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         """Return the item at the given index."""  # noqa: D418
 
     @overload
-    def __getitem__(self, indices: slice) -> Sequence[_T_co]:
+    def __getitem__(self, indices: slice) -> lazysequence[_T_co]:
         """Return a slice of the sequence."""  # noqa: D418
 
-    def __getitem__(self, index: Union[int, slice]) -> Union[_T_co, Sequence[_T_co]]:
+    def __getitem__(
+        self, index: Union[int, slice]
+    ) -> Union[_T_co, lazysequence[_T_co]]:
         """Return the item at the given index."""
         if isinstance(index, slice):
             return lazysequence(
