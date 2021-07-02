@@ -6,8 +6,8 @@ Reference
     :backlinks: none
 
 
-lazysequence.__main__
----------------------
+lazysequence
+------------
 
-.. automodule:: lazysequence.__main__
+.. automodule:: lazysequence
    :members:

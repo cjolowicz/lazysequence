@@ -1,1 +1,1 @@
-"""Test suite for the lazysequence package."""
+"""Test suite for lazysequence."""
