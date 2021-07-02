@@ -66,6 +66,7 @@ A lazy sequence combines advantages from option 2 and option 3. It is an immutab
 There are some caveats:
 
 - The lazy sequence will eventually store all items in memory. If this is a problem, use ``s.release()`` to obtain an iterator over the sequence items without further caching. After calling this function, the sequence should no longer be used.
+- Slicing returns a new lazy sequence with a reference to the old lazy sequence. Don't do this in a tight loop.
 - Explicit is better than implicit. Clients may be better off being passed an iterator and dealing with its limitations. For example, clients may not expect ``len(s)`` to incur the cost of consuming the iterator to its end.
 
 

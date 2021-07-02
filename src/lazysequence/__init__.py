@@ -26,7 +26,11 @@ record 4
 record 5
 record 6
 """
+from __future__ import annotations
+
 from collections import deque
+from itertools import chain
+from itertools import islice
 from typing import Callable
 from typing import Iterable
 from typing import Iterator
@@ -67,8 +71,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def __iter__(self) -> Iterator[_T_co]:
         """Iterate over the items in the sequence."""
-        yield from self._cache
-        yield from self._consume()
+        return chain(self._cache, self._consume())
 
     def release(self) -> Iterator[_T_co]:
         """Iterate over the sequence without caching additional items.
@@ -77,9 +80,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         Yields:
             The items in the sequence.
-        """
-        yield from self._cache
-        yield from self._iter
+        """  # noqa: DAR201, DAR302
+        return chain(self._cache, self._iter)
 
     def __bool__(self) -> bool:
         """Return True if there are any items in the sequence."""
@@ -96,15 +98,26 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         """Return the item at the given index."""  # noqa: D418
 
     @overload
-    def __getitem__(self, indices: slice) -> Sequence[_T_co]:
+    def __getitem__(self, indices: slice) -> lazysequence[_T_co]:
         """Return a slice of the sequence."""  # noqa: D418
 
-    def __getitem__(self, index: Union[int, slice]) -> Union[_T_co, Sequence[_T_co]]:
+    def __getitem__(
+        self, index: Union[int, slice]
+    ) -> Union[_T_co, lazysequence[_T_co]]:
         """Return the item at the given index."""
         if isinstance(index, slice):
-            return lazysequence(
-                self[position] for position in range(*index.indices(len(self)))
-            )
+            start, stop, step = index.start, index.stop, index.step
+
+            if step is not None and step < 0:
+                return lazysequence(reversed(self[start:stop:-step]))
+
+            if start is not None and start < 0:
+                start += len(self)
+
+            if stop is not None and stop < 0:
+                stop += len(self)
+
+            return lazysequence(islice(self, start, stop, step))
 
         if index < 0:
             index += len(self)
@@ -116,8 +129,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         index -= len(self._cache)
 
-        for position, item in enumerate(self._consume()):
-            if index == position:
-                return item
-
-        raise IndexError("lazysequence index out of range")
+        try:
+            return next(islice(self._consume(), index, None))
+        except StopIteration:
+            raise IndexError("lazysequence index out of range") from None
