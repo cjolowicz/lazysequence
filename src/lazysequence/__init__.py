@@ -40,8 +40,15 @@ from typing import Union
 _T_co = TypeVar("_T_co", covariant=True)
 
 
-class _LazySequence(Sequence[_T_co]):
-    """A lazy sequence provides sequence operations on an iterable."""
+class lazysequence(Sequence[_T_co]):  # noqa: N801
+    """A lazy sequence provides sequence operations on an iterable.
+
+    Args:
+        iterable: The iterable being wrapped.
+        storage: A class or callable used to create the internal cache for
+            items consumed from the iterator. By default, ``collections.deque``
+            is used.
+    """
 
     def __init__(
         self,
@@ -67,6 +74,9 @@ class _LazySequence(Sequence[_T_co]):
         """Iterate over the sequence without caching additional items.
 
         The sequence should no longer be used after calling this function.
+
+        Yields:
+            The items in the sequence.
         """
         yield from self._cache
         yield from self._iter
@@ -92,7 +102,7 @@ class _LazySequence(Sequence[_T_co]):
     def __getitem__(self, index: Union[int, slice]) -> Union[_T_co, Sequence[_T_co]]:
         """Return the item at the given index."""
         if isinstance(index, slice):
-            return _LazySequence(
+            return lazysequence(
                 self[position] for position in range(*index.indices(len(self)))
             )
 
@@ -111,6 +121,3 @@ class _LazySequence(Sequence[_T_co]):
                 return item
 
         raise IndexError("lazysequence index out of range")
-
-
-lazysequence = _LazySequence
