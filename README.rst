@@ -73,7 +73,7 @@ A lazy sequence combines advantages from option 2 and option 3. It is constructe
 Requirements
 ------------
 
-* Python 3.9
+* Python 3.8+
 
 
 Installation
