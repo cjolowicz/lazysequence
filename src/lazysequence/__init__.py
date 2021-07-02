@@ -29,6 +29,7 @@ record 6
 from __future__ import annotations
 
 from collections import deque
+from itertools import chain
 from itertools import islice
 from typing import Callable
 from typing import Iterable
@@ -70,8 +71,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def __iter__(self) -> Iterator[_T_co]:
         """Iterate over the items in the sequence."""
-        yield from self._cache
-        yield from self._consume()
+        return chain(self._cache, self._consume())
 
     def release(self) -> Iterator[_T_co]:
         """Iterate over the sequence without caching additional items.
@@ -80,9 +80,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         Yields:
             The items in the sequence.
-        """
-        yield from self._cache
-        yield from self._iter
+        """  # noqa: DAR201, DAR302
+        return chain(self._cache, self._iter)
 
     def __bool__(self) -> bool:
         """Return True if there are any items in the sequence."""
