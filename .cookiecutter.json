@@ -1,0 +1,11 @@
+{
+  "_template": "https://github.com/cjolowicz/cookiecutter-hypermodern-python",
+  "author": "Claudio Jolowicz",
+  "email": "mail@claudiojolowicz.com",
+  "friendly_name": "lazysequence",
+  "github_user": "cjolowicz",
+  "license": "MIT",
+  "package_name": "lazysequence",
+  "project_name": "lazysequence",
+  "version": "0.0.0"
+}
