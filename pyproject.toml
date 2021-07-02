@@ -20,7 +20,6 @@ Changelog = "https://github.com/cjolowicz/lazysequence/releases"
 
 [tool.poetry.dependencies]
 python = "^3.6.1"
-click = "^8.0.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
@@ -43,11 +42,7 @@ darglint = "^1.8.0"
 reorder-python-imports = "^2.5.0"
 pre-commit-hooks = "^4.0.1"
 sphinx-rtd-theme = "^0.5.2"
-sphinx-click = "^3.0.1"
 Pygments = "^2.9.0"
-
-[tool.poetry.scripts]
-lazysequence = "lazysequence.__main__:main"
 
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]

@@ -86,12 +86,6 @@ You can install *lazysequence* via pip_ from PyPI_:
    $ pip install lazysequence
 
 
-Usage
------
-
-Please see the `Command-line Reference <Usage_>`_ for details.
-
-
 Contributing
 ------------
 
