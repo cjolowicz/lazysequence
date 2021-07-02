@@ -40,7 +40,7 @@ from typing import Union
 _T_co = TypeVar("_T_co", covariant=True)
 
 
-class _LazySequence(Sequence[_T_co]):
+class lazysequence(Sequence[_T_co]):  # noqa: N801
     """A lazy sequence provides sequence operations on an iterable."""
 
     def __init__(
@@ -92,7 +92,7 @@ class _LazySequence(Sequence[_T_co]):
     def __getitem__(self, index: Union[int, slice]) -> Union[_T_co, Sequence[_T_co]]:
         """Return the item at the given index."""
         if isinstance(index, slice):
-            return _LazySequence(
+            return lazysequence(
                 self[position] for position in range(*index.indices(len(self)))
             )
 
@@ -111,6 +111,3 @@ class _LazySequence(Sequence[_T_co]):
                 return item
 
         raise IndexError("lazysequence index out of range")
-
-
-lazysequence = _LazySequence
