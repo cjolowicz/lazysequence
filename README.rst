@@ -70,12 +70,6 @@ A lazy sequence combines advantages from option 2 and option 3. It is constructe
 - Explicit is better than implicit. Clients may be better off being passed an iterator and dealing with its limitations. For example, clients may not expect ``len(s)`` to incur the cost of consuming the iterator to its end.
 
 
-Requirements
-------------
-
-* Python 3.8+
-
-
 Installation
 ------------
 
