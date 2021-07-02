@@ -5,8 +5,6 @@ lazysequence
 
 |Read the Docs| |Tests| |Codecov|
 
-|pre-commit| |Black|
-
 .. |PyPI| image:: https://img.shields.io/pypi/v/lazysequence.svg
    :target: https://pypi.org/project/lazysequence/
    :alt: PyPI
@@ -25,24 +23,57 @@ lazysequence
 .. |Codecov| image:: https://codecov.io/gh/cjolowicz/lazysequence/branch/main/graph/badge.svg
    :target: https://codecov.io/gh/cjolowicz/lazysequence
    :alt: Codecov
-.. |pre-commit| image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
-   :target: https://github.com/pre-commit/pre-commit
-   :alt: pre-commit
-.. |Black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
-   :target: https://github.com/psf/black
-   :alt: Black
 
 
-Features
---------
+**tl;dr** A lazy sequence makes an iterator look like a tuple.
 
-* TODO
+.. code:: python
+
+   from lazysequence import LazySequence
+
+   def load_records():
+       yield from [1, 2, 3, 4, 5, 6]  # pretend each iteration is expensive
+
+   records = LazySequence(load_records())
+   if not records:
+       raise SystemExit("no records found")
+
+   first, second = records[:2]
+
+   print("The first record is", first)
+   print("The second record is", second)
+
+   for record in records.release():  # do not cache all records in memory
+       print("record", record)
+
+
+Sometimes you need to peek ahead at items returned by an iterator. How do you do that?
+
+If the iterator does not need to be used later, just consume the items from the iterator. If later code needs to see all the items from the iterator, there are various options:
+
+1. You could pass the consumed items to the surrounding code separately. This can get messy, though.
+2. You could copy the items into a sequence beforehand. This is an option if the copy does not take a lot of space or time.
+3. You could duplicate the iterator using `itertools.tee`_, or write your own custom itertool. Consumed items are buffered internally. There are some good examples of this approach on SO, by `Alex Martelli`_, `Raymond Hettinger`_, and `Ned Batchelder`_.
+
+.. _itertools.tee: https://docs.python.org/3/library/itertools.html#itertools.tee
+.. _Alex Martelli: https://stackoverflow.com/a/1518097/1355754
+.. _Raymond Hettinger: https://stackoverflow.com/a/15726344/1355754
+.. _Ned Batchelder: https://stackoverflow.com/a/1517965/1355754
+
+A lazy sequence combines advantages from option 2 and option 3. It is constructed from an iterable, and implements `collections.abc.Sequence`_, providing the full set of immutable sequence operations on the iterable. Consumed items are cached internally, so the lookahead can happen transparently, and remains invisible to later code. Unlike a full copy (option 2), but like a duplicated iterator (option 3), items are only consumed and stored in memory as far as required for any given operation.
+
+.. _collections.abc.Sequence: https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence
+
+**Caveats:**
+
+- The lazy sequence will eventually store all items in memory. If this is a problem, use ``s.release()`` to obtain an iterator over the sequence items without further caching. After calling this function, the sequence should no longer be used.
+- Explicit is better than implicit. Clients may be better off being passed an iterator and dealing with its limitations. For example, clients may not expect ``len(s)`` to incur the cost of consuming the iterator to its end.
 
 
 Requirements
 ------------
 
-* TODO
+* Python 3.9
 
 
 Installation
