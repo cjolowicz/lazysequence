@@ -29,6 +29,7 @@ record 6
 from __future__ import annotations
 
 from collections import deque
+from itertools import islice
 from typing import Callable
 from typing import Iterable
 from typing import Iterator
@@ -106,9 +107,18 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
     ) -> Union[_T_co, lazysequence[_T_co]]:
         """Return the item at the given index."""
         if isinstance(index, slice):
-            return lazysequence(
-                self[position] for position in range(*index.indices(len(self)))
-            )
+            start, stop, step = index.start, index.stop, index.step
+
+            if step is not None and step < 0:
+                return lazysequence(reversed(self[start:stop:-step]))
+
+            if start is not None and start < 0:
+                start += len(self)
+
+            if stop is not None and stop < 0:
+                stop += len(self)
+
+            return lazysequence(islice(self, start, stop, step))
 
         if index < 0:
             index += len(self)
@@ -120,8 +130,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         index -= len(self._cache)
 
-        for position, item in enumerate(self._consume()):
-            if index == position:
-                return item
-
-        raise IndexError("lazysequence index out of range")
+        try:
+            return next(islice(self._consume(), index, None))
+        except StopIteration:
+            raise IndexError("lazysequence index out of range") from None
