@@ -27,12 +27,12 @@ record 5
 record 6
 """
 from collections import deque
-from collections.abc import Callable
-from collections.abc import Iterable
-from collections.abc import Iterator
-from collections.abc import MutableSequence
-from collections.abc import Sequence
+from typing import Callable
+from typing import Iterable
+from typing import Iterator
+from typing import MutableSequence
 from typing import overload
+from typing import Sequence
 from typing import TypeVar
 from typing import Union
 
