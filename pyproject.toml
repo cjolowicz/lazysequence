@@ -8,18 +8,12 @@ readme = "README.rst"
 homepage = "https://github.com/cjolowicz/lazysequence"
 repository = "https://github.com/cjolowicz/lazysequence"
 documentation = "https://lazysequence.readthedocs.io"
-classifiers = [
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-]
 
 [tool.poetry.urls]
 Changelog = "https://github.com/cjolowicz/lazysequence/releases"
 
 [tool.poetry.dependencies]
-python = "^3.6.1"
+python = "^3.9"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
