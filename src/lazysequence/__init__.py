@@ -69,6 +69,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         """Initialize."""
         self._iter = iter(iterable)
         self._cache: MutableSequence[_T_co] = storage()
+        if start is not None and start < 0:
+            start += sum(1 for _ in self._consume())
+            start = max(0, start)
         self._start = start
 
     def _consume(self) -> Iterator[_T_co]:

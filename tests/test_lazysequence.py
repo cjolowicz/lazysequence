@@ -185,3 +185,10 @@ def test_start_slice_negative() -> None:
     s = lazysequence(range(100), start=10)
     a, b = s[-2:]
     assert (98, 99) == (a, b)
+
+
+def test_negative_start_iter() -> None:
+    """."""
+    s = lazysequence(range(100), start=-10)
+    item = next(iter(s))
+    assert 90 == item
