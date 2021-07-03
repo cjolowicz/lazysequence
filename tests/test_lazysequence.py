@@ -243,3 +243,9 @@ def test_negative_start_slice_negative() -> None:
     s = lazysequence(range(100), start=-10)
     a, b = s[-2:]
     assert (98, 99) == (a, b)
+
+
+def test_stop_iter() -> None:
+    """."""
+    s = lazysequence(range(100), stop=10)
+    assert all(item < 10 for item in s)
