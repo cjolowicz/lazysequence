@@ -136,35 +136,6 @@ def test_paging() -> None:
 
 
 @pytest.mark.parametrize(
-    ("size", "start", "index", "expected"),
-    [
-        (100, 10, 0, 10),
-        (100, 10, -1, 99),
-        (100, -10, 0, 90),
-        (100, -10, -1, 99),
-    ],
-)
-def test_start_getitem(size: int, start: int, index: int, expected: int) -> None:
-    """."""
-    s = lazysequence(range(size), start=start)
-    assert expected == s[index]
-
-
-@pytest.mark.parametrize(
-    ("size", "start", "index"),
-    [
-        (100, 1000, 0),
-        (100, 1000, -1),
-    ],
-)
-def test_start_getitem_raises(size: int, start: int, index: int) -> None:
-    """."""
-    s = lazysequence(range(size), start=start)
-    with pytest.raises(IndexError):
-        s[index]
-
-
-@pytest.mark.parametrize(
     ("size", "start", "expected"),
     [
         (100, 10, 10),
@@ -232,6 +203,35 @@ def test_start_len(size: int, start: int, expected: int) -> None:
     """."""
     s = lazysequence(range(size), start=start)
     assert expected == len(s)
+
+
+@pytest.mark.parametrize(
+    ("size", "start", "index", "expected"),
+    [
+        (100, 10, 0, 10),
+        (100, 10, -1, 99),
+        (100, -10, 0, 90),
+        (100, -10, -1, 99),
+    ],
+)
+def test_start_getitem(size: int, start: int, index: int, expected: int) -> None:
+    """."""
+    s = lazysequence(range(size), start=start)
+    assert expected == s[index]
+
+
+@pytest.mark.parametrize(
+    ("size", "start", "index"),
+    [
+        (100, 1000, 0),
+        (100, 1000, -1),
+    ],
+)
+def test_start_getitem_raises(size: int, start: int, index: int) -> None:
+    """."""
+    s = lazysequence(range(size), start=start)
+    with pytest.raises(IndexError):
+        s[index]
 
 
 @pytest.mark.parametrize(
