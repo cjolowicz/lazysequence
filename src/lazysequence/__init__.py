@@ -39,6 +39,7 @@ from typing import Callable
 from typing import Iterable
 from typing import Iterator
 from typing import MutableSequence
+from typing import Optional
 from typing import overload
 from typing import Sequence
 from typing import TypeVar
@@ -62,11 +63,13 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         self,
         iterable: Iterable[_T_co],
         *,
-        storage: Callable[[], MutableSequence[_T_co]] = deque
+        storage: Callable[[], MutableSequence[_T_co]] = deque,
+        start: Optional[int] = None,
     ) -> None:
         """Initialize."""
         self._iter = iter(iterable)
         self._cache: MutableSequence[_T_co] = storage()
+        self._start = start
 
     def _consume(self) -> Iterator[_T_co]:
         for item in self._iter:
