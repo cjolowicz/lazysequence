@@ -135,148 +135,121 @@ def test_paging() -> None:
     assert not s
 
 
-def test_start_getitem() -> None:
+@pytest.mark.parametrize(
+    ("size", "start", "index", "expected"),
+    [
+        (100, 10, 0, 10),
+        (100, 10, -1, 99),
+        (100, -10, 0, 90),
+        (100, -10, -1, 99),
+    ],
+)
+def test_start_getitem(size: int, start: int, index: int, expected: int) -> None:
     """."""
-    s = lazysequence(range(100), start=10)
-    assert 10 == s[0]
+    s = lazysequence(range(size), start=start)
+    assert expected == s[index]
 
 
-def test_excessive_start_getitem() -> None:
+@pytest.mark.parametrize(
+    ("size", "start", "index"),
+    [
+        (100, 1000, 0),
+        (100, 1000, -1),
+    ],
+)
+def test_excessive_start_getitem(size: int, start: int, index: int) -> None:
     """."""
-    s = lazysequence(range(100), start=1000)
+    s = lazysequence(range(size), start=start)
     with pytest.raises(IndexError):
-        s[0]
+        s[index]
 
 
-def test_start_getitem_negative() -> None:
+@pytest.mark.parametrize(
+    ("size", "start", "expected"),
+    [
+        (100, 10, 10),
+        (100, -10, 90),
+        (100, -1000, 0),
+    ],
+)
+def test_start_iter(size: int, start: int, expected: int) -> None:
     """."""
-    s = lazysequence(range(100), start=10)
-    assert 99 == s[-1]
-
-
-def test_excessive_start_getitem_negative() -> None:
-    """."""
-    s = lazysequence(range(100), start=1000)
-    with pytest.raises(IndexError):
-        s[-1]
-
-
-def test_start_iter() -> None:
-    """."""
-    s = lazysequence(range(100), start=10)
+    s = lazysequence(range(size), start=start)
     item = next(iter(s))
-    assert 10 == item
+    assert expected == item
 
 
-def test_excessive_start_iter() -> None:
+@pytest.mark.parametrize(
+    ("size", "start"),
+    [
+        (100, 1000),
+    ],
+)
+def test_excessive_start_iter(size: int, start: int) -> None:
     """."""
-    s = lazysequence(range(100), start=1000)
+    s = lazysequence(range(size), start=start)
     with pytest.raises(StopIteration):
         next(iter(s))
 
 
-def test_start_bool() -> None:
+@pytest.mark.parametrize(
+    ("size", "start", "expected"),
+    [
+        (100, 100, False),
+        (0, -1, False),
+        (1, -1, True),
+    ],
+)
+def test_start_bool(size: int, start: int, expected: bool) -> None:
     """."""
-    s = lazysequence(range(100), start=100)
-    assert not s
+    s = lazysequence(range(size), start=start)
+    assert bool(s) is expected
 
 
-def test_start_release() -> None:
+@pytest.mark.parametrize(
+    ("size", "start", "expected"),
+    [
+        (100, 10, 10),
+        (100, -10, 90),
+    ],
+)
+def test_start_release(size: int, start: int, expected: int) -> None:
     """."""
-    s = lazysequence(range(100), start=10)
+    s = lazysequence(range(size), start=start)
     item = next(s.release())
-    assert 10 == item
+    assert expected == item
 
 
-def test_start_len() -> None:
+@pytest.mark.parametrize(
+    ("size", "start", "expected"),
+    [
+        (100, 10, 90),
+        (100, 1000, 0),
+        (100, -10, 10),
+    ],
+)
+def test_start_len(size: int, start: int, expected: int) -> None:
     """."""
-    s = lazysequence(range(100), start=10)
-    assert 90 == len(s)
+    s = lazysequence(range(size), start=start)
+    assert expected == len(s)
 
 
-def test_excessive_start_len() -> None:
+@pytest.mark.parametrize(
+    ("size", "start", "indices", "expected"),
+    [
+        (100, 10, slice(2), (10, 11)),
+        (100, 10, slice(-2, None), (98, 99)),
+        (100, -10, slice(2), (90, 91)),
+        (100, -10, slice(-2, None), (98, 99)),
+    ],
+)
+def test_start_slice(
+    size: int, start: int, indices: slice, expected: tuple[int, ...]
+) -> None:
     """."""
-    s = lazysequence(range(100), start=1000)
-    assert 0 == len(s)
-
-
-def test_start_slice() -> None:
-    """."""
-    s = lazysequence(range(100), start=10)
-    a, b = s[:2]
-    assert (10, 11) == (a, b)
-
-
-def test_start_slice_negative() -> None:
-    """."""
-    s = lazysequence(range(100), start=10)
-    a, b = s[-2:]
-    assert (98, 99) == (a, b)
-
-
-def test_negative_start_iter() -> None:
-    """."""
-    s = lazysequence(range(100), start=-10)
-    item = next(iter(s))
-    assert 90 == item
-
-
-def test_excessive_negative_start_iter() -> None:
-    """."""
-    s = lazysequence(range(100), start=-1000)
-    item = next(iter(s))
-    assert 0 == item
-
-
-def test_negative_start_getitem() -> None:
-    """."""
-    s = lazysequence(range(100), start=-10)
-    assert 90 == s[0]
-
-
-def test_negative_start_getitem_negative() -> None:
-    """."""
-    s = lazysequence(range(100), start=-10)
-    assert 99 == s[-1]
-
-
-def test_negative_start_bool_empty() -> None:
-    """."""
-    s: lazysequence[int] = lazysequence([], start=-1)
-    assert not s
-
-
-def test_negative_start_bool_nonempty() -> None:
-    """."""
-    s = lazysequence([0], start=-1)
-    assert s
-
-
-def test_negative_start_release() -> None:
-    """."""
-    s = lazysequence(range(100), start=-10)
-    item = next(s.release())
-    assert 90 == item
-
-
-def test_negative_start_len() -> None:
-    """."""
-    s = lazysequence(range(100), start=-10)
-    assert 10 == len(s)
-
-
-def test_negative_start_slice() -> None:
-    """."""
-    s = lazysequence(range(100), start=-10)
-    a, b = s[:2]
-    assert (90, 91) == (a, b)
-
-
-def test_negative_start_slice_negative() -> None:
-    """."""
-    s = lazysequence(range(100), start=-10)
-    a, b = s[-2:]
-    assert (98, 99) == (a, b)
+    s = lazysequence(range(size), start=start)
+    a, b = s[indices]
+    assert expected == (a, b)
 
 
 def test_stop_iter() -> None:
