@@ -65,6 +65,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         *,
         storage: Callable[[], MutableSequence[_T_co]] = deque,
         start: Optional[int] = None,
+        stop: Optional[int] = None,
     ) -> None:
         """Initialize."""
         self._iter = iter(iterable)
@@ -73,6 +74,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             start += sum(1 for _ in self._consume())
             start = max(0, start)
         self._start = start
+        self._stop = stop
 
     def _consume(self) -> Iterator[_T_co]:
         for item in self._iter:
