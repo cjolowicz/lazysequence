@@ -154,6 +154,13 @@ def test_start_iter() -> None:
     assert 10 == item
 
 
+def test_excessive_start_iter() -> None:
+    """."""
+    s = lazysequence(range(100), start=1000)
+    with pytest.raises(StopIteration):
+        next(iter(s))
+
+
 def test_start_bool() -> None:
     """."""
     s = lazysequence(range(100), start=100)
