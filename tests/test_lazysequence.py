@@ -229,3 +229,17 @@ def test_negative_start_len() -> None:
     """."""
     s = lazysequence(range(100), start=-10)
     assert 10 == len(s)
+
+
+def test_negative_start_slice() -> None:
+    """."""
+    s = lazysequence(range(100), start=-10)
+    a, b = s[:2]
+    assert (90, 91) == (a, b)
+
+
+def test_negative_start_slice_negative() -> None:
+    """."""
+    s = lazysequence(range(100), start=-10)
+    a, b = s[-2:]
+    assert (98, 99) == (a, b)
