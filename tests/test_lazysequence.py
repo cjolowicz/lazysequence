@@ -264,19 +264,26 @@ def test_stop_iter(size: int, stop: int) -> None:
     assert all(item < stop for item in s)
 
 
-def test_stop_bool_empty() -> None:
+@pytest.mark.parametrize(
+    ("size", "stop", "expected"),
+    [
+        (1, 0, False),
+        (2, 1, True),
+    ],
+)
+def test_stop_bool_empty(size: int, stop: int, expected: bool) -> None:
     """."""
-    s: lazysequence[int] = lazysequence([0], stop=0)
-    assert not s
+    s = lazysequence(range(size), stop=stop)
+    assert bool(s) == expected
 
 
-def test_stop_bool_nonempty() -> None:
+@pytest.mark.parametrize(
+    ("size", "stop"),
+    [
+        (100, 10),
+    ],
+)
+def test_stop_release(size: int, stop: int) -> None:
     """."""
-    s = lazysequence([0, 1], stop=1)
-    assert s
-
-
-def test_stop_release() -> None:
-    """."""
-    s = lazysequence(range(100), stop=10)
-    assert all(item < 10 for item in s.release())
+    s = lazysequence(range(size), stop=stop)
+    assert all(item < stop for item in s.release())
