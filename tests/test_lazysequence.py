@@ -287,3 +287,15 @@ def test_stop_release(size: int, stop: int) -> None:
     """."""
     s = lazysequence(range(size), stop=stop)
     assert all(item < stop for item in s.release())
+
+
+@pytest.mark.parametrize(
+    ("size", "stop", "expected"),
+    [
+        (100, 10, 10),
+    ],
+)
+def test_stop_len(size: int, stop: int, expected: int) -> None:
+    """."""
+    s = lazysequence(range(size), stop=stop)
+    assert expected == len(s)
