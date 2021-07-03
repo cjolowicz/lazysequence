@@ -252,10 +252,16 @@ def test_start_slice(
     assert expected == (a, b)
 
 
-def test_stop_iter() -> None:
+@pytest.mark.parametrize(
+    ("size", "stop"),
+    [
+        (100, 10),
+    ],
+)
+def test_stop_iter(size: int, stop: int) -> None:
     """."""
-    s = lazysequence(range(100), stop=10)
-    assert all(item < 10 for item in s)
+    s = lazysequence(range(size), stop=stop)
+    assert all(item < stop for item in s)
 
 
 def test_stop_bool_empty() -> None:
