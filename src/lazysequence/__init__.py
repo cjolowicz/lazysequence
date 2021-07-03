@@ -3,7 +3,7 @@
 >>> from lazysequence import lazysequence
 >>>
 >>> def load_records():
-...     yield from [1, 2, 3, 4, 5, 6]  # pretend each iteration is expensive
+...     return range(10)  # let's pretend this is expensive
 ...
 >>> records = lazysequence(load_records())
 >>> if not records:
@@ -12,19 +12,23 @@
 >>> first, second = records[:2]
 >>>
 >>> print("The first record is", first)
-The first record is 1
+The first record is 0
 >>> print("The second record is", second)
-The second record is 2
+The second record is 1
 >>>
 >>> for record in records.release():  # do not cache all records in memory
 ...     print("record", record)
 ...
+record 0
 record 1
 record 2
 record 3
 record 4
 record 5
 record 6
+record 7
+record 8
+record 9
 """
 from __future__ import annotations
 
