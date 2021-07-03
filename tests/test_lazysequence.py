@@ -261,3 +261,9 @@ def test_stop_bool_nonempty() -> None:
     """."""
     s = lazysequence([0, 1], stop=1)
     assert s
+
+
+def test_stop_release() -> None:
+    """."""
+    s = lazysequence(range(100), stop=10)
+    assert all(item < 10 for item in s.release())
