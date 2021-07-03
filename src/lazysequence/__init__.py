@@ -80,7 +80,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
     def release(self) -> Iterator[_T_co]:
         """Iterate over the sequence without caching additional items.
 
-        The sequence should no longer be used after calling this function.
+        The sequence should no longer be used after calling this function. The
+        same applies to slices of the sequence obtained by using ``s[i:j]``.
 
         Yields:
             The items in the sequence.
