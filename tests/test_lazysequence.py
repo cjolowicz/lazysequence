@@ -141,6 +141,13 @@ def test_start_getitem() -> None:
     assert 10 == s[0]
 
 
+def test_excessive_start_getitem() -> None:
+    """."""
+    s = lazysequence(range(100), start=1000)
+    with pytest.raises(IndexError):
+        s[0]
+
+
 def test_start_getitem_negative() -> None:
     """."""
     s = lazysequence(range(100), start=10)
