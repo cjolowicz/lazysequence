@@ -145,3 +145,16 @@ def test_start_getitem_negative() -> None:
     """."""
     s = lazysequence(range(100), start=10)
     assert 99 == s[-1]
+
+
+def test_start_iter() -> None:
+    """."""
+    s = lazysequence(range(100), start=10)
+    item = next(iter(s))
+    assert 10 == item
+
+
+def test_start_bool() -> None:
+    """."""
+    s = lazysequence(range(100), start=100)
+    assert not s
