@@ -107,6 +107,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         result = len(self._cache) + sum(1 for _ in self._consume())
         if self._start is not None:
             result -= self._start
+            result = max(0, result)
         return result
 
     @overload

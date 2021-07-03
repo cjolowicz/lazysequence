@@ -173,6 +173,12 @@ def test_start_len() -> None:
     assert 90 == len(s)
 
 
+def test_excessive_start_len() -> None:
+    """."""
+    s = lazysequence(range(100), start=1000)
+    assert 0 == len(s)
+
+
 def test_start_slice() -> None:
     """."""
     s = lazysequence(range(100), start=10)
