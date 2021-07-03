@@ -121,6 +121,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
             if stop is not None and stop < 0:
                 stop += len(self)
+                stop = max(0, stop)
 
             return lazysequence(islice(self, start, stop, step))
 
