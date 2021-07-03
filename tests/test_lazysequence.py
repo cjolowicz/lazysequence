@@ -133,3 +133,15 @@ def test_paging() -> None:
     while s:
         s = s[100:]
     assert not s
+
+
+def test_start_getitem() -> None:
+    """."""
+    s = lazysequence(range(100), start=10)
+    assert 10 == s[0]
+
+
+def test_start_getitem_negative() -> None:
+    """."""
+    s = lazysequence(range(100), start=10)
+    assert 99 == s[-1]
