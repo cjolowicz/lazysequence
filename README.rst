@@ -30,7 +30,7 @@ A lazy sequence makes an iterator look like an immutable sequence:
    from lazysequence import lazysequence
 
    def load_records():
-       yield from [1, 2, 3, 4, 5, 6]  # pretend each iteration is expensive
+       return range(10)  # let's pretend this is expensive
 
    records = lazysequence(load_records())
    if not records:
