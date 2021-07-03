@@ -223,3 +223,9 @@ def test_negative_start_release() -> None:
     s = lazysequence(range(100), start=-10)
     item = next(s.release())
     assert 90 == item
+
+
+def test_negative_start_len() -> None:
+    """."""
+    s = lazysequence(range(100), start=-10)
+    assert 10 == len(s)
