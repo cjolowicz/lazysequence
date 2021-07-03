@@ -249,3 +249,15 @@ def test_stop_iter() -> None:
     """."""
     s = lazysequence(range(100), stop=10)
     assert all(item < 10 for item in s)
+
+
+def test_stop_bool_empty() -> None:
+    """."""
+    s: lazysequence[int] = lazysequence([0], stop=0)
+    assert not s
+
+
+def test_stop_bool_nonempty() -> None:
+    """."""
+    s = lazysequence([0, 1], stop=1)
+    assert s
