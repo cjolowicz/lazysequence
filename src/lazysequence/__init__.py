@@ -99,7 +99,10 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def __len__(self) -> int:
         """Return the number of items in the sequence."""
-        return len(self._cache) + sum(1 for _ in self._consume())
+        result = len(self._cache) + sum(1 for _ in self._consume())
+        if self._start is not None:
+            result -= self._start
+        return result
 
     @overload
     def __getitem__(self, index: int) -> _T_co:

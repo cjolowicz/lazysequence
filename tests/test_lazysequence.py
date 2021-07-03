@@ -165,3 +165,9 @@ def test_start_release() -> None:
     s = lazysequence(range(100), start=10)
     item = next(s.release())
     assert 10 == item
+
+
+def test_start_len() -> None:
+    """."""
+    s = lazysequence(range(100), start=10)
+    assert 90 == len(s)
