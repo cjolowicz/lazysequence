@@ -204,3 +204,15 @@ def test_negative_start_getitem_negative() -> None:
     """."""
     s = lazysequence(range(100), start=-10)
     assert 99 == s[-1]
+
+
+def test_negative_start_bool_empty() -> None:
+    """."""
+    s: lazysequence[int] = lazysequence([], start=-1)
+    assert not s
+
+
+def test_negative_start_bool_nonempty() -> None:
+    """."""
+    s = lazysequence([0], start=-1)
+    assert s
