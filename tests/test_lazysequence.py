@@ -60,11 +60,25 @@ def test_getslice_negative_start() -> None:
     assert 2 == item
 
 
+def test_getslice_negative_start_empty() -> None:
+    """It returns the items at the given positions."""
+    s: lazysequence[int] = lazysequence([])
+    for _ in s[-1:]:
+        pass
+
+
 def test_getslice_negative_stop() -> None:
     """It returns the items at the given positions."""
     s = lazysequence([1, 2])
     [item] = s[:-1]
     assert 1 == item
+
+
+def test_getslice_negative_stop_empty() -> None:
+    """It returns the items at the given positions."""
+    s: lazysequence[int] = lazysequence([])
+    for _ in s[:-1]:
+        pass
 
 
 def test_getslice_negative_step() -> None:
