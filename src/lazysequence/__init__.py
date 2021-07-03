@@ -117,6 +117,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
             if start is not None and start < 0:
                 start += len(self)
+                start = max(0, start)
 
             if stop is not None and stop < 0:
                 stop += len(self)
