@@ -157,7 +157,7 @@ def test_start_getitem(size: int, start: int, index: int, expected: int) -> None
         (100, 1000, -1),
     ],
 )
-def test_excessive_start_getitem(size: int, start: int, index: int) -> None:
+def test_start_getitem_raises(size: int, start: int, index: int) -> None:
     """."""
     s = lazysequence(range(size), start=start)
     with pytest.raises(IndexError):
@@ -185,7 +185,7 @@ def test_start_iter(size: int, start: int, expected: int) -> None:
         (100, 1000),
     ],
 )
-def test_excessive_start_iter(size: int, start: int) -> None:
+def test_start_iter_raises(size: int, start: int) -> None:
     """."""
     s = lazysequence(range(size), start=start)
     with pytest.raises(StopIteration):
