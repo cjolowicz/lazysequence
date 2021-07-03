@@ -221,6 +221,13 @@ def test_negative_start_iter() -> None:
     assert 90 == item
 
 
+def test_excessive_negative_start_iter() -> None:
+    """."""
+    s = lazysequence(range(100), start=-1000)
+    item = next(iter(s))
+    assert 0 == item
+
+
 def test_negative_start_getitem() -> None:
     """."""
     s = lazysequence(range(100), start=-10)
