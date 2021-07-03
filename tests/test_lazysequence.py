@@ -158,3 +158,10 @@ def test_start_bool() -> None:
     """."""
     s = lazysequence(range(100), start=100)
     assert not s
+
+
+def test_start_release() -> None:
+    """."""
+    s = lazysequence(range(100), start=10)
+    item = next(s.release())
+    assert 10 == item
