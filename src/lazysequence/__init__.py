@@ -108,7 +108,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         Yields:
             The items in the sequence.
         """  # noqa: DAR201, DAR302
-        return islice(chain(self._cache, self._iter), self._start, self._stop, None)
+        return islice(
+            chain(self._cache, self._iter), self._start, self._stop, self._step
+        )
 
     def __bool__(self) -> bool:
         """Return True if there are any items in the sequence."""

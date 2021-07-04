@@ -289,6 +289,19 @@ def test_release_stop(size: int, stop: int, bound: int) -> None:
 
 
 @pytest.mark.parametrize(
+    ("size", "step", "expected"),
+    [
+        (10, 1, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+        (10, 2, [0, 2, 4, 6, 8]),
+    ],
+)
+def test_release_step(size: int, step: int, expected: list[int]) -> None:
+    """."""
+    s = lazysequence(range(size), step=step)
+    assert expected == list(s.release())
+
+
+@pytest.mark.parametrize(
     ("size", "start", "expected"),
     [
         (100, 10, 90),
