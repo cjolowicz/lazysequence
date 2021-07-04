@@ -143,6 +143,12 @@ def test_paging() -> None:
     assert not s
 
 
+def test_init_step_raises() -> None:
+    """."""
+    with pytest.raises(ValueError, match="slice step cannot be zero"):
+        lazysequence(range(10), step=0)
+
+
 @pytest.mark.parametrize(
     ("size", "start", "expected"),
     [

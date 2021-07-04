@@ -81,6 +81,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             if stop is not None and stop < 0:
                 stop = max(0, stop + size)
 
+        if step == 0:
+            raise ValueError("slice step cannot be zero")
+
         self._start = start
         self._stop = stop
         self._step = step
