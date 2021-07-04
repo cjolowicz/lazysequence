@@ -404,6 +404,31 @@ def test_getitem_stop(size: int, stop: int, index: int, expected: int) -> None:
 
 
 @pytest.mark.parametrize(
+    ("size", "step", "index", "expected"),
+    [
+        (10, 1, 0, 0),
+        (10, 2, 0, 0),
+        (10, 1, -1, 9),
+        (10, 2, -1, 8),
+        (10, 3, -1, 9),
+        (10, 4, -1, 8),
+        (10, 5, -1, 5),
+        (10, 6, -1, 6),
+        (10, 7, -1, 7),
+        (10, 8, -1, 8),
+        (10, 9, -1, 9),
+        (10, 10, -1, 0),
+        (10, 11, -1, 0),
+        (10, 100, -1, 0),
+    ],
+)
+def test_getitem_step(size: int, step: int, index: int, expected: int) -> None:
+    """."""
+    s = lazysequence(range(size), step=step)
+    assert expected == s[index]
+
+
+@pytest.mark.parametrize(
     ("size", "start", "stop", "index", "expected"),
     [
         (10, 5, 9, 0, 5),
@@ -468,6 +493,25 @@ def test_getitem_raises_start_and_stop(
 ) -> None:
     """."""
     s = lazysequence(range(size), start=start, stop=stop)
+    with pytest.raises(IndexError):
+        s[index]
+
+
+@pytest.mark.parametrize(
+    ("size", "step", "index"),
+    [
+        (10, 1, 10),
+        (10, 2, 5),
+        (10, 3, 10),
+        (10, 4, 9),
+        (10, 5, 6),
+        (10, 10, 1),
+        (10, 2, -6),
+    ],
+)
+def test_getitem_raises_step(size: int, step: int, index: int) -> None:
+    """It raises IndexError."""
+    s = lazysequence(range(size), step=step)
     with pytest.raises(IndexError):
         s[index]
 

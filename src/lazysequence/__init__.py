@@ -167,6 +167,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if index < 0:
             raise IndexError("lazysequence index out of range")
 
+        if self._step is not None:
+            index *= self._step
+
         if self._start is not None:
             index += self._start
 
