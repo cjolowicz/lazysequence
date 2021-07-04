@@ -456,3 +456,29 @@ def test_getitem_raises_start_and_stop(
     s = lazysequence(range(size), start=start, stop=stop)
     with pytest.raises(IndexError):
         s[index]
+
+
+@pytest.mark.parametrize(
+    ("size", "start", "stop", "indices", "expected"),
+    [
+        (10, 5, 9, slice(2), [5, 6]),
+        (10, 5, 9, slice(-2, None), [7, 8]),
+        (10, 5, -1, slice(2), [5, 6]),
+        (10, 5, -1, slice(-2, None), [7, 8]),
+        (10, -5, 9, slice(2), [5, 6]),
+        (10, -5, 9, slice(-2, None), [7, 8]),
+        (10, -5, -1, slice(2), [5, 6]),
+        (10, -5, -1, slice(-2, None), [7, 8]),
+        (10, 9, 5, slice(2), []),
+        (10, 9, -5, slice(2), []),
+        (10, -1, 5, slice(2), []),
+        (10, -1, -5, slice(2), []),
+    ],
+)
+def test_slice_start_and_stop(
+    size: int, start: int, stop: int, indices: slice, expected: list[int]
+) -> None:
+    """."""
+    s = lazysequence(range(size), start=start, stop=stop)
+    result = list(s[indices])
+    assert expected == result
