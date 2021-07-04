@@ -151,7 +151,7 @@ def test_paging() -> None:
         (100, -1000, 0),
     ],
 )
-def test_start_iter(size: int, start: int, expected: int) -> None:
+def test_iter_start(size: int, start: int, expected: int) -> None:
     """."""
     s = lazysequence(range(size), start=start)
     item = next(iter(s))
@@ -164,7 +164,7 @@ def test_start_iter(size: int, start: int, expected: int) -> None:
         (100, 1000),
     ],
 )
-def test_start_iter_raises(size: int, start: int) -> None:
+def test_iter_raises_start(size: int, start: int) -> None:
     """."""
     s = lazysequence(range(size), start=start)
     with pytest.raises(StopIteration):
@@ -179,7 +179,7 @@ def test_start_iter_raises(size: int, start: int) -> None:
         (1, -1, True),
     ],
 )
-def test_start_bool(size: int, start: int, expected: bool) -> None:
+def test_bool_start(size: int, start: int, expected: bool) -> None:
     """."""
     s = lazysequence(range(size), start=start)
     assert bool(s) is expected
@@ -192,7 +192,7 @@ def test_start_bool(size: int, start: int, expected: bool) -> None:
         (100, -10, 90),
     ],
 )
-def test_start_release(size: int, start: int, expected: int) -> None:
+def test_release_start(size: int, start: int, expected: int) -> None:
     """."""
     s = lazysequence(range(size), start=start)
     item = next(s.release())
@@ -207,7 +207,7 @@ def test_start_release(size: int, start: int, expected: int) -> None:
         (100, -10, 10),
     ],
 )
-def test_start_len(size: int, start: int, expected: int) -> None:
+def test_len_start(size: int, start: int, expected: int) -> None:
     """."""
     s = lazysequence(range(size), start=start)
     assert expected == len(s)
@@ -222,7 +222,7 @@ def test_start_len(size: int, start: int, expected: int) -> None:
         (100, -10, -1, 99),
     ],
 )
-def test_start_getitem(size: int, start: int, index: int, expected: int) -> None:
+def test_getitem_start(size: int, start: int, index: int, expected: int) -> None:
     """."""
     s = lazysequence(range(size), start=start)
     assert expected == s[index]
@@ -235,7 +235,7 @@ def test_start_getitem(size: int, start: int, index: int, expected: int) -> None
         (100, 1000, -1),
     ],
 )
-def test_start_getitem_raises(size: int, start: int, index: int) -> None:
+def test_getitem_raises_start(size: int, start: int, index: int) -> None:
     """."""
     s = lazysequence(range(size), start=start)
     with pytest.raises(IndexError):
@@ -253,7 +253,7 @@ def test_start_getitem_raises(size: int, start: int, index: int) -> None:
         (100, -1000, slice(2), (0, 1)),
     ],
 )
-def test_start_slice(
+def test_slice_start(
     size: int, start: int, indices: slice, expected: tuple[int, ...]
 ) -> None:
     """."""
@@ -270,7 +270,7 @@ def test_start_slice(
         (100, -1000, 0),
     ],
 )
-def test_stop_iter(size: int, stop: int, bound: int) -> None:
+def test_iter_stop(size: int, stop: int, bound: int) -> None:
     """."""
     s = lazysequence(range(size), stop=stop)
     assert all(item < bound for item in s)
@@ -291,7 +291,7 @@ def test_stop_iter(size: int, stop: int, bound: int) -> None:
         (2, -3, False),
     ],
 )
-def test_stop_bool(size: int, stop: int, expected: bool) -> None:
+def test_bool_stop(size: int, stop: int, expected: bool) -> None:
     """."""
     s = lazysequence(range(size), stop=stop)
     assert bool(s) == expected
@@ -305,7 +305,7 @@ def test_stop_bool(size: int, stop: int, expected: bool) -> None:
         (100, -1000, 0),
     ],
 )
-def test_stop_release(size: int, stop: int, bound: int) -> None:
+def test_release_stop(size: int, stop: int, bound: int) -> None:
     """."""
     s = lazysequence(range(size), stop=stop)
     assert all(item < bound for item in s.release())
@@ -319,7 +319,7 @@ def test_stop_release(size: int, stop: int, bound: int) -> None:
         (100, -10, 90),
     ],
 )
-def test_stop_len(size: int, stop: int, expected: int) -> None:
+def test_len_stop(size: int, stop: int, expected: int) -> None:
     """."""
     s = lazysequence(range(size), stop=stop)
     assert expected == len(s)
@@ -336,7 +336,7 @@ def test_stop_len(size: int, stop: int, expected: int) -> None:
         (100, -10, -1, 89),
     ],
 )
-def test_stop_getitem(size: int, stop: int, index: int, expected: int) -> None:
+def test_getitem_stop(size: int, stop: int, index: int, expected: int) -> None:
     """."""
     s = lazysequence(range(size), stop=stop)
     assert expected == s[index]
@@ -351,7 +351,7 @@ def test_stop_getitem(size: int, stop: int, index: int, expected: int) -> None:
         (100, -1000, 0),
     ],
 )
-def test_stop_getitem_raises(size: int, stop: int, index: int) -> None:
+def test_getitem_raises_stop(size: int, stop: int, index: int) -> None:
     """It raises IndexError."""
     s = lazysequence(range(size), stop=stop)
     with pytest.raises(IndexError):
@@ -370,7 +370,7 @@ def test_stop_getitem_raises(size: int, stop: int, index: int) -> None:
         (100, -1, slice(-2, None), (97, 98)),
     ],
 )
-def test_stop_slice(
+def test_slice_stop(
     size: int, stop: int, indices: slice, expected: tuple[int, ...]
 ) -> None:
     """."""
