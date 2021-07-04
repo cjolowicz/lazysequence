@@ -92,7 +92,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def __iter__(self) -> Iterator[_T_co]:
         """Iterate over the items in the sequence."""
-        return islice(chain(self._cache, self._consume()), self._start, self._stop)
+        return islice(
+            chain(self._cache, self._consume()), self._start, self._stop, self._step
+        )
 
     def release(self) -> Iterator[_T_co]:
         """Iterate over the sequence without caching additional items.
