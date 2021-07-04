@@ -241,6 +241,8 @@ def test_start_getitem_raises(size: int, start: int, index: int) -> None:
         (100, 10, slice(-2, None), (98, 99)),
         (100, -10, slice(2), (90, 91)),
         (100, -10, slice(-2, None), (98, 99)),
+        (100, 1000, slice(2), ()),
+        (100, -1000, slice(2), (0, 1)),
     ],
 )
 def test_start_slice(
