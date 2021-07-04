@@ -417,3 +417,42 @@ def test_len_start_and_stop(size: int, start: int, stop: int, expected: int) -> 
     """."""
     s = lazysequence(range(size), start=start, stop=stop)
     assert expected == len(s)
+
+
+@pytest.mark.parametrize(
+    ("size", "start", "stop", "index", "expected"),
+    [
+        (10, 5, 9, 0, 5),
+        (10, 5, 9, -1, 8),
+        (10, 5, -1, 0, 5),
+        (10, 5, -1, -1, 8),
+        (10, -5, 9, 0, 5),
+        (10, -5, 9, -1, 8),
+        (10, -5, -1, 0, 5),
+        (10, -5, -1, -1, 8),
+    ],
+)
+def test_getitem_start_and_stop(
+    size: int, start: int, stop: int, index: int, expected: int
+) -> None:
+    """."""
+    s = lazysequence(range(size), start=start, stop=stop)
+    assert expected == s[index]
+
+
+@pytest.mark.parametrize(
+    ("size", "start", "stop", "index"),
+    [
+        (10, 9, 5, 0),
+        (10, 9, -5, 0),
+        (10, -1, 5, 0),
+        (10, -1, -5, 0),
+    ],
+)
+def test_getitem_raises_start_and_stop(
+    size: int, start: int, stop: int, index: int
+) -> None:
+    """."""
+    s = lazysequence(range(size), start=start, stop=stop)
+    with pytest.raises(IndexError):
+        s[index]
