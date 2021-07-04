@@ -324,6 +324,7 @@ def test_stop_getitem(size: int, stop: int, index: int, expected: int) -> None:
     [
         (100, 0, 0),
         (100, 10, 20),
+        (100, 9, -10),
         (100, -1000, 0),
     ],
 )
