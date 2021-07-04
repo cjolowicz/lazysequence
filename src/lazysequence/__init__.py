@@ -74,6 +74,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             start += sum(1 for _ in self._consume())
             start = max(0, start)
         self._start = start
+        if stop is not None and stop < 0:
+            stop += sum(1 for _ in self._consume())
+            stop = max(0, stop)
         self._stop = stop
 
     def _consume(self) -> Iterator[_T_co]:
