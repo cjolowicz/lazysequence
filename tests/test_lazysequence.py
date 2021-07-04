@@ -271,8 +271,16 @@ def test_stop_iter(size: int, stop: int, bound: int) -> None:
 @pytest.mark.parametrize(
     ("size", "stop", "expected"),
     [
+        (0, 0, False),
+        (0, 1, False),
         (1, 0, False),
+        (1, 1, True),
         (2, 1, True),
+        (0, -1, False),
+        (1, -1, False),
+        (2, -1, True),
+        (2, -2, False),
+        (2, -3, False),
     ],
 )
 def test_stop_bool(size: int, stop: int, expected: bool) -> None:
