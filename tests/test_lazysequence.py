@@ -275,7 +275,7 @@ def test_stop_iter(size: int, stop: int, bound: int) -> None:
         (2, 1, True),
     ],
 )
-def test_stop_bool_empty(size: int, stop: int, expected: bool) -> None:
+def test_stop_bool(size: int, stop: int, expected: bool) -> None:
     """."""
     s = lazysequence(range(size), stop=stop)
     assert bool(s) == expected
