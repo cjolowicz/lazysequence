@@ -128,6 +128,11 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if self._start is not None:
             result = max(0, result - self._start)
 
+        if self._step is not None and result > 0:
+            # This is equivalent to `math.ceil(result / self._step)`, but avoids
+            # floating-point operations and importing `math`.
+            result = 1 + (result - 1) // self._step
+
         return result
 
     @overload
