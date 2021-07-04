@@ -159,6 +159,41 @@ def test_iter_start(size: int, start: int, expected: int) -> None:
 
 
 @pytest.mark.parametrize(
+    ("size", "stop", "bound"),
+    [
+        (100, 10, 10),
+        (100, -10, 90),
+        (100, -1000, 0),
+    ],
+)
+def test_iter_stop(size: int, stop: int, bound: int) -> None:
+    """."""
+    s = lazysequence(range(size), stop=stop)
+    assert all(item < bound for item in s)
+
+
+@pytest.mark.parametrize(
+    ("size", "start", "stop", "expected"),
+    [
+        (10, 5, 9, [5, 6, 7, 8]),
+        (10, 5, -1, [5, 6, 7, 8]),
+        (10, -5, 9, [5, 6, 7, 8]),
+        (10, -5, -1, [5, 6, 7, 8]),
+        (10, 9, 5, []),
+        (10, 9, -5, []),
+        (10, -1, 5, []),
+        (10, -1, -5, []),
+    ],
+)
+def test_iter_start_and_stop(
+    size: int, start: int, stop: int, expected: list[int]
+) -> None:
+    """."""
+    s = lazysequence(range(size), start=start, stop=stop)
+    assert expected == list(s)
+
+
+@pytest.mark.parametrize(
     ("size", "start"),
     [
         (100, 1000),
@@ -186,6 +221,27 @@ def test_bool_start(size: int, start: int, expected: bool) -> None:
 
 
 @pytest.mark.parametrize(
+    ("size", "stop", "expected"),
+    [
+        (0, 0, False),
+        (0, 1, False),
+        (1, 0, False),
+        (1, 1, True),
+        (2, 1, True),
+        (0, -1, False),
+        (1, -1, False),
+        (2, -1, True),
+        (2, -2, False),
+        (2, -3, False),
+    ],
+)
+def test_bool_stop(size: int, stop: int, expected: bool) -> None:
+    """."""
+    s = lazysequence(range(size), stop=stop)
+    assert bool(s) == expected
+
+
+@pytest.mark.parametrize(
     ("size", "start", "expected"),
     [
         (100, 10, 10),
@@ -200,6 +256,20 @@ def test_release_start(size: int, start: int, expected: int) -> None:
 
 
 @pytest.mark.parametrize(
+    ("size", "stop", "bound"),
+    [
+        (100, 10, 10),
+        (100, -10, 90),
+        (100, -1000, 0),
+    ],
+)
+def test_release_stop(size: int, stop: int, bound: int) -> None:
+    """."""
+    s = lazysequence(range(size), stop=stop)
+    assert all(item < bound for item in s.release())
+
+
+@pytest.mark.parametrize(
     ("size", "start", "expected"),
     [
         (100, 10, 90),
@@ -210,6 +280,39 @@ def test_release_start(size: int, start: int, expected: int) -> None:
 def test_len_start(size: int, start: int, expected: int) -> None:
     """."""
     s = lazysequence(range(size), start=start)
+    assert expected == len(s)
+
+
+@pytest.mark.parametrize(
+    ("size", "stop", "expected"),
+    [
+        (100, 10, 10),
+        (100, 1000, 100),
+        (100, -10, 90),
+    ],
+)
+def test_len_stop(size: int, stop: int, expected: int) -> None:
+    """."""
+    s = lazysequence(range(size), stop=stop)
+    assert expected == len(s)
+
+
+@pytest.mark.parametrize(
+    ("size", "start", "stop", "expected"),
+    [
+        (10, 5, 9, 4),
+        (10, 5, -1, 4),
+        (10, -5, 9, 4),
+        (10, -5, -1, 4),
+        (10, 9, 5, 0),
+        (10, 9, -5, 0),
+        (10, -1, 5, 0),
+        (10, -1, -5, 0),
+    ],
+)
+def test_len_start_and_stop(size: int, start: int, stop: int, expected: int) -> None:
+    """."""
+    s = lazysequence(range(size), start=start, stop=stop)
     assert expected == len(s)
 
 
@@ -229,6 +332,44 @@ def test_getitem_start(size: int, start: int, index: int, expected: int) -> None
 
 
 @pytest.mark.parametrize(
+    ("size", "stop", "index", "expected"),
+    [
+        (100, 10, 0, 0),
+        (100, 10, -1, 9),
+        (100, 1000, 0, 0),
+        (100, 1000, -1, 99),
+        (100, -10, 0, 0),
+        (100, -10, -1, 89),
+    ],
+)
+def test_getitem_stop(size: int, stop: int, index: int, expected: int) -> None:
+    """."""
+    s = lazysequence(range(size), stop=stop)
+    assert expected == s[index]
+
+
+@pytest.mark.parametrize(
+    ("size", "start", "stop", "index", "expected"),
+    [
+        (10, 5, 9, 0, 5),
+        (10, 5, 9, -1, 8),
+        (10, 5, -1, 0, 5),
+        (10, 5, -1, -1, 8),
+        (10, -5, 9, 0, 5),
+        (10, -5, 9, -1, 8),
+        (10, -5, -1, 0, 5),
+        (10, -5, -1, -1, 8),
+    ],
+)
+def test_getitem_start_and_stop(
+    size: int, start: int, stop: int, index: int, expected: int
+) -> None:
+    """."""
+    s = lazysequence(range(size), start=start, stop=stop)
+    assert expected == s[index]
+
+
+@pytest.mark.parametrize(
     ("size", "start", "index"),
     [
         (100, 1000, 0),
@@ -238,6 +379,40 @@ def test_getitem_start(size: int, start: int, index: int, expected: int) -> None
 def test_getitem_raises_start(size: int, start: int, index: int) -> None:
     """."""
     s = lazysequence(range(size), start=start)
+    with pytest.raises(IndexError):
+        s[index]
+
+
+@pytest.mark.parametrize(
+    ("size", "stop", "index"),
+    [
+        (100, 0, 0),
+        (100, 10, 20),
+        (100, 9, -10),
+        (100, -1000, 0),
+    ],
+)
+def test_getitem_raises_stop(size: int, stop: int, index: int) -> None:
+    """It raises IndexError."""
+    s = lazysequence(range(size), stop=stop)
+    with pytest.raises(IndexError):
+        s[index]
+
+
+@pytest.mark.parametrize(
+    ("size", "start", "stop", "index"),
+    [
+        (10, 9, 5, 0),
+        (10, 9, -5, 0),
+        (10, -1, 5, 0),
+        (10, -1, -5, 0),
+    ],
+)
+def test_getitem_raises_start_and_stop(
+    size: int, start: int, stop: int, index: int
+) -> None:
+    """."""
+    s = lazysequence(range(size), start=start, stop=stop)
     with pytest.raises(IndexError):
         s[index]
 
@@ -263,102 +438,6 @@ def test_slice_start(
 
 
 @pytest.mark.parametrize(
-    ("size", "stop", "bound"),
-    [
-        (100, 10, 10),
-        (100, -10, 90),
-        (100, -1000, 0),
-    ],
-)
-def test_iter_stop(size: int, stop: int, bound: int) -> None:
-    """."""
-    s = lazysequence(range(size), stop=stop)
-    assert all(item < bound for item in s)
-
-
-@pytest.mark.parametrize(
-    ("size", "stop", "expected"),
-    [
-        (0, 0, False),
-        (0, 1, False),
-        (1, 0, False),
-        (1, 1, True),
-        (2, 1, True),
-        (0, -1, False),
-        (1, -1, False),
-        (2, -1, True),
-        (2, -2, False),
-        (2, -3, False),
-    ],
-)
-def test_bool_stop(size: int, stop: int, expected: bool) -> None:
-    """."""
-    s = lazysequence(range(size), stop=stop)
-    assert bool(s) == expected
-
-
-@pytest.mark.parametrize(
-    ("size", "stop", "bound"),
-    [
-        (100, 10, 10),
-        (100, -10, 90),
-        (100, -1000, 0),
-    ],
-)
-def test_release_stop(size: int, stop: int, bound: int) -> None:
-    """."""
-    s = lazysequence(range(size), stop=stop)
-    assert all(item < bound for item in s.release())
-
-
-@pytest.mark.parametrize(
-    ("size", "stop", "expected"),
-    [
-        (100, 10, 10),
-        (100, 1000, 100),
-        (100, -10, 90),
-    ],
-)
-def test_len_stop(size: int, stop: int, expected: int) -> None:
-    """."""
-    s = lazysequence(range(size), stop=stop)
-    assert expected == len(s)
-
-
-@pytest.mark.parametrize(
-    ("size", "stop", "index", "expected"),
-    [
-        (100, 10, 0, 0),
-        (100, 10, -1, 9),
-        (100, 1000, 0, 0),
-        (100, 1000, -1, 99),
-        (100, -10, 0, 0),
-        (100, -10, -1, 89),
-    ],
-)
-def test_getitem_stop(size: int, stop: int, index: int, expected: int) -> None:
-    """."""
-    s = lazysequence(range(size), stop=stop)
-    assert expected == s[index]
-
-
-@pytest.mark.parametrize(
-    ("size", "stop", "index"),
-    [
-        (100, 0, 0),
-        (100, 10, 20),
-        (100, 9, -10),
-        (100, -1000, 0),
-    ],
-)
-def test_getitem_raises_stop(size: int, stop: int, index: int) -> None:
-    """It raises IndexError."""
-    s = lazysequence(range(size), stop=stop)
-    with pytest.raises(IndexError):
-        s[index]
-
-
-@pytest.mark.parametrize(
     ("size", "stop", "indices", "expected"),
     [
         (100, 10, slice(2), (0, 1)),
@@ -377,85 +456,6 @@ def test_slice_stop(
     s = lazysequence(range(size), stop=stop)
     result = tuple(s[indices])
     assert expected == result
-
-
-@pytest.mark.parametrize(
-    ("size", "start", "stop", "expected"),
-    [
-        (10, 5, 9, [5, 6, 7, 8]),
-        (10, 5, -1, [5, 6, 7, 8]),
-        (10, -5, 9, [5, 6, 7, 8]),
-        (10, -5, -1, [5, 6, 7, 8]),
-        (10, 9, 5, []),
-        (10, 9, -5, []),
-        (10, -1, 5, []),
-        (10, -1, -5, []),
-    ],
-)
-def test_iter_start_and_stop(
-    size: int, start: int, stop: int, expected: list[int]
-) -> None:
-    """."""
-    s = lazysequence(range(size), start=start, stop=stop)
-    assert expected == list(s)
-
-
-@pytest.mark.parametrize(
-    ("size", "start", "stop", "expected"),
-    [
-        (10, 5, 9, 4),
-        (10, 5, -1, 4),
-        (10, -5, 9, 4),
-        (10, -5, -1, 4),
-        (10, 9, 5, 0),
-        (10, 9, -5, 0),
-        (10, -1, 5, 0),
-        (10, -1, -5, 0),
-    ],
-)
-def test_len_start_and_stop(size: int, start: int, stop: int, expected: int) -> None:
-    """."""
-    s = lazysequence(range(size), start=start, stop=stop)
-    assert expected == len(s)
-
-
-@pytest.mark.parametrize(
-    ("size", "start", "stop", "index", "expected"),
-    [
-        (10, 5, 9, 0, 5),
-        (10, 5, 9, -1, 8),
-        (10, 5, -1, 0, 5),
-        (10, 5, -1, -1, 8),
-        (10, -5, 9, 0, 5),
-        (10, -5, 9, -1, 8),
-        (10, -5, -1, 0, 5),
-        (10, -5, -1, -1, 8),
-    ],
-)
-def test_getitem_start_and_stop(
-    size: int, start: int, stop: int, index: int, expected: int
-) -> None:
-    """."""
-    s = lazysequence(range(size), start=start, stop=stop)
-    assert expected == s[index]
-
-
-@pytest.mark.parametrize(
-    ("size", "start", "stop", "index"),
-    [
-        (10, 9, 5, 0),
-        (10, 9, -5, 0),
-        (10, -1, 5, 0),
-        (10, -1, -5, 0),
-    ],
-)
-def test_getitem_raises_start_and_stop(
-    size: int, start: int, stop: int, index: int
-) -> None:
-    """."""
-    s = lazysequence(range(size), start=start, stop=stop)
-    with pytest.raises(IndexError):
-        s[index]
 
 
 @pytest.mark.parametrize(
