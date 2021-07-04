@@ -73,11 +73,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if any(arg < 0 for arg in (start, stop) if arg is not None):
             size = sum(1 for _ in self._consume())
             if start is not None and start < 0:
-                start += size
-                start = max(0, start)
+                start = max(0, start + size)
             if stop is not None and stop < 0:
-                stop += size
-                stop = max(0, stop)
+                stop = max(0, stop + size)
         self._start = start
         self._stop = stop
 
