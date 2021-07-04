@@ -350,11 +350,11 @@ def xfail(*args: Any) -> ParameterSet:
     [
         (100, 10, slice(2), (0, 1)),
         (100, 10, slice(-2, None), (8, 9)),
-        xfail(100, -10, slice(2), (0, 1)),
-        xfail(100, -10, slice(-2, None), (88, 89)),
+        (100, -10, slice(2), (0, 1)),
+        (100, -10, slice(-2, None), (88, 89)),
         (100, 1000, slice(2), (0, 1)),
-        xfail(100, -1000, slice(2), ()),
-        xfail(100, -1, slice(-2, None), (98,)),
+        (100, -1000, slice(2), ()),
+        (100, -1, slice(-2, None), (97, 98)),
     ],
 )
 def test_stop_slice(
