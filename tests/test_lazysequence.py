@@ -95,6 +95,13 @@ def test_outofrange() -> None:
         s[0]
 
 
+def test_outofrange_negative() -> None:
+    """It raises IndexError."""
+    s = lazysequence([1, 2])
+    with pytest.raises(IndexError):
+        s[-3]
+
+
 def test_bool_false() -> None:
     """It is False for an empty sequence."""
     s: lazysequence[int] = lazysequence([])

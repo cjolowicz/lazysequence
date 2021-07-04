@@ -106,7 +106,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
     def __getitem__(self, indices: slice) -> lazysequence[_T_co]:
         """Return a slice of the sequence."""  # noqa: D418
 
-    def __getitem__(
+    def __getitem__(  # noqa: C901
         self, index: Union[int, slice]
     ) -> Union[_T_co, lazysequence[_T_co]]:
         """Return the item at the given index."""
@@ -128,6 +128,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         if index < 0:
             index += len(self)
+
+        if index < 0:
+            raise IndexError("lazysequence index out of range")
 
         try:
             return self._cache[index]
