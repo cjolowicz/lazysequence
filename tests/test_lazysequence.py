@@ -1,8 +1,5 @@
 """Unit tests for lazysequence."""
-from typing import Any
-
 import pytest
-from _pytest.mark import ParameterSet
 
 from lazysequence import lazysequence
 
@@ -338,11 +335,6 @@ def test_stop_getitem_raises(size: int, stop: int, index: int) -> None:
     s = lazysequence(range(size), stop=stop)
     with pytest.raises(IndexError):
         s[index]
-
-
-def xfail(*args: Any) -> ParameterSet:
-    """Mark parameters as XFAIL."""
-    return pytest.param(*args, marks=pytest.mark.xfail)
 
 
 @pytest.mark.parametrize(
