@@ -374,7 +374,14 @@ def test_stop_slice(
 @pytest.mark.parametrize(
     ("size", "start", "stop", "expected"),
     [
+        (10, 5, 9, [5, 6, 7, 8]),
+        (10, 5, -1, [5, 6, 7, 8]),
+        (10, -5, 9, [5, 6, 7, 8]),
         (10, -5, -1, [5, 6, 7, 8]),
+        (10, 9, 5, []),
+        (10, 9, -5, []),
+        (10, -1, 5, []),
+        (10, -1, -5, []),
     ],
 )
 def test_iter_start_and_stop(
