@@ -369,3 +369,17 @@ def test_stop_slice(
     s = lazysequence(range(size), stop=stop)
     result = tuple(s[indices])
     assert expected == result
+
+
+@pytest.mark.parametrize(
+    ("size", "start", "stop", "expected"),
+    [
+        (10, -5, -1, [5, 6, 7, 8]),
+    ],
+)
+def test_iter_start_and_stop(
+    size: int, start: int, stop: int, expected: list[int]
+) -> None:
+    """."""
+    s = lazysequence(range(size), start=start, stop=stop)
+    assert expected == list(s)
