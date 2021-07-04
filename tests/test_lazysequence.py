@@ -1,5 +1,8 @@
 """Unit tests for lazysequence."""
+from typing import Any
+
 import pytest
+from _pytest.mark import ParameterSet
 
 from lazysequence import lazysequence
 
@@ -333,3 +336,29 @@ def test_stop_getitem_raises(size: int, stop: int, index: int) -> None:
     s = lazysequence(range(size), stop=stop)
     with pytest.raises(IndexError):
         s[index]
+
+
+def xfail(*args: Any) -> ParameterSet:
+    """Mark parameters as XFAIL."""
+    return pytest.param(*args, marks=pytest.mark.xfail)
+
+
+@pytest.mark.parametrize(
+    ("size", "stop", "indices", "expected"),
+    [
+        (100, 10, slice(2), (0, 1)),
+        (100, 10, slice(-2, None), (8, 9)),
+        xfail(100, -10, slice(2), (0, 1)),
+        xfail(100, -10, slice(-2, None), (88, 89)),
+        (100, 1000, slice(2), (0, 1)),
+        xfail(100, -1000, slice(2), ()),
+        xfail(100, -1, slice(-2, None), (98,)),
+    ],
+)
+def test_stop_slice(
+    size: int, stop: int, indices: slice, expected: tuple[int, ...]
+) -> None:
+    """."""
+    s = lazysequence(range(size), stop=stop)
+    result = tuple(s[indices])
+    assert expected == result
