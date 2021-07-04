@@ -248,8 +248,8 @@ def test_start_slice(
 ) -> None:
     """."""
     s = lazysequence(range(size), start=start)
-    a, b = s[indices]
-    assert expected == (a, b)
+    result = tuple(s[indices])
+    assert expected == result
 
 
 @pytest.mark.parametrize(
