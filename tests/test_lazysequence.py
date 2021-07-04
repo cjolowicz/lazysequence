@@ -390,3 +390,22 @@ def test_iter_start_and_stop(
     """."""
     s = lazysequence(range(size), start=start, stop=stop)
     assert expected == list(s)
+
+
+@pytest.mark.parametrize(
+    ("size", "start", "stop", "expected"),
+    [
+        (10, 5, 9, 4),
+        (10, 5, -1, 4),
+        (10, -5, 9, 4),
+        (10, -5, -1, 4),
+        (10, 9, 5, 0),
+        (10, 9, -5, 0),
+        (10, -1, 5, 0),
+        (10, -1, -5, 0),
+    ],
+)
+def test_len_start_and_stop(size: int, start: int, stop: int, expected: int) -> None:
+    """."""
+    s = lazysequence(range(size), start=start, stop=stop)
+    assert expected == len(s)
