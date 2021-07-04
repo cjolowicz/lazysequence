@@ -113,8 +113,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             result = min(result, self._stop)
 
         if self._start is not None:
-            result -= self._start
-            result = max(0, result)
+            result = max(0, result - self._start)
 
         return result
 
