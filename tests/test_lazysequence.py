@@ -258,15 +258,17 @@ def test_start_slice(
 
 
 @pytest.mark.parametrize(
-    ("size", "stop"),
+    ("size", "stop", "bound"),
     [
-        (100, 10),
+        (100, 10, 10),
+        (100, -10, 90),
+        (100, -1000, 0),
     ],
 )
-def test_stop_iter(size: int, stop: int) -> None:
+def test_stop_iter(size: int, stop: int, bound: int) -> None:
     """."""
     s = lazysequence(range(size), stop=stop)
-    assert all(item < stop for item in s)
+    assert all(item < bound for item in s)
 
 
 @pytest.mark.parametrize(
