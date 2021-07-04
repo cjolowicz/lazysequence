@@ -302,3 +302,33 @@ def test_stop_len(size: int, stop: int, expected: int) -> None:
     """."""
     s = lazysequence(range(size), stop=stop)
     assert expected == len(s)
+
+
+@pytest.mark.parametrize(
+    ("size", "stop", "index", "expected"),
+    [
+        (100, 10, 0, 0),
+        (100, 10, -1, 9),
+        (100, 1000, 0, 0),
+        (100, 1000, -1, 99),
+    ],
+)
+def test_stop_getitem(size: int, stop: int, index: int, expected: int) -> None:
+    """."""
+    s = lazysequence(range(size), stop=stop)
+    assert expected == s[index]
+
+
+@pytest.mark.parametrize(
+    ("size", "stop", "index"),
+    [
+        (100, 0, 0),
+        (100, 10, 20),
+        (100, -1000, 0),
+    ],
+)
+def test_stop_getitem_raises(size: int, stop: int, index: int) -> None:
+    """It raises IndexError."""
+    s = lazysequence(range(size), stop=stop)
+    with pytest.raises(IndexError):
+        s[index]
