@@ -290,15 +290,17 @@ def test_stop_bool(size: int, stop: int, expected: bool) -> None:
 
 
 @pytest.mark.parametrize(
-    ("size", "stop"),
+    ("size", "stop", "bound"),
     [
-        (100, 10),
+        (100, 10, 10),
+        (100, -10, 90),
+        (100, -1000, 0),
     ],
 )
-def test_stop_release(size: int, stop: int) -> None:
+def test_stop_release(size: int, stop: int, bound: int) -> None:
     """."""
     s = lazysequence(range(size), stop=stop)
-    assert all(item < stop for item in s.release())
+    assert all(item < bound for item in s.release())
 
 
 @pytest.mark.parametrize(
