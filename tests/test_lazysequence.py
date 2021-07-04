@@ -308,6 +308,7 @@ def test_stop_release(size: int, stop: int, bound: int) -> None:
     [
         (100, 10, 10),
         (100, 1000, 100),
+        (100, -10, 90),
     ],
 )
 def test_stop_len(size: int, stop: int, expected: int) -> None:
