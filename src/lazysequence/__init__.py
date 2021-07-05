@@ -99,11 +99,26 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             for _ in self._consume():
                 pass
 
-            start, stop, step = self._start, self._stop, self._step
-            if start is not None:
-                start = min(start, len(self._cache) - 1)
+            size = len(self._cache)
 
-            return islice(reversed(self._cache), stop, start, -step)
+            start, stop, step = self._start, self._stop, self._step
+            step = -step
+
+            if start is None:
+                start = 0
+            else:
+                start = (size - 1) - start
+
+            start = max(0, start)
+
+            if stop is None:
+                stop = size
+            else:
+                stop = (size - 1) - stop
+
+            stop = max(0, stop)
+
+            return islice(reversed(self._cache), start, stop, step)
 
         return islice(
             chain(self._cache, self._consume()), self._start, self._stop, self._step
