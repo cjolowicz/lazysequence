@@ -152,9 +152,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         if step is not None and result > 0:
             # This is equivalent to `math.ceil(result / step)`, but avoids
-            # floating-point operations and importing `math`. Use `abs` because
-            # the length is the same going forwards or backwards.
-            result = 1 + (result - 1) // abs(step)
+            # floating-point operations and importing `math`.
+            result = 1 + (result - 1) // step
 
         return result
 
