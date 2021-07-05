@@ -209,7 +209,7 @@ def test_iter_start_and_stop(
 def test_iter_step(size: int, step: int, expected: list[int]) -> None:
     """."""
     s = lazysequence(range(size), step=step)
-    assert expected == list(s)
+    assert expected == list(iter(s))  # using iter avoids `len(s)`
 
 
 @pytest.mark.parametrize(
