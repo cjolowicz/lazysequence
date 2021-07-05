@@ -99,26 +99,10 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             for _ in self._consume():
                 pass
 
-            size = len(self._cache)
-
-            start, stop, step = self._start, self._stop, self._step
-            step = -step
-
-            if start is None:
-                start = 0
-            else:
-                start = (size - 1) - start
-
-            start = max(0, start)
-
-            if stop is None:
-                stop = size
-            else:
-                stop = (size - 1) - stop
-
-            stop = max(0, stop)
-
-            return islice(reversed(self._cache), start, stop, step)
+            return islice(
+                reversed(self._cache),
+                *_reverse_slice(self._start, self._stop, self._step, len(self._cache)),
+            )
 
         return islice(
             chain(self._cache, self._consume()), self._start, self._stop, self._step
@@ -238,3 +222,25 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             return next(islice(self._consume(), index, None))
         except StopIteration:
             raise IndexError("lazysequence index out of range") from None
+
+
+def _reverse_slice(
+    start: Optional[int], stop: Optional[int], step: int, size: int
+) -> tuple[int, int, int]:
+    step = -step
+
+    if start is None:
+        start = 0
+    else:
+        start = (size - 1) - start
+
+    start = max(0, start)
+
+    if stop is None:
+        stop = size
+    else:
+        stop = (size - 1) - stop
+
+    stop = max(0, stop)
+
+    return start, stop, step
