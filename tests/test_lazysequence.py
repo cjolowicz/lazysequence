@@ -440,6 +440,26 @@ def test_len_step(size: int, step: int, expected: int) -> None:
 
 
 @pytest.mark.parametrize(
+    ("size", "start", "stop", "step", "expected"),
+    [
+        (10, 0, 10, 1, len([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])),
+        (10, 9, 0, -1, len([9, 8, 7, 6, 5, 4, 3, 2, 1])),
+        (10, 10, 0, -1, len([9, 8, 7, 6, 5, 4, 3, 2, 1])),
+        (3, 2, 0, -1, len([2, 1])),
+        (10, 9, 8, -1, len([9])),
+        (10, 8, 4, -3, len([8, 5])),
+        (0, 8, 4, -3, len([])),
+    ],
+)
+def test_len_start_stop_and_step(
+    size: int, start: int, stop: int, step: int, expected: int
+) -> None:
+    """."""
+    s = lazysequence(range(size), start=start, stop=stop, step=step)
+    assert expected == len(s)
+
+
+@pytest.mark.parametrize(
     ("size", "start", "index", "expected"),
     [
         (100, 10, 0, 10),
