@@ -170,6 +170,10 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         self, index: Union[int, slice]
     ) -> Union[_T_co, lazysequence[_T_co]]:
         """Return the item at the given index."""
+        start: Optional[int]
+        stop: Optional[int]
+        step: Optional[int]
+
         if isinstance(index, slice):
             start, stop, step = index.start, index.stop, index.step
 
@@ -190,13 +194,15 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if index < 0:
             raise IndexError("lazysequence index out of range")
 
-        if self._step is not None:
-            index *= self._step
+        start, stop, step = self._start, self._stop, self._step
 
-        if self._start is not None:
-            index += self._start
+        if step is not None:
+            index *= step
 
-        if self._stop is not None and index >= self._stop:
+        if start is not None:
+            index += start
+
+        if stop is not None and index >= stop:
             raise IndexError("lazysequence index out of range")
 
         try:
