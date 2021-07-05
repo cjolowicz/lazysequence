@@ -95,6 +95,17 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def __iter__(self) -> Iterator[_T_co]:
         """Iterate over the items in the sequence."""
+        if self._step is not None and self._step < 0:
+            for _ in self._consume():
+                pass
+
+            return islice(
+                reversed(self._cache),
+                self._start,
+                self._stop,
+                -self._step,
+            )
+
         return islice(
             chain(self._cache, self._consume()), self._start, self._stop, self._step
         )
