@@ -201,6 +201,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
                 size = len(self._cache) + sum(1 for _ in self._consume())
                 if start is None:
                     start = size - 1
+                else:
+                    start = min(start, size - 1)
+
             index *= step
 
         if start is not None:
