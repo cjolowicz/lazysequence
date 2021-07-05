@@ -638,6 +638,9 @@ def test_slice_start_and_stop(
         (10, 2, slice(2), [0, 2]),
         (10, 2, slice(-2, None), [6, 8]),
         (10, 100, slice(2), [0]),
+        (10, -2, slice(2), [9, 7]),
+        (10, -2, slice(-2, None), [3, 1]),
+        (10, -100, slice(2), [9]),
     ],
 )
 def test_slice_step(size: int, step: int, indices: slice, expected: list[int]) -> None:
