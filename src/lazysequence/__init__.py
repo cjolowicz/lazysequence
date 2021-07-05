@@ -123,9 +123,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
             return islice(
                 reversed(self._cache),
-                self._start,
-                self._stop,
-                -self._step,
+                *_reverse_slice(self._start, self._stop, self._step, len(self._cache)),
             )
 
         return islice(
