@@ -195,14 +195,22 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             raise IndexError("lazysequence index out of range")
 
         start, stop, step = self._start, self._stop, self._step
-
-        if step is not None:
+        if step is None:
+            step = 1
+        else:
             index *= step
+            if step < 0 and start is None:
+                start = len(self._cache) + sum(1 for _ in self._consume()) - 1
 
         if start is not None:
             index += start
 
-        if stop is not None and index >= stop:
+        if index < 0:
+            raise IndexError("lazysequence index out of range")
+
+        if stop is not None and (
+            step > 0 and index >= stop or step < 0 and index <= stop
+        ):
             raise IndexError("lazysequence index out of range")
 
         try:
