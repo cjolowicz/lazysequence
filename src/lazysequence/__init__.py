@@ -119,6 +119,17 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         Yields:
             The items in the sequence.
         """  # noqa: DAR201, DAR302
+        if self._step is not None and self._step < 0:
+            for _ in self._consume():
+                pass
+
+            return islice(
+                reversed(self._cache),
+                self._start,
+                self._stop,
+                -self._step,
+            )
+
         return islice(
             chain(self._cache, self._iter), self._start, self._stop, self._step
         )
