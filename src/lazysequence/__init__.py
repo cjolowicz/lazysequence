@@ -139,18 +139,19 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
     def __len__(self) -> int:
         """Return the number of items in the sequence."""
         result = len(self._cache) + sum(1 for _ in self._consume())
+        start, stop, step = self._start, self._stop, self._step
 
-        if self._stop is not None:
-            result = min(result, self._stop)
+        if stop is not None:
+            result = min(result, stop)
 
-        if self._start is not None:
-            result = max(0, result - self._start)
+        if start is not None:
+            result = max(0, result - start)
 
-        if self._step is not None and result > 0:
-            # This is equivalent to `math.ceil(result / self._step)`, but avoids
+        if step is not None and result > 0:
+            # This is equivalent to `math.ceil(result / step)`, but avoids
             # floating-point operations and importing `math`. Use `abs` because
             # the length is the same going forwards or backwards.
-            result = 1 + (result - 1) // abs(self._step)
+            result = 1 + (result - 1) // abs(step)
 
         return result
 
