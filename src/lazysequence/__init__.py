@@ -91,8 +91,8 @@ class _slice:  # noqa: N801
         return start, stop, step
 
 
-def _isnegative(start: Optional[int], stop: Optional[int]) -> bool:
-    return any(arg < 0 for arg in (start, stop) if arg is not None)
+def _isnegative(aslice: _slice) -> bool:
+    return any(arg < 0 for arg in (aslice.start, aslice.stop) if arg is not None)
 
 
 def _aspositive(
@@ -132,7 +132,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         theslice = _slice(start, stop, step)
 
-        if _isnegative(theslice.start, theslice.stop):
+        if _isnegative(theslice):
             start, stop = _aspositive(
                 theslice.start, theslice.stop, self._unboundedsize
             )
