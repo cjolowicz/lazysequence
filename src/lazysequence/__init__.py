@@ -91,6 +91,18 @@ class _slice:  # noqa: N801
         return start, stop, step
 
 
+def _aspositive(
+    start: Optional[int], stop: Optional[int], size: int
+) -> tuple[Optional[int], Optional[int]]:
+    if start is not None and start < 0:
+        start = max(0, start + size)
+
+    if stop is not None and stop < 0:
+        stop = max(0, stop + size)
+
+    return start, stop
+
+
 class lazysequence(Sequence[_T_co]):  # noqa: N801
     """A lazy sequence provides sequence operations on an iterable.
 
@@ -116,12 +128,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         if any(arg < 0 for arg in (start, stop) if arg is not None):
             size = self._unboundedsize
-
-            if start is not None and start < 0:
-                start = max(0, start + size)
-
-            if stop is not None and stop < 0:
-                stop = max(0, stop + size)
+            start, stop = _aspositive(start, stop, size)
 
         theslice = _slice(start, stop, step)
         self._slice = theslice
