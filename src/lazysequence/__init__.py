@@ -276,7 +276,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         except IndexError:
             pass
 
-        index -= len(self._cache)
+        index -= self._cachesize
 
         try:
             return next(islice(self._consume(), index, None))
