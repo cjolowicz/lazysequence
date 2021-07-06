@@ -263,8 +263,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             index = _resolve(self._slice, index)
         else:
             self._fill()
-            size = self._cachesize
-            index = _rresolve(self._slice, index, size)
+            index = _rresolve(self._slice, index, self._cachesize)
 
         try:
             return self._cache[index]
