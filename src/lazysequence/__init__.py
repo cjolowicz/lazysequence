@@ -80,7 +80,7 @@ class _slice:  # noqa: N801
 
         return _slice(start, stop, self.step)
 
-    def reverse(self, size: int) -> tuple[int, int, int]:
+    def reverse2(self, size: int) -> tuple[int, int, int]:
         start, stop, step = self.start, self.stop, self.step
 
         if step is None:
@@ -103,6 +103,9 @@ class _slice:  # noqa: N801
         stop = max(0, stop)
 
         return start, stop, step
+
+    def reverse(self, size: int) -> tuple[int, int, int]:
+        return self.reverse2(size)
 
 
 class lazysequence(Sequence[_T_co]):  # noqa: N801
