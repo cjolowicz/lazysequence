@@ -114,7 +114,24 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             start, stop, step = index.start, index.stop, index.step
 
             if step is not None and step < 0:
-                return lazysequence(reversed(self[start:stop:-step]))
+                size = len(self)
+                step = -step
+
+                if start is None:
+                    start = 0
+                else:
+                    start = (size - 1) - start
+
+                start = max(0, start)
+
+                if stop is None:
+                    stop = size
+                else:
+                    stop = (size - 1) - stop
+
+                stop = max(0, stop)
+
+                return lazysequence(islice(reversed(self._cache), start, stop, step))
 
             if start is not None and start < 0:
                 start += len(self)

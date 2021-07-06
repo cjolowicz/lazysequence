@@ -88,6 +88,20 @@ def test_getslice_negative_step() -> None:
     assert (2, 1) == (a, b)
 
 
+def test_getslice_negative_step_and_start() -> None:
+    """It returns the items at the given positions."""
+    s = lazysequence([1, 2, 3])
+    a, b, c = s[3::-1]
+    assert (3, 2, 1) == (a, b, c)
+
+
+def test_getslice_negative_step_and_stop() -> None:
+    """It returns the items at the given positions."""
+    s = lazysequence([1, 2, 3])
+    [a] = s[:1:-1]
+    assert 3 == a
+
+
 def test_outofrange() -> None:
     """It raises IndexError."""
     s: lazysequence[int] = lazysequence([])
