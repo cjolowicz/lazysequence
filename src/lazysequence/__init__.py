@@ -232,7 +232,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         step: Optional[int]
 
         if isinstance(index, slice):
-            start, stop, step = index.start, index.stop, index.step
+            start, stop, step = _slice.fromslice(index).astuple()
 
             if step is not None and step < 0:
                 return lazysequence(reversed(self[start:stop:-step]))
