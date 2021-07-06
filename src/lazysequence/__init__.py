@@ -104,13 +104,6 @@ class _slice:  # noqa: N801
 
         return _slice(start, stop, step)
 
-    def reverse(self, size: int) -> tuple[int, int, int]:
-        theslice = self.reverse2(size)
-        assert theslice.start is not None  # noqa: S101
-        assert theslice.stop is not None  # noqa: S101
-        assert theslice.step is not None  # noqa: S101
-        return theslice.start, theslice.stop, theslice.step
-
 
 class lazysequence(Sequence[_T_co]):  # noqa: N801
     """A lazy sequence provides sequence operations on an iterable.
