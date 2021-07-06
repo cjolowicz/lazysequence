@@ -144,13 +144,13 @@ class _slice:  # noqa: N801
 
     def rresolve(self, index: int, size: int) -> int:
         start, stop, step = self.astuple()
-        index *= step
 
         if start is None:
             start = size - 1
         else:
             start = min(start, size - 1)
 
+        index *= step
         index += start
 
         if index < 0 or stop is not None and index <= stop:
