@@ -214,13 +214,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def _getslice(self, index: slice) -> lazysequence[_T_co]:
         slice = _slice.fromslice(index)
+        slice = slice.withpositivebounds(len(self))
         start, stop, step = slice.astuple()
-
-        if start is not None and start < 0:
-            start = max(0, start + len(self))
-
-        if stop is not None and stop < 0:
-            stop = max(0, stop + len(self))
 
         if step < 0:
             return lazysequence(reversed(self[start:stop:-step]))
