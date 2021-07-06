@@ -240,8 +240,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         start, stop, step = self._slice.astuple()
         if step is None:
             step = 1
-        else:
-            index *= step
+
+        index *= step
 
         if self._slice.hasnegativestep():
             self._fill()
