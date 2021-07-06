@@ -59,6 +59,9 @@ class _slice:  # noqa: N801
     def __init__(
         self, start: Optional[int], stop: Optional[int], step: Optional[int]
     ) -> None:
+        if step == 0:
+            raise ValueError("slice step cannot be zero")
+
         object.__setattr__(self, "start", start)
         object.__setattr__(self, "stop", stop)
         object.__setattr__(self, "step", step)
@@ -119,9 +122,6 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
             if stop is not None and stop < 0:
                 stop = max(0, stop + size)
-
-        if step == 0:
-            raise ValueError("slice step cannot be zero")
 
         self._slice = _slice(start, stop, step)
 
