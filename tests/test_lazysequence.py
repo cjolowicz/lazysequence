@@ -654,6 +654,7 @@ def test_getitem_raises_step(size: int, step: int, index: int) -> None:
     ("size", "start", "stop", "step", "index"),
     [
         (0, 8, 4, -3, 0),
+        (10, 9, 0, -1, 9),
     ],
 )
 def test_getitem_raises_start_stop_and_step(
