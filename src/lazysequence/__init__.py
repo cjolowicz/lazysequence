@@ -56,6 +56,13 @@ class _slice:  # noqa: N801
     stop: Optional[int]
     step: Optional[int]
 
+    def __init__(
+        self, start: Optional[int], stop: Optional[int], step: Optional[int]
+    ) -> None:
+        object.__setattr__(self, "start", start)
+        object.__setattr__(self, "stop", stop)
+        object.__setattr__(self, "step", step)
+
     def reverse(self, size: int) -> tuple[int, int, int]:
         start, stop, step = self.start, self.stop, self.step
 
