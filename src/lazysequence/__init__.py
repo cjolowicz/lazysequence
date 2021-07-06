@@ -77,7 +77,7 @@ class _slice:  # noqa: N801
         return any(arg < 0 for arg in (self.start, self.stop) if arg is not None)
 
     def hasnegativestep(self) -> bool:
-        return self.step is not None and self.step < 0
+        return self.step < 0
 
     def withpositivebounds(self, size: int) -> _slice:
         start, stop = self.start, self.stop
@@ -97,7 +97,7 @@ class _slice:  # noqa: N801
         if self.start is not None:
             size = max(0, size - self.start)
 
-        if self.step is not None and size > 0:
+        if size > 0:
             # This is equivalent to `math.ceil(result / step)`, but avoids
             # floating-point operations and importing `math`.
             size = 1 + (size - 1) // self.step
@@ -106,9 +106,6 @@ class _slice:  # noqa: N801
 
     def reverse(self, size: int) -> _slice:
         start, stop, step = self.start, self.stop, self.step
-
-        if step is None:
-            step = 1  # pragma: no cover
 
         step = -step
 
@@ -228,7 +225,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if stop is not None and stop < 0:
             stop = max(0, stop + len(self))
 
-        if step is not None and step < 0:
+        if step < 0:
             return lazysequence(reversed(self[start:stop:-step]))
 
         return lazysequence(islice(self, start, stop, step))
@@ -241,9 +238,6 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             raise IndexError("lazysequence index out of range")
 
         start, stop, step = self._slice.astuple()
-        if step is None:
-            step = 1
-
         index *= step
 
         if self._slice.hasnegativestep():
