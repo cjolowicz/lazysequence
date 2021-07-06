@@ -88,6 +88,10 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         self._stop = stop
         self._step = step
 
+    @property
+    def _unboundedsize(self) -> int:
+        return len(self._cache) + sum(1 for _ in self._consume())
+
     def _consume(self) -> Iterator[_T_co]:
         for item in self._iter:
             self._cache.append(item)
@@ -138,7 +142,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def __len__(self) -> int:
         """Return the number of items in the sequence."""
-        size = len(self._cache) + sum(1 for _ in self._consume())
+        size = self._unboundedsize
         start, stop, step = self._start, self._stop, self._step
 
         if step is not None and step < 0:
@@ -200,7 +204,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             step = 1
         else:
             if step < 0:
-                size = len(self._cache) + sum(1 for _ in self._consume())
+                size = self._unboundedsize
                 if start is None:
                     start = size - 1
                 else:
