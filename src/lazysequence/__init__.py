@@ -284,7 +284,6 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         self, index: Union[int, slice]
     ) -> Union[_T_co, lazysequence[_T_co]]:
         """Return the item at the given index."""
-        if isinstance(index, slice):
-            return self._getslice(index)
-
-        return self._getitem(index)
+        return (
+            self._getslice(index) if isinstance(index, slice) else self._getitem(index)
+        )
