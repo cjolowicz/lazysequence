@@ -73,7 +73,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         self._cache: MutableSequence[_T_co] = storage()
 
         if any(arg < 0 for arg in (start, stop) if arg is not None):
-            size = sum(1 for _ in self._consume())
+            size = self._unboundedsize
 
             if start is not None and start < 0:
                 start = max(0, start + size)
