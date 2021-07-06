@@ -50,7 +50,7 @@ from typing import Union
 _T_co = TypeVar("_T_co", covariant=True)
 
 
-@dataclass
+@dataclass(frozen=True)
 class _slice:  # noqa: N801
     start: Optional[int]
     stop: Optional[int]
