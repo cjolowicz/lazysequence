@@ -130,11 +130,10 @@ class _slice:  # noqa: N801
     def resolve(self, index: int) -> int:
         start, stop, step = self.astuple()
 
-        if start is not None:
-            index = index * step + start
-        else:
+        if start is None:
             start = 0
-            index = index * step + start
+
+        index = index * step + start
 
         if stop is not None and index >= stop:
             raise IndexError("lazysequence index out of range")
