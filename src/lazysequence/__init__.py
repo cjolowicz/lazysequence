@@ -229,21 +229,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         return lazysequence(islice(self, start, stop, step))
 
-    @overload
-    def __getitem__(self, index: int) -> _T_co:
-        """Return the item at the given index."""  # noqa: D418
-
-    @overload
-    def __getitem__(self, indices: slice) -> lazysequence[_T_co]:
-        """Return a slice of the sequence."""  # noqa: D418
-
-    def __getitem__(  # noqa: C901
-        self, index: Union[int, slice]
-    ) -> Union[_T_co, lazysequence[_T_co]]:
-        """Return the item at the given index."""
-        if isinstance(index, slice):
-            return self._getslice(index)
-
+    def _getitem(self, index: int) -> _T_co:  # noqa: C901
         if index < 0:
             index += len(self)
 
@@ -285,3 +271,20 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             return next(islice(self._consume(), index, None))
         except StopIteration:
             raise IndexError("lazysequence index out of range") from None
+
+    @overload
+    def __getitem__(self, index: int) -> _T_co:
+        """Return the item at the given index."""  # noqa: D418
+
+    @overload
+    def __getitem__(self, indices: slice) -> lazysequence[_T_co]:
+        """Return a slice of the sequence."""  # noqa: D418
+
+    def __getitem__(
+        self, index: Union[int, slice]
+    ) -> Union[_T_co, lazysequence[_T_co]]:
+        """Return the item at the given index."""
+        if isinstance(index, slice):
+            return self._getslice(index)
+
+        return self._getitem(index)
