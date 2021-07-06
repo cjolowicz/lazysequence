@@ -66,6 +66,9 @@ class _slice:  # noqa: N801
         object.__setattr__(self, "stop", stop)
         object.__setattr__(self, "step", step)
 
+    def isnegative(self) -> bool:
+        return any(arg < 0 for arg in (self.start, self.stop) if arg is not None)
+
     def reverse(self, size: int) -> tuple[int, int, int]:
         start, stop, step = self.start, self.stop, self.step
 
@@ -89,10 +92,6 @@ class _slice:  # noqa: N801
         stop = max(0, stop)
 
         return start, stop, step
-
-
-def _isnegative(aslice: _slice) -> bool:
-    return any(arg < 0 for arg in (aslice.start, aslice.stop) if arg is not None)
 
 
 def _aspositive(
@@ -132,7 +131,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         theslice = _slice(start, stop, step)
 
-        if _isnegative(theslice):
+        if theslice.isnegative():
             start, stop = _aspositive(
                 theslice.start, theslice.stop, self._unboundedsize
             )
