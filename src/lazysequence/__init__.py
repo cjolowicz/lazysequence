@@ -138,11 +138,6 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         self._slice = theslice
 
-    @property
-    def _step(self) -> Optional[int]:
-        value: Optional[int] = self._slice.step
-        return value
-
     def _consume(self) -> Iterator[_T_co]:
         for item in self._iter:
             self._cache.append(item)
@@ -154,7 +149,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def __iter__(self) -> Iterator[_T_co]:
         """Iterate over the items in the sequence."""
-        if self._step is not None and self._step < 0:
+        if self._slice.step is not None and self._slice.step < 0:
             size = self._unboundedsize  # fills self._cache
 
             theslice = self._slice.reverse(size)
@@ -171,7 +166,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         Yields:
             The items in the sequence.
         """  # noqa: DAR201, DAR302
-        if self._step is not None and self._step < 0:
+        if self._slice.step is not None and self._slice.step < 0:
             size = self._unboundedsize  # fills self._cache
 
             theslice = self._slice.reverse(size)
