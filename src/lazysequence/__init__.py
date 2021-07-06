@@ -252,7 +252,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         return lazysequence(slice.apply(self))
 
-    def _getitem(self, index: int) -> _T_co:  # noqa: C901
+    def _getitem(self, index: int) -> _T_co:
         if index < 0:
             index += len(self)
 
