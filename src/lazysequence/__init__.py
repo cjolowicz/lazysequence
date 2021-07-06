@@ -87,6 +87,22 @@ class _slice:  # noqa: N801
 
         return _slice(start, stop, self.step)
 
+    def length(self, size: int) -> int:
+        result = size
+
+        if self.stop is not None:
+            result = min(result, self.stop)
+
+        if self.start is not None:
+            result = max(0, result - self.start)
+
+        if self.step is not None and result > 0:
+            # This is equivalent to `math.ceil(result / step)`, but avoids
+            # floating-point operations and importing `math`.
+            result = 1 + (result - 1) // self.step
+
+        return result
+
     def reverse(self, size: int) -> _slice:
         start, stop, step = self.start, self.stop, self.step
 
@@ -113,23 +129,6 @@ class _slice:  # noqa: N801
 
     def astuple(self) -> tuple[Optional[int], Optional[int], Optional[int]]:
         return self.start, self.stop, self.step
-
-
-def _slicelength(theslice: _slice, size: int) -> int:
-    result = size
-
-    if theslice.stop is not None:
-        result = min(result, theslice.stop)
-
-    if theslice.start is not None:
-        result = max(0, result - theslice.start)
-
-    if theslice.step is not None and result > 0:
-        # This is equivalent to `math.ceil(result / step)`, but avoids
-        # floating-point operations and importing `math`.
-        result = 1 + (result - 1) // theslice.step
-
-    return result
 
 
 class lazysequence(Sequence[_T_co]):  # noqa: N801
@@ -213,7 +212,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if self._slice.hasnegativestep():
             theslice = self._slice.reverse(self._cachesize)
 
-        return _slicelength(theslice, self._cachesize)
+        return theslice.length(self._cachesize)
 
     @overload
     def __getitem__(self, index: int) -> _T_co:
