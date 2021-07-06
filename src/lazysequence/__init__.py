@@ -115,6 +115,23 @@ class _slice:  # noqa: N801
         return self.start, self.stop, self.step
 
 
+def _slicelength(theslice: _slice, size: int) -> int:
+    result = size
+
+    if theslice.stop is not None:
+        result = min(result, theslice.stop)
+
+    if theslice.start is not None:
+        result = max(0, result - theslice.start)
+
+    if theslice.step is not None and result > 0:
+        # This is equivalent to `math.ceil(result / step)`, but avoids
+        # floating-point operations and importing `math`.
+        result = 1 + (result - 1) // theslice.step
+
+    return result
+
+
 class lazysequence(Sequence[_T_co]):  # noqa: N801
     """A lazy sequence provides sequence operations on an iterable.
 
@@ -196,20 +213,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if self._slice.hasnegativestep():
             theslice = self._slice.reverse(self._cachesize)
 
-        result = self._cachesize
-
-        if theslice.stop is not None:
-            result = min(result, theslice.stop)
-
-        if theslice.start is not None:
-            result = max(0, result - theslice.start)
-
-        if theslice.step is not None and result > 0:
-            # This is equivalent to `math.ceil(result / step)`, but avoids
-            # floating-point operations and importing `math`.
-            result = 1 + (result - 1) // theslice.step
-
-        return result
+        return _slicelength(theslice, self._cachesize)
 
     @overload
     def __getitem__(self, index: int) -> _T_co:
