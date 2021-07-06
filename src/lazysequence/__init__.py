@@ -132,9 +132,11 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         theslice = _slice(start, stop, step)
 
-        if _isnegative(start, stop):
-            start, stop = _aspositive(start, stop, self._unboundedsize)
-            theslice = _slice(start, stop, step)
+        if _isnegative(theslice.start, theslice.stop):
+            start, stop = _aspositive(
+                theslice.start, theslice.stop, self._unboundedsize
+            )
+            theslice = _slice(start, stop, theslice.step)
 
         self._slice = theslice
 
