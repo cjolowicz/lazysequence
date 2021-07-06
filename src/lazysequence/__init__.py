@@ -255,7 +255,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if index < 0:
             raise IndexError("lazysequence index out of range")
 
-        start, stop, step = self._start, self._stop, self._step
+        start, stop, step = self._slice.astuple()
         if step is None:
             step = 1
         else:
