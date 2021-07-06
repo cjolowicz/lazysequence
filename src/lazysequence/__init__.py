@@ -121,12 +121,11 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             The items in the sequence.
         """  # noqa: DAR201, DAR302
         if self._step is not None and self._step < 0:
-            for _ in self._consume():
-                pass
+            size = self._unboundedsize  # fills self._cache
 
             return islice(
                 reversed(self._cache),
-                *_reverse_slice(self._start, self._stop, self._step, len(self._cache)),
+                *_reverse_slice(self._start, self._stop, self._step, size),
             )
 
         return islice(
