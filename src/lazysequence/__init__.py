@@ -56,6 +56,10 @@ class _slice:  # noqa: N801
     stop: Optional[int]
     step: Optional[int]
 
+    @classmethod
+    def fromslice(cls, aslice: slice) -> _slice:
+        return cls(aslice.start, aslice.stop, aslice.step)
+
     def __init__(
         self, start: Optional[int], stop: Optional[int], step: Optional[int]
     ) -> None:
