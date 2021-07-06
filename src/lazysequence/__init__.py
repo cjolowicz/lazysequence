@@ -94,9 +94,9 @@ class _slice:  # noqa: N801
         return start, stop, step
 
 
-def _aspositive(
-    start: Optional[int], stop: Optional[int], size: int
-) -> tuple[Optional[int], Optional[int]]:
+def _aspositive(aslice: _slice, size: int) -> tuple[Optional[int], Optional[int]]:
+    start, stop = aslice.start, aslice.stop
+
     if start is not None and start < 0:
         start = max(0, start + size)
 
@@ -132,9 +132,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         theslice = _slice(start, stop, step)
 
         if theslice.isnegative():
-            start, stop = _aspositive(
-                theslice.start, theslice.stop, self._unboundedsize
-            )
+            start, stop = _aspositive(theslice, self._unboundedsize)
             theslice = _slice(start, stop, theslice.step)
 
         self._slice = theslice
