@@ -77,7 +77,7 @@ class _slice:  # noqa: N801
         return any(arg < 0 for arg in (self.start, self.stop) if arg is not None)
 
     def withpositivebounds(self, size: int) -> _slice:
-        start, stop = self.start, self.stop
+        start, stop, step = self.astuple()
 
         if start is not None and start < 0:
             start = max(0, start + size)
@@ -85,7 +85,7 @@ class _slice:  # noqa: N801
         if stop is not None and stop < 0:
             stop = max(0, stop + size)
 
-        return _slice(start, stop, self.step)
+        return _slice(start, stop, step)
 
     def length(self, size: int) -> int:
         if self.stop is not None:
