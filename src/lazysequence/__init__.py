@@ -158,15 +158,18 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
     def _cachesize(self) -> int:
         return len(self._cache)
 
-    def __iter__(self) -> Iterator[_T_co]:
-        """Iterate over the items in the sequence."""
+    def _iterate(self, iterator: Iterator[_T_co]) -> Iterator[_T_co]:
         if self._slice.hasnegativestep():
             self._fill()
 
             theslice = self._slice.reverse(self._cachesize)
             return islice(reversed(self._cache), *theslice.astuple())
 
-        return islice(chain(self._cache, self._consume()), *self._slice.astuple())
+        return islice(chain(self._cache, iterator), *self._slice.astuple())
+
+    def __iter__(self) -> Iterator[_T_co]:
+        """Iterate over the items in the sequence."""
+        return self._iterate(self._consume())
 
     def release(self) -> Iterator[_T_co]:
         """Iterate over the sequence without caching additional items.
@@ -177,13 +180,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         Yields:
             The items in the sequence.
         """  # noqa: DAR201, DAR302
-        if self._slice.hasnegativestep():
-            self._fill()
-
-            theslice = self._slice.reverse(self._cachesize)
-            return islice(reversed(self._cache), *theslice.astuple())
-
-        return islice(chain(self._cache, self._iter), *self._slice.astuple())
+        return self._iterate(self._iter)
 
     def __bool__(self) -> bool:
         """Return True if there are any items in the sequence."""
