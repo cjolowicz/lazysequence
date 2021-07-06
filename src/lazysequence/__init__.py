@@ -215,6 +215,20 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         return slice.length(self._cachesize)
 
+    def _getslice(self, index: slice) -> lazysequence[_T_co]:
+        start, stop, step = _slice.fromslice(index).astuple()
+
+        if step is not None and step < 0:
+            return lazysequence(reversed(self[start:stop:-step]))
+
+        if start is not None and start < 0:
+            start = max(0, start + len(self))
+
+        if stop is not None and stop < 0:
+            stop = max(0, stop + len(self))
+
+        return lazysequence(islice(self, start, stop, step))
+
     @overload
     def __getitem__(self, index: int) -> _T_co:
         """Return the item at the given index."""  # noqa: D418
@@ -232,18 +246,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         step: Optional[int]
 
         if isinstance(index, slice):
-            start, stop, step = _slice.fromslice(index).astuple()
-
-            if step is not None and step < 0:
-                return lazysequence(reversed(self[start:stop:-step]))
-
-            if start is not None and start < 0:
-                start = max(0, start + len(self))
-
-            if stop is not None and stop < 0:
-                stop = max(0, stop + len(self))
-
-            return lazysequence(islice(self, start, stop, step))
+            return self._getslice(index)
 
         if index < 0:
             index += len(self)
