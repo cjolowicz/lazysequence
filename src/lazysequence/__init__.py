@@ -188,7 +188,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         size = self._unboundedsize
         start, stop, step = self._slice.astuple()
 
-        if step is not None and step < 0:
+        if self._slice.hasnegativestep():
             theslice = self._slice.reverse(size)
             start, stop, step = theslice.astuple()
 
