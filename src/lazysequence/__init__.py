@@ -84,8 +84,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if step == 0:
             raise ValueError("slice step cannot be zero")
 
-        self._slice = slice(start, stop)
-        self._step = step
+        self._slice = slice(start, stop, step)
 
     @property
     def _start(self) -> Optional[int]:
@@ -95,6 +94,11 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
     @property
     def _stop(self) -> Optional[int]:
         value: Optional[int] = self._slice.stop
+        return value
+
+    @property
+    def _step(self) -> Optional[int]:
+        value: Optional[int] = self._slice.step
         return value
 
     def _consume(self) -> Iterator[_T_co]:
