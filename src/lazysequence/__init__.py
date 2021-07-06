@@ -69,6 +69,9 @@ class _slice:  # noqa: N801
     def hasnegativebounds(self) -> bool:
         return any(arg < 0 for arg in (self.start, self.stop) if arg is not None)
 
+    def hasnegativestep(self) -> bool:
+        return self.step is not None and self.step < 0
+
     def withpositivebounds(self, size: int) -> _slice:
         start, stop = self.start, self.stop
 
