@@ -246,13 +246,15 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             index = _resolve(self._slice, index)
         else:
             self._fill()
+            size = self._cachesize
+
             start, stop, step = self._slice.astuple()
             index *= step
 
             if start is None:
-                start = self._cachesize - 1
+                start = size - 1
             else:
-                start = min(start, self._cachesize - 1)
+                start = min(start, size - 1)
 
             index += start
 
