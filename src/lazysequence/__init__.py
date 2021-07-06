@@ -80,7 +80,7 @@ class _slice:  # noqa: N801
 
         return _slice(start, stop, self.step)
 
-    def reverse2(self, size: int) -> _slice:
+    def reverse(self, size: int) -> _slice:
         start, stop, step = self.start, self.stop, self.step
 
         if step is None:
@@ -164,7 +164,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if self._step is not None and self._step < 0:
             size = self._unboundedsize  # fills self._cache
 
-            theslice = self._slice.reverse2(size)
+            theslice = self._slice.reverse(size)
             return islice(
                 reversed(self._cache), theslice.start, theslice.stop, theslice.step
             )
@@ -185,7 +185,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if self._step is not None and self._step < 0:
             size = self._unboundedsize  # fills self._cache
 
-            theslice = self._slice.reverse2(size)
+            theslice = self._slice.reverse(size)
             return islice(
                 reversed(self._cache), theslice.start, theslice.stop, theslice.step
             )
@@ -206,7 +206,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         start, stop, step = self._start, self._stop, self._step
 
         if step is not None and step < 0:
-            theslice = self._slice.reverse2(size)
+            theslice = self._slice.reverse(size)
             start, stop, step = theslice.start, theslice.stop, theslice.step
 
         result = size
