@@ -102,8 +102,7 @@ class _slice:  # noqa: N801
         return size
 
     def reverse(self, size: int) -> _slice:
-        start, stop, step = self.start, self.stop, self.step
-
+        start, stop, step = self.astuple()
         step = -step
 
         if start is None:
