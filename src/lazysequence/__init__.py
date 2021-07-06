@@ -140,22 +140,21 @@ class _slice:  # noqa: N801
 
         return index
 
+    def rresolve(self, index: int, size: int) -> int:
+        start, stop, step = self.astuple()
+        index *= step
 
-def _rresolve(slice: _slice, index: int, size: int) -> int:
-    start, stop, step = slice.astuple()
-    index *= step
+        if start is None:
+            start = size - 1
+        else:
+            start = min(start, size - 1)
 
-    if start is None:
-        start = size - 1
-    else:
-        start = min(start, size - 1)
+        index += start
 
-    index += start
+        if index < 0 or stop is not None and index <= stop:
+            raise IndexError("lazysequence index out of range")
 
-    if index < 0 or stop is not None and index <= stop:
-        raise IndexError("lazysequence index out of range")
-
-    return index
+        return index
 
 
 class lazysequence(Sequence[_T_co]):  # noqa: N801
@@ -262,7 +261,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             index = self._slice.resolve(index)
         else:
             self._fill()
-            index = _rresolve(self._slice, index, self._cachesize)
+            index = self._slice.rresolve(index, self._cachesize)
 
         try:
             return self._cache[index]
