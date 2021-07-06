@@ -213,7 +213,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         start, stop, step = self._start, self._stop, self._step
 
         if step is not None and step < 0:
-            start, stop, step = self._slice.reverse(size)
+            theslice = self._slice.reverse2(size)
+            start, stop, step = theslice.start, theslice.stop, theslice.step
 
         result = size
 
