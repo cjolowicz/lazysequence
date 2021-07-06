@@ -248,8 +248,11 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
 
 def _reverse_slice(
-    start: Optional[int], stop: Optional[int], step: int, size: int
+    start: Optional[int], stop: Optional[int], step: Optional[int], size: int
 ) -> tuple[int, int, int]:
+    if step is None:
+        step = 1
+
     step = -step
 
     if start is None:
