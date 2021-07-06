@@ -237,9 +237,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             if start is not None:
                 index += start
 
-            if stop is not None and (
-                step > 0 and index >= stop or step < 0 and index <= stop
-            ):
+            if stop is not None and index >= stop:
                 raise IndexError("lazysequence index out of range")
         else:
             index *= step
