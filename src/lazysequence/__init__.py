@@ -190,14 +190,13 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
     def __len__(self) -> int:
         """Return the number of items in the sequence."""
         self._fill()
-        size = self._cachesize
         start, stop, step = self._slice.astuple()
 
         if self._slice.hasnegativestep():
-            theslice = self._slice.reverse(size)
+            theslice = self._slice.reverse(self._cachesize)
             start, stop, step = theslice.astuple()
 
-        result = size
+        result = self._cachesize
 
         if stop is not None:
             result = min(result, stop)
