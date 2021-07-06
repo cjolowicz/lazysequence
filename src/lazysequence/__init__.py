@@ -179,7 +179,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             The items in the sequence.
         """  # noqa: DAR201, DAR302
         if self._slice.hasnegativestep():
-            size = self._unboundedsize  # fills self._cache
+            self._fill()
+            size = self._cachesize
 
             theslice = self._slice.reverse(size)
             return islice(reversed(self._cache), *theslice.astuple())
