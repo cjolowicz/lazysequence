@@ -130,10 +130,10 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         self._iter = iter(iterable)
         self._cache: MutableSequence[_T_co] = storage()
 
+        theslice = _slice(start, stop, step)
+
         if _isnegative(start, stop):
             start, stop = _aspositive(start, stop, self._unboundedsize)
-            theslice = _slice(start, stop, step)
-        else:
             theslice = _slice(start, stop, step)
 
         self._slice = theslice
