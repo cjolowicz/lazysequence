@@ -128,6 +128,8 @@ class _slice:  # noqa: N801
         return islice(iterable, *self.astuple())
 
     def resolve(self, index: int) -> int:
+        assert self.step > 0  # noqa: S101
+
         start, stop, step = self.astuple()
 
         if start is None:
