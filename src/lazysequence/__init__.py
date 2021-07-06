@@ -131,8 +131,7 @@ class _slice:  # noqa: N801
         start, stop, step = self.astuple()
 
         if start is not None:
-            index *= step
-            index += start
+            index = index * step + start
         else:
             index *= step
 
