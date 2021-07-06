@@ -253,7 +253,7 @@ def _reverse_slice(aslice: _slice, size: int) -> tuple[int, int, int]:
     start, stop, step = aslice.start, aslice.stop, aslice.step
 
     if step is None:
-        step = 1
+        step = 1  # pragma: no cover
 
     step = -step
 
