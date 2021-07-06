@@ -230,25 +230,38 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             raise IndexError("lazysequence index out of range")
 
         start, stop, step = self._slice.astuple()
-        index *= step
 
-        if step < 0:
+        if step >= 0:
+            index *= step
+
+            if start is not None:
+                index += start
+
+            if index < 0:
+                raise IndexError("lazysequence index out of range")
+
+            if stop is not None and (
+                step > 0 and index >= stop or step < 0 and index <= stop
+            ):
+                raise IndexError("lazysequence index out of range")
+        else:
+            index *= step
             self._fill()
             if start is None:
                 start = self._cachesize - 1
             else:
                 start = min(start, self._cachesize - 1)
 
-        if start is not None:
-            index += start
+            if start is not None:
+                index += start
 
-        if index < 0:
-            raise IndexError("lazysequence index out of range")
+            if index < 0:
+                raise IndexError("lazysequence index out of range")
 
-        if stop is not None and (
-            step > 0 and index >= stop or step < 0 and index <= stop
-        ):
-            raise IndexError("lazysequence index out of range")
+            if stop is not None and (
+                step > 0 and index >= stop or step < 0 and index <= stop
+            ):
+                raise IndexError("lazysequence index out of range")
 
         try:
             return self._cache[index]
