@@ -206,7 +206,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         if step is not None and step < 0:
             theslice = self._slice.reverse(size)
-            start, stop, step = theslice.start, theslice.stop, theslice.step
+            start, stop, step = theslice.astuple()
 
         result = size
 
