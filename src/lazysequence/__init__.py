@@ -66,7 +66,7 @@ class _slice:  # noqa: N801
         object.__setattr__(self, "stop", stop)
         object.__setattr__(self, "step", step)
 
-    def isnegative(self) -> bool:
+    def hasnegativebounds(self) -> bool:
         return any(arg < 0 for arg in (self.start, self.stop) if arg is not None)
 
     def aspositive(self, size: int) -> _slice:
@@ -133,7 +133,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         theslice = _slice(start, stop, step)
 
-        if theslice.isnegative():
+        if theslice.hasnegativebounds():
             theslice = theslice.aspositive(self._unboundedsize)
 
         self._slice = theslice
