@@ -172,8 +172,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             size = self._unboundedsize  # fills self._cache
 
             theslice = self._slice.reverse2(size)
-            start, stop, step = theslice.start, theslice.stop, theslice.step
-            return islice(reversed(self._cache), start, stop, step)
+            return islice(
+                reversed(self._cache), theslice.start, theslice.stop, theslice.step
+            )
 
         return islice(
             chain(self._cache, self._consume()), self._start, self._stop, self._step
