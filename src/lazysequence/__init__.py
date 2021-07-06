@@ -76,9 +76,6 @@ class _slice:  # noqa: N801
     def hasnegativebounds(self) -> bool:
         return any(arg < 0 for arg in (self.start, self.stop) if arg is not None)
 
-    def hasnegativestep(self) -> bool:
-        return self.step < 0
-
     def withpositivebounds(self, size: int) -> _slice:
         start, stop = self.start, self.stop
 
@@ -176,7 +173,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         return len(self._cache)
 
     def _iterate(self, iterator: Iterator[_T_co]) -> Iterator[_T_co]:
-        if self._slice.hasnegativestep():
+        if self._slice.step < 0:
             self._fill()
 
             slice = self._slice.reverse(self._cachesize)
@@ -210,7 +207,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         self._fill()
         slice = self._slice
 
-        if self._slice.hasnegativestep():
+        if self._slice.step < 0:
             slice = slice.reverse(self._cachesize)
 
         return slice.length(self._cachesize)
@@ -240,7 +237,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         start, stop, step = self._slice.astuple()
         index *= step
 
-        if self._slice.hasnegativestep():
+        if self._slice.step < 0:
             self._fill()
             if start is None:
                 start = self._cachesize - 1
