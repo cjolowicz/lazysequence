@@ -150,6 +150,10 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         self._cache.extend(self._iter)
 
     @property
+    def _cachesize(self) -> int:
+        return len(self._cache)
+
+    @property
     def _unboundedsize(self) -> int:
         self._fill()
         return len(self._cache)
