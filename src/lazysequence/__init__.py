@@ -196,20 +196,18 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if self._slice.hasnegativestep():
             theslice = self._slice.reverse(self._cachesize)
 
-        start, stop, step = theslice.astuple()
-
         result = self._cachesize
 
-        if stop is not None:
-            result = min(result, stop)
+        if theslice.stop is not None:
+            result = min(result, theslice.stop)
 
-        if start is not None:
-            result = max(0, result - start)
+        if theslice.start is not None:
+            result = max(0, result - theslice.start)
 
-        if step is not None and result > 0:
+        if theslice.step is not None and result > 0:
             # This is equivalent to `math.ceil(result / step)`, but avoids
             # floating-point operations and importing `math`.
-            result = 1 + (result - 1) // step
+            result = 1 + (result - 1) // theslice.step
 
         return result
 
