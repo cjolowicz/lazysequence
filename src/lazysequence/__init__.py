@@ -137,7 +137,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         theslice = _slice(start, stop, step)
 
         if theslice.hasnegativebounds():
-            theslice = theslice.withpositivebounds(self._unboundedsize)
+            self._fill()
+            theslice = theslice.withpositivebounds(self._cachesize)
 
         self._slice = theslice
 
