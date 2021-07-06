@@ -54,7 +54,7 @@ _T_co = TypeVar("_T_co", covariant=True)
 class _slice:  # noqa: N801
     start: Optional[int]
     stop: Optional[int]
-    step: Optional[int]
+    step: int
 
     @classmethod
     def fromslice(cls, aslice: slice) -> _slice:
@@ -65,6 +65,9 @@ class _slice:  # noqa: N801
     ) -> None:
         if step == 0:
             raise ValueError("slice step cannot be zero")
+
+        if step is None:
+            step = 1
 
         object.__setattr__(self, "start", start)
         object.__setattr__(self, "stop", stop)
@@ -125,7 +128,7 @@ class _slice:  # noqa: N801
 
         return _slice(start, stop, step)
 
-    def astuple(self) -> tuple[Optional[int], Optional[int], Optional[int]]:
+    def astuple(self) -> tuple[Optional[int], Optional[int], int]:
         return self.start, self.stop, self.step
 
     def apply(self, iterator: Iterator[_T_co]) -> Iterator[_T_co]:
