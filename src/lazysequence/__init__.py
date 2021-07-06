@@ -91,6 +91,10 @@ class _slice:  # noqa: N801
         return start, stop, step
 
 
+def _isnegative(start: Optional[int], stop: Optional[int]) -> bool:
+    return any(arg < 0 for arg in (start, stop) if arg is not None)
+
+
 def _aspositive(
     start: Optional[int], stop: Optional[int], size: int
 ) -> tuple[Optional[int], Optional[int]]:
@@ -126,7 +130,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         self._iter = iter(iterable)
         self._cache: MutableSequence[_T_co] = storage()
 
-        if any(arg < 0 for arg in (start, stop) if arg is not None):
+        if _isnegative(start, stop):
             start, stop = _aspositive(start, stop, self._unboundedsize)
 
         theslice = _slice(start, stop, step)
