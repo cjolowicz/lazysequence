@@ -123,7 +123,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             if stop is not None and stop < 0:
                 stop = max(0, stop + size)
 
-        self._slice = _slice(start, stop, step)
+        theslice = _slice(start, stop, step)
+        self._slice = theslice
 
     @property
     def _start(self) -> Optional[int]:
