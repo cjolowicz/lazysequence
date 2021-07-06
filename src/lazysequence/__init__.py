@@ -158,9 +158,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         """Iterate over the items in the sequence."""
         if self._slice.hasnegativestep():
             self._fill()
-            size = self._cachesize
 
-            theslice = self._slice.reverse(size)
+            theslice = self._slice.reverse(self._cachesize)
             return islice(reversed(self._cache), *theslice.astuple())
 
         return islice(chain(self._cache, self._consume()), *self._slice.astuple())
