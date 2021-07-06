@@ -211,7 +211,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         slice = self._slice
 
         if self._slice.hasnegativestep():
-            slice = self._slice.reverse(self._cachesize)
+            slice = slice.reverse(self._cachesize)
 
         return slice.length(self._cachesize)
 
