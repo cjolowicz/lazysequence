@@ -243,7 +243,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         else:
             index *= step
 
-        if step is not None and step < 0:
+        if self._slice.hasnegativestep():
             self._fill()
             if start is None:
                 start = self._cachesize - 1
