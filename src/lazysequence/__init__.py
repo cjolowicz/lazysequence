@@ -33,6 +33,7 @@ record 9
 from __future__ import annotations
 
 from collections import deque
+from dataclasses import dataclass
 from itertools import chain
 from itertools import islice
 from typing import Callable
@@ -47,6 +48,13 @@ from typing import Union
 
 
 _T_co = TypeVar("_T_co", covariant=True)
+
+
+@dataclass
+class _slice:  # noqa: N801
+    start: Optional[int]
+    stop: Optional[int]
+    step: Optional[int]
 
 
 class lazysequence(Sequence[_T_co]):  # noqa: N801
@@ -84,7 +92,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if step == 0:
             raise ValueError("slice step cannot be zero")
 
-        self._slice = slice(start, stop, step)
+        self._slice = _slice(start, stop, step)
 
     @property
     def _start(self) -> Optional[int]:
@@ -241,7 +249,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             raise IndexError("lazysequence index out of range") from None
 
 
-def _reverse_slice(aslice: slice, size: int) -> tuple[int, int, int]:
+def _reverse_slice(aslice: _slice, size: int) -> tuple[int, int, int]:
     start, stop, step = aslice.start, aslice.stop, aslice.step
 
     if step is None:
