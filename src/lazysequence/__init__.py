@@ -170,9 +170,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             theslice = self._slice.reverse(size)
             return islice(reversed(self._cache), *theslice.astuple())
 
-        return islice(
-            chain(self._cache, self._consume()), self._start, self._stop, self._step
-        )
+        return islice(chain(self._cache, self._consume()), *self._slice.astuple())
 
     def release(self) -> Iterator[_T_co]:
         """Iterate over the sequence without caching additional items.
