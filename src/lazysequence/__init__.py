@@ -148,7 +148,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     @property
     def _unboundedsize(self) -> int:
-        return len(self._cache) + sum(1 for _ in self._consume())
+        self._cache.extend(self._iter)
+        return len(self._cache)
 
     def __iter__(self) -> Iterator[_T_co]:
         """Iterate over the items in the sequence."""
