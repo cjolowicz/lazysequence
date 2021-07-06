@@ -241,14 +241,14 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if step is None:
             step = 1
         else:
+            index *= step
+
             if step < 0:
                 self._fill()
                 if start is None:
                     start = self._cachesize - 1
                 else:
                     start = min(start, self._cachesize - 1)
-
-            index *= step
 
         if start is not None:
             index += start
