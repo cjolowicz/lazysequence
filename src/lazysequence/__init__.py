@@ -132,8 +132,10 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         if _isnegative(start, stop):
             start, stop = _aspositive(start, stop, self._unboundedsize)
+            theslice = _slice(start, stop, step)
+        else:
+            theslice = _slice(start, stop, step)
 
-        theslice = _slice(start, stop, step)
         self._slice = theslice
 
     @property
