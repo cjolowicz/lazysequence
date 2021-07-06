@@ -219,7 +219,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if slice.step < 0:
             return lazysequence(reversed(self[slice.start : slice.stop : -slice.step]))
 
-        return lazysequence(islice(self, slice.start, slice.stop, slice.step))
+        return lazysequence(slice.apply(iter(self)))
 
     def _getitem(self, index: int) -> _T_co:  # noqa: C901
         if index < 0:
