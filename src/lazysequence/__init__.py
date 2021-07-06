@@ -215,12 +215,11 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
     def _getslice(self, index: slice) -> lazysequence[_T_co]:
         slice = _slice.fromslice(index)
         slice = slice.withpositivebounds(len(self))
-        start, stop, step = slice.astuple()
 
-        if step < 0:
-            return lazysequence(reversed(self[start:stop:-step]))
+        if slice.step < 0:
+            return lazysequence(reversed(self[slice.start : slice.stop : -slice.step]))
 
-        return lazysequence(islice(self, start, stop, step))
+        return lazysequence(islice(self, slice.start, slice.stop, slice.step))
 
     def _getitem(self, index: int) -> _T_co:  # noqa: C901
         if index < 0:
