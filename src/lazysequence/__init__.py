@@ -133,7 +133,8 @@ class _slice:  # noqa: N801
         if start is not None:
             index = index * step + start
         else:
-            index *= step
+            start = 0
+            index = index * step + start
 
         if stop is not None and index >= stop:
             raise IndexError("lazysequence index out of range")
