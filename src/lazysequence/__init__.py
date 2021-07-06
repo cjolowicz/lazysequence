@@ -131,6 +131,10 @@ class _slice:  # noqa: N801
         return self.start, self.stop, self.step
 
 
+def _applyslice(theslice: _slice, iterator: Iterator[_T_co]) -> Iterator[_T_co]:
+    return islice(iterator, *theslice.astuple())
+
+
 class lazysequence(Sequence[_T_co]):  # noqa: N801
     """A lazy sequence provides sequence operations on an iterable.
 
@@ -179,9 +183,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             self._fill()
 
             theslice = self._slice.reverse(self._cachesize)
-            return islice(reversed(self._cache), *theslice.astuple())
+            return _applyslice(theslice, reversed(self._cache))
 
-        return islice(chain(self._cache, iterator), *self._slice.astuple())
+        return _applyslice(self._slice, chain(self._cache, iterator))
 
     def __iter__(self) -> Iterator[_T_co]:
         """Iterate over the items in the sequence."""
