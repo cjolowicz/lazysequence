@@ -130,9 +130,8 @@ class _slice:  # noqa: N801
     def astuple(self) -> tuple[Optional[int], Optional[int], Optional[int]]:
         return self.start, self.stop, self.step
 
-
-def _applyslice(theslice: _slice, iterator: Iterator[_T_co]) -> Iterator[_T_co]:
-    return islice(iterator, *theslice.astuple())
+    def apply(self, iterator: Iterator[_T_co]) -> Iterator[_T_co]:
+        return islice(iterator, *self.astuple())
 
 
 class lazysequence(Sequence[_T_co]):  # noqa: N801
@@ -183,9 +182,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             self._fill()
 
             theslice = self._slice.reverse(self._cachesize)
-            return _applyslice(theslice, reversed(self._cache))
+            return theslice.apply(reversed(self._cache))
 
-        return _applyslice(self._slice, chain(self._cache, iterator))
+        return self._slice.apply(chain(self._cache, iterator))
 
     def __iter__(self) -> Iterator[_T_co]:
         """Iterate over the items in the sequence."""
