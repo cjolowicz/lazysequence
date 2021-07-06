@@ -229,9 +229,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if index < 0:
             raise IndexError("lazysequence index out of range")
 
-        start, stop, step = self._slice.astuple()
-
         if self._slice.step >= 0:
+            start, stop, step = self._slice.astuple()
             index *= step
 
             if start is not None:
@@ -240,6 +239,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             if stop is not None and index >= stop:
                 raise IndexError("lazysequence index out of range")
         else:
+            start, stop, step = self._slice.astuple()
             index *= step
 
             self._fill()
