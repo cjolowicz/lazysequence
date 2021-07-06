@@ -115,10 +115,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if self._step is not None and self._step < 0:
             size = self._unboundedsize  # fills self._cache
 
-            return islice(
-                reversed(self._cache),
-                *_reverse_slice(self._start, self._stop, self._step, size),
-            )
+            return islice(reversed(self._cache), *_reverse_slice(self._slice, size))
 
         return islice(
             chain(self._cache, self._consume()), self._start, self._stop, self._step
@@ -136,10 +133,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if self._step is not None and self._step < 0:
             size = self._unboundedsize  # fills self._cache
 
-            return islice(
-                reversed(self._cache),
-                *_reverse_slice(self._start, self._stop, self._step, size),
-            )
+            return islice(reversed(self._cache), *_reverse_slice(self._slice, size))
 
         return islice(
             chain(self._cache, self._iter), self._start, self._stop, self._step
@@ -157,7 +151,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         start, stop, step = self._start, self._stop, self._step
 
         if step is not None and step < 0:
-            start, stop, step = _reverse_slice(start, stop, step, size)
+            start, stop, step = _reverse_slice(self._slice, size)
 
         result = size
 
@@ -247,9 +241,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             raise IndexError("lazysequence index out of range") from None
 
 
-def _reverse_slice(
-    start: Optional[int], stop: Optional[int], step: Optional[int], size: int
-) -> tuple[int, int, int]:
+def _reverse_slice(aslice: slice, size: int) -> tuple[int, int, int]:
+    start, stop, step = aslice.start, aslice.stop, aslice.step
+
     if step is None:
         step = 1
 
