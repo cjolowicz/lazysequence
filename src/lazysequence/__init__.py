@@ -231,7 +231,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         start, stop, step = self._slice.astuple()
 
-        if step >= 0:
+        if self._slice.step >= 0:
             index *= step
 
             if start is not None:
