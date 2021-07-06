@@ -157,13 +157,13 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         self._iter = iter(iterable)
         self._cache: MutableSequence[_T_co] = storage()
 
-        theslice = _slice(start, stop, step)
+        slice = _slice(start, stop, step)
 
-        if theslice.hasnegativebounds():
+        if slice.hasnegativebounds():
             self._fill()
-            self._slice = theslice.withpositivebounds(self._cachesize)
+            self._slice = slice.withpositivebounds(self._cachesize)
         else:
-            self._slice = theslice
+            self._slice = slice
 
     def _consume(self) -> Iterator[_T_co]:
         for item in self._iter:
@@ -181,8 +181,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if self._slice.hasnegativestep():
             self._fill()
 
-            theslice = self._slice.reverse(self._cachesize)
-            return theslice.apply(reversed(self._cache))
+            slice = self._slice.reverse(self._cachesize)
+            return slice.apply(reversed(self._cache))
 
         return self._slice.apply(chain(self._cache, iterator))
 
@@ -210,12 +210,12 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
     def __len__(self) -> int:
         """Return the number of items in the sequence."""
         self._fill()
-        theslice = self._slice
+        slice = self._slice
 
         if self._slice.hasnegativestep():
-            theslice = self._slice.reverse(self._cachesize)
+            slice = self._slice.reverse(self._cachesize)
 
-        return theslice.length(self._cachesize)
+        return slice.length(self._cachesize)
 
     @overload
     def __getitem__(self, index: int) -> _T_co:
