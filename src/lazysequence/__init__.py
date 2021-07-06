@@ -150,7 +150,7 @@ class _slice:  # noqa: N801
         else:
             start = min(start, size - 1)
 
-        index = index * step + start
+        index = start + index * step
 
         if index < 0 or stop is not None and index <= stop:
             raise IndexError("lazysequence index out of range")
