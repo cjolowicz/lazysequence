@@ -143,6 +143,8 @@ class _slice:  # noqa: N801
         return index
 
     def rresolve(self, index: int, size: int) -> int:
+        assert self.step < 0  # noqa: S101
+
         start, stop, step = self.astuple()
 
         if start is None:
