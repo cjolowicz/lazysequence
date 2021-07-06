@@ -127,8 +127,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         self._cache: MutableSequence[_T_co] = storage()
 
         if any(arg < 0 for arg in (start, stop) if arg is not None):
-            size = self._unboundedsize
-            start, stop = _aspositive(start, stop, size)
+            start, stop = _aspositive(start, stop, self._unboundedsize)
 
         theslice = _slice(start, stop, step)
         self._slice = theslice
