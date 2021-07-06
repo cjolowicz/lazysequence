@@ -56,6 +56,30 @@ class _slice:  # noqa: N801
     stop: Optional[int]
     step: Optional[int]
 
+    def reverse(self, size: int) -> tuple[int, int, int]:
+        start, stop, step = self.start, self.stop, self.step
+
+        if step is None:
+            step = 1  # pragma: no cover
+
+        step = -step
+
+        if start is None:
+            start = 0
+        else:
+            start = (size - 1) - start
+
+        start = max(0, start)
+
+        if stop is None:
+            stop = size
+        else:
+            stop = (size - 1) - stop
+
+        stop = max(0, stop)
+
+        return start, stop, step
+
 
 class lazysequence(Sequence[_T_co]):  # noqa: N801
     """A lazy sequence provides sequence operations on an iterable.
@@ -123,7 +147,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if self._step is not None and self._step < 0:
             size = self._unboundedsize  # fills self._cache
 
-            return islice(reversed(self._cache), *_reverse_slice(self._slice, size))
+            return islice(reversed(self._cache), *self._slice.reverse(size))
 
         return islice(
             chain(self._cache, self._consume()), self._start, self._stop, self._step
@@ -141,7 +165,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if self._step is not None and self._step < 0:
             size = self._unboundedsize  # fills self._cache
 
-            return islice(reversed(self._cache), *_reverse_slice(self._slice, size))
+            return islice(reversed(self._cache), *self._slice.reverse(size))
 
         return islice(
             chain(self._cache, self._iter), self._start, self._stop, self._step
@@ -159,7 +183,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         start, stop, step = self._start, self._stop, self._step
 
         if step is not None and step < 0:
-            start, stop, step = _reverse_slice(self._slice, size)
+            start, stop, step = self._slice.reverse(size)
 
         result = size
 
@@ -247,28 +271,3 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             return next(islice(self._consume(), index, None))
         except StopIteration:
             raise IndexError("lazysequence index out of range") from None
-
-
-def _reverse_slice(aslice: _slice, size: int) -> tuple[int, int, int]:
-    start, stop, step = aslice.start, aslice.stop, aslice.step
-
-    if step is None:
-        step = 1  # pragma: no cover
-
-    step = -step
-
-    if start is None:
-        start = 0
-    else:
-        start = (size - 1) - start
-
-    start = max(0, start)
-
-    if stop is None:
-        stop = size
-    else:
-        stop = (size - 1) - stop
-
-    stop = max(0, stop)
-
-    return start, stop, step
