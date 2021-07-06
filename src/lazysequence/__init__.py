@@ -154,11 +154,6 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
     def _cachesize(self) -> int:
         return len(self._cache)
 
-    @property
-    def _unboundedsize(self) -> int:
-        self._fill()
-        return self._cachesize
-
     def __iter__(self) -> Iterator[_T_co]:
         """Iterate over the items in the sequence."""
         if self._slice.hasnegativestep():
