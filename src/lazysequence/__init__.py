@@ -88,20 +88,18 @@ class _slice:  # noqa: N801
         return _slice(start, stop, self.step)
 
     def length(self, size: int) -> int:
-        result = size
-
         if self.stop is not None:
-            result = min(result, self.stop)
+            size = min(size, self.stop)
 
         if self.start is not None:
-            result = max(0, result - self.start)
+            size = max(0, size - self.start)
 
-        if self.step is not None and result > 0:
+        if self.step is not None and size > 0:
             # This is equivalent to `math.ceil(result / step)`, but avoids
             # floating-point operations and importing `math`.
-            result = 1 + (result - 1) // self.step
+            size = 1 + (size - 1) // self.step
 
-        return result
+        return size
 
     def reverse(self, size: int) -> _slice:
         start, stop, step = self.start, self.stop, self.step
