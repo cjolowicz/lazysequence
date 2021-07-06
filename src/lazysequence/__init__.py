@@ -139,11 +139,6 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         self._slice = theslice
 
     @property
-    def _stop(self) -> Optional[int]:
-        value: Optional[int] = self._slice.stop
-        return value
-
-    @property
     def _step(self) -> Optional[int]:
         value: Optional[int] = self._slice.step
         return value
