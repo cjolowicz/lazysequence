@@ -104,6 +104,9 @@ class _slice:  # noqa: N801
 
         return _slice(start, stop, step)
 
+    def astuple(self) -> tuple[Optional[int], Optional[int], Optional[int]]:
+        return self.start, self.stop, self.step
+
 
 class lazysequence(Sequence[_T_co]):  # noqa: N801
     """A lazy sequence provides sequence operations on an iterable.
