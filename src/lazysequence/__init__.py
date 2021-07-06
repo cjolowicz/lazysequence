@@ -129,6 +129,19 @@ class _slice:  # noqa: N801
         return islice(iterable, *self.astuple())
 
 
+def _resolve(slice: _slice, index: int) -> int:
+    start, stop, step = slice.astuple()
+    index *= step
+
+    if start is not None:
+        index += start
+
+    if stop is not None and index >= stop:
+        raise IndexError("lazysequence index out of range")
+
+    return index
+
+
 class lazysequence(Sequence[_T_co]):  # noqa: N801
     """A lazy sequence provides sequence operations on an iterable.
 
@@ -230,14 +243,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             raise IndexError("lazysequence index out of range")
 
         if self._slice.step >= 0:
-            start, stop, step = self._slice.astuple()
-            index *= step
-
-            if start is not None:
-                index += start
-
-            if stop is not None and index >= stop:
-                raise IndexError("lazysequence index out of range")
+            index = _resolve(self._slice, index)
         else:
             start, stop, step = self._slice.astuple()
             index *= step
