@@ -280,6 +280,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         origin = self._slice
         start, stop, step = slice.astuple()
 
+        # determine start
         if start is None:
             if step > 0:
                 start = 0
@@ -303,6 +304,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
                 else:
                     start = None
 
+        # determine stop
         if stop is not None:
             if stop < 0:
                 stop = max(0, stop + len(self))
@@ -322,6 +324,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         elif origin.start is not None and origin.start > 0:
             stop = origin.start - 1
 
+        # determine step
         step *= origin.step
 
         return lazysequence(
