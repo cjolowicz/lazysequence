@@ -296,9 +296,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         def positive_start(start: Optional[int]) -> int:
             if start is None:
-                if step > 0:
-                    return 0
-                return len(self) - 1
+                return 0 if step > 0 else len(self) - 1
 
             if start < 0:
                 return max(0, start + len(self))
