@@ -145,15 +145,9 @@ def test_release() -> None:
 
 def test_paging() -> None:
     """It can be used to obtain successive slices."""
-    # It's best to avoid this technique. Slicing returns a new lazy sequence on
-    # top of the old one. This is inherently recursive, and repeated slicing of
-    # large sequences can result in a RecursionError. Try `s = s[10:]` to see
-    # this happen. You can improve the situation by using `s.release()` followed
-    # by `itertools.islice`, and construct the new lazy sequence from that.
-
     s = lazysequence(range(10000))
     while s:
-        s = s[100:]
+        s = s[10:]
     assert not s
 
 
