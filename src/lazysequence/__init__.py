@@ -338,13 +338,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         origin = self._slice
         start, stop, step = slice.astuple()
 
-        # determine start
         start = resolve_start(start)
-
-        # determine stop
         stop = resolve_stop(stop)
-
-        # determine step
         step *= origin.step
 
         return lazysequence(
