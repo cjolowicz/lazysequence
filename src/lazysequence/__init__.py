@@ -290,9 +290,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         def resolve(idx: int) -> Optional[int]:
             if self._slice.step > 0:
                 return self._slice.resolve_noraise(idx)
-            else:
-                self._fill()
-                return self._slice.rresolve_noraise(idx, self._cachesize)
+
+            self._fill()
+            return self._slice.rresolve_noraise(idx, self._cachesize)
 
         def positive_start(start: Optional[int]) -> int:
             if start is None:
