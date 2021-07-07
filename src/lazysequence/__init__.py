@@ -309,11 +309,11 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
             if (
                 start is None
-                and origin.step < 0
-                and origin.start is not None
-                and origin.start > 0
+                and self._slice.step < 0
+                and self._slice.start is not None
+                and self._slice.start > 0
             ):
-                return origin.start - 1
+                return self._slice.start - 1
 
             return start
 
@@ -323,11 +323,11 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
                     stop = max(0, stop + len(self))
                 return resolve(stop)
 
-            if origin.step > 0:
-                return origin.stop
+            if self._slice.step > 0:
+                return self._slice.stop
 
-            if origin.start is not None and origin.start > 0:
-                return origin.start - 1
+            if self._slice.start is not None and self._slice.start > 0:
+                return self._slice.start - 1
 
             return stop
 
@@ -335,12 +335,11 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if slice.hasnegativebounds():
             slice = slice.withpositivebounds(len(self))
 
-        origin = self._slice
         start, stop, step = slice.astuple()
 
         start = resolve_start(start)
         stop = resolve_stop(stop)
-        step *= origin.step
+        step *= self._slice.step
 
         return lazysequence(
             self._iter, storage=(lambda: self._cache), start=start, stop=stop, step=step
