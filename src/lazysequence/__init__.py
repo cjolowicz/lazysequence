@@ -312,9 +312,13 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         start = resolve(start)
 
-        if origin.step < 0 and start is None:
-            if origin.start is not None and origin.start > 0:
-                start = origin.start - 1
+        if (
+            start is None
+            and origin.step < 0
+            and origin.start is not None
+            and origin.start > 0
+        ):
+            start = origin.start - 1
 
         # determine stop
         if stop is not None:
