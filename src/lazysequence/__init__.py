@@ -317,6 +317,19 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
             return start
 
+        def resolve_stop(stop: Optional[int]) -> Optional[int]:
+            if stop is not None:
+                if stop < 0:
+                    stop = max(0, stop + len(self))
+                stop = resolve(stop)
+            else:
+                if origin.step > 0:
+                    stop = origin.stop
+                else:
+                    if origin.start is not None and origin.start > 0:
+                        stop = origin.start - 1
+            return stop
+
         slice = _slice.fromslice(index)
         if slice.hasnegativebounds():
             slice = slice.withpositivebounds(len(self))
@@ -328,16 +341,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         start = resolve_start(start)
 
         # determine stop
-        if stop is not None:
-            if stop < 0:
-                stop = max(0, stop + len(self))
-            stop = resolve(stop)
-        else:
-            if origin.step > 0:
-                stop = origin.stop
-            else:
-                if origin.start is not None and origin.start > 0:
-                    stop = origin.start - 1
+        stop = resolve_stop(stop)
 
         # determine step
         step *= origin.step
