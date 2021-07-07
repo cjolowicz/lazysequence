@@ -321,13 +321,14 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             if stop is not None:
                 if stop < 0:
                     stop = max(0, stop + len(self))
-                stop = resolve(stop)
-            else:
-                if origin.step > 0:
-                    stop = origin.stop
-                else:
-                    if origin.start is not None and origin.start > 0:
-                        stop = origin.start - 1
+                return resolve(stop)
+
+            if origin.step > 0:
+                return origin.stop
+
+            if origin.start is not None and origin.start > 0:
+                return origin.start - 1
+
             return stop
 
         slice = _slice.fromslice(index)
