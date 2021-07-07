@@ -304,10 +304,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
                 self._fill()
                 start = origin.rresolve(start, self._cachesize)
             except IndexError:
+                start = None
                 if origin.start is not None and origin.start > 0:
                     start = origin.start - 1
-                else:
-                    start = None
 
         # determine stop
         if stop is not None:
