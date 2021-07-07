@@ -169,6 +169,12 @@ class _slice:  # noqa: N801
 
         return index
 
+    def rresolve_noraise(self, index: int, size: int) -> Optional[int]:
+        try:
+            return self.rresolve(index, size)
+        except IndexError:
+            return None
+
 
 class lazysequence(Sequence[_T_co]):  # noqa: N801
     """A lazy sequence provides sequence operations on an iterable.
@@ -301,10 +307,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             start = origin.resolve_noraise(start)
         else:
             self._fill()
-            try:
-                start = origin.rresolve(start, self._cachesize)
-            except IndexError:
-                start = None
+            start = origin.rresolve_noraise(start, self._cachesize)
 
             if start is None:
                 if origin.start is not None and origin.start > 0:
@@ -318,10 +321,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
                 stop = origin.resolve_noraise(stop)
             else:
                 self._fill()
-                try:
-                    stop = origin.rresolve(stop, self._cachesize)
-                except IndexError:
-                    stop = None
+                stop = origin.rresolve_noraise(stop, self._cachesize)
         elif origin.step > 0:
             stop = origin.stop
         elif origin.start is not None and origin.start > 0:
