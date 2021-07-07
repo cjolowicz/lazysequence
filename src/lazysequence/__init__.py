@@ -300,8 +300,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if origin.step > 0:
             start = origin.resolve_noraise(start)
         else:
+            self._fill()
             try:
-                self._fill()
                 start = origin.rresolve(start, self._cachesize)
             except IndexError:
                 start = None
@@ -317,8 +317,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             if origin.step > 0:
                 stop = origin.resolve_noraise(stop)
             else:
+                self._fill()
                 try:
-                    self._fill()
                     stop = origin.rresolve(stop, self._cachesize)
                 except IndexError:
                     stop = None
