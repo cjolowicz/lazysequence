@@ -272,17 +272,61 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         except StopIteration:
             raise IndexError("lazysequence index out of range") from None
 
-    def _getslice(self, index: slice) -> lazysequence[_T_co]:
+    def _getslice(self, index: slice) -> lazysequence[_T_co]:  # noqa: C901
         slice = _slice.fromslice(index)
         if slice.hasnegativebounds():
             slice = slice.withpositivebounds(len(self))
 
-        if slice.step < 0:
-            self._fill()
-            slice = slice.reverse(self._cachesize)
-            return lazysequence(slice.apply(reversed(self._cache)))
+        origin = self._slice
+        start, stop, step = slice.astuple()
 
-        return lazysequence(slice.apply(self))
+        if start is None:
+            if slice.step > 0:
+                start = 0
+            else:
+                start = len(self) - 1
+        elif start < 0:
+            start = max(0, start + len(self))
+
+        if origin.step > 0:
+            try:
+                start = origin.resolve(start)
+            except IndexError:
+                start = origin.stop
+        else:
+            try:
+                self._fill()
+                start = origin.rresolve(start, self._cachesize)
+            except IndexError:
+                if origin.start is not None and origin.start > 0:
+                    start = origin.start - 1
+                else:
+                    start = None
+
+        if stop is not None:
+            if stop < 0:
+                stop = max(0, stop + len(self))
+            if origin.step > 0:
+                try:
+                    stop = origin.resolve(stop)
+                except IndexError:
+                    stop = origin.stop
+            else:
+                try:
+                    self._fill()
+                    stop = origin.rresolve(stop, self._cachesize)
+                except IndexError:
+                    stop = None
+        elif origin.step > 0:
+            stop = origin.stop
+        elif origin.start is not None and origin.start > 0:
+            stop = origin.start - 1
+
+        step *= origin.step
+
+        return lazysequence(
+            self._iter, storage=(lambda: self._cache), start=start, stop=stop, step=step
+        )
 
     @overload
     def __getitem__(self, index: int) -> _T_co:
