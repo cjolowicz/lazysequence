@@ -294,6 +294,17 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
                 self._fill()
                 return self._slice.rresolve_noraise(idx, self._cachesize)
 
+        def positive_start(start: Optional[int]) -> int:
+            if start is None:
+                if step > 0:
+                    start = 0
+                else:
+                    start = len(self) - 1
+            elif start < 0:
+                start = max(0, start + len(self))
+
+            return start
+
         slice = _slice.fromslice(index)
         if slice.hasnegativebounds():
             slice = slice.withpositivebounds(len(self))
@@ -302,14 +313,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         start, stop, step = slice.astuple()
 
         # determine start
-        if start is None:
-            if step > 0:
-                start = 0
-            else:
-                start = len(self) - 1
-        elif start < 0:
-            start = max(0, start + len(self))
-
+        start = positive_start(start)
         start = resolve(start)
 
         if (
