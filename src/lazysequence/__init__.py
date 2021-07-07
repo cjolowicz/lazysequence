@@ -327,10 +327,12 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             if stop < 0:
                 stop = max(0, stop + len(self))
             stop = resolve(stop)
-        elif origin.step > 0:
-            stop = origin.stop
-        elif origin.start is not None and origin.start > 0:
-            stop = origin.start - 1
+        else:
+            if origin.step > 0:
+                stop = origin.stop
+            else:
+                if origin.start is not None and origin.start > 0:
+                    stop = origin.start - 1
 
         # determine step
         step *= origin.step
