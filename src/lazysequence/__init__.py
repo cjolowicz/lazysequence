@@ -313,7 +313,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
                 and origin.start is not None
                 and origin.start > 0
             ):
-                start = origin.start - 1
+                return origin.start - 1
+
             return start
 
         slice = _slice.fromslice(index)
