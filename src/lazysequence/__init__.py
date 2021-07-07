@@ -144,6 +144,14 @@ class _slice:  # noqa: N801
 
         return index
 
+    def resolve_noraise(self, index: int) -> Optional[int]:
+        assert self.step > 0  # noqa: S101
+
+        try:
+            return self.resolve(index)
+        except IndexError:
+            return self.stop
+
     def rresolve(self, index: int, size: int) -> int:
         assert self.step < 0  # noqa: S101
 
@@ -290,10 +298,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             start = max(0, start + len(self))
 
         if origin.step > 0:
-            try:
-                start = origin.resolve(start)
-            except IndexError:
-                start = origin.stop
+            start = origin.resolve_noraise(start)
         else:
             try:
                 self._fill()
@@ -309,10 +314,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             if stop < 0:
                 stop = max(0, stop + len(self))
             if origin.step > 0:
-                try:
-                    stop = origin.resolve(stop)
-                except IndexError:
-                    stop = origin.stop
+                stop = origin.resolve_noraise(stop)
             else:
                 try:
                     self._fill()
