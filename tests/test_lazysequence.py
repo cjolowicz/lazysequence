@@ -415,7 +415,7 @@ def test_slice_iter(
     stop: Optional[int],
     step: Optional[int],
 ) -> None:
-    """It yields the expected items."""
+    """It yields the same items as a list."""
     lazy, strict = createslices(size, start, stop, step)
     assert strict == list(iter(lazy))  # using `iter` explicitly avoids `len(s)`
 
@@ -427,7 +427,7 @@ def test_slice_bool(
     stop: Optional[int],
     step: Optional[int],
 ) -> None:
-    """It returns the expected result."""
+    """It returns the same boolean as a list."""
     lazy, strict = createslices(size, start, stop, step)
     assert bool(strict) is bool(lazy)
 
@@ -439,7 +439,7 @@ def test_slice_release(
     stop: Optional[int],
     step: Optional[int],
 ) -> None:
-    """."""
+    """It yields the same items as a list."""
     lazy, strict = createslices(size, start, stop, step)
     assert strict == list(lazy.release())
 
@@ -451,7 +451,7 @@ def test_slice_len(
     stop: Optional[int],
     step: Optional[int],
 ) -> None:
-    """."""
+    """It has the same length as a list."""
     lazy, strict = createslices(size, start, stop, step)
     assert len(strict) == len(lazy)
 
@@ -466,7 +466,7 @@ def test_slice_getitem(
     step: Optional[int],
     index: int,
 ) -> None:
-    """."""
+    """It returns the same item as a list."""
     lazy, strict = createslices(size, start, stop, step)
     assert strict[index] == lazy[index]
 
@@ -481,7 +481,7 @@ def test_slice_getitem_raises(
     step: Optional[int],
     index: int,
 ) -> None:
-    """."""
+    """It raises an exception."""
     s = lazysequence(range(size))
     s = s[start:stop:step]
     with pytest.raises(IndexError):
@@ -498,6 +498,6 @@ def test_slice_of_slice(
     step: Optional[int],
     indices: slice,
 ) -> None:
-    """."""
+    """It contains the same items as a list."""
     lazy, strict = createslices(size, start, stop, step)
     assert strict[indices] == list(lazy[indices])
