@@ -43,6 +43,7 @@ from typing import MutableSequence
 from typing import Optional
 from typing import overload
 from typing import Sequence
+from typing import Sized
 from typing import Tuple
 from typing import TypeVar
 from typing import Union
@@ -203,9 +204,17 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         _indices: slice = _defaultslice,
     ) -> None:
         """Initialize."""
+        parent = self
+
+        class _Total(Sized):
+            def __len__(self) -> int:
+                parent._fill()
+                return parent._cachesize
+
         self._iter = iter(iterable)
         self._cache = storage() if _cache is None else _cache
         self._slice = _slice.fromslice(_indices)
+        self._total = _Total()
 
     def _consume(self) -> Iterator[_T_co]:
         for item in self._iter:
