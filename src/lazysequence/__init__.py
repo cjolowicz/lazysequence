@@ -173,7 +173,7 @@ class _slice:  # noqa: N801
         try:
             return self.rresolve(index, size)
         except IndexError:
-            return None
+            return self.stop + 1 if self.stop is not None else None
 
 
 class lazysequence(Sequence[_T_co]):  # noqa: N801
@@ -322,6 +322,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
                 return self._slice.stop
 
             if self._slice.start is not None and self._slice.start > 0:
+                if self._slice.step < 0:
+                    return self._slice.start + 1
                 return self._slice.start - 1
 
             return None
