@@ -1,5 +1,7 @@
 """Unit tests for lazysequence."""
+from typing import List
 from typing import Optional
+from typing import Tuple
 
 import pytest
 
@@ -189,6 +191,21 @@ SLICE_TEST_CASES = [
 ]
 
 
+def createslices(
+    size: int,
+    start: Optional[int],
+    stop: Optional[int],
+    step: Optional[int],
+) -> Tuple[lazysequence[int], List[int]]:
+    """Create lazysequence and list slices for comparison."""
+    iterable = range(size)
+    indices = slice(start, stop, step)
+    return (
+        lazysequence(iterable)[indices],
+        list(iterable)[indices],
+    )
+
+
 @pytest.mark.parametrize(SLICE_TEST_PARAMS, SLICE_TEST_CASES)
 def test_slice_iter(
     size: int,
@@ -197,11 +214,8 @@ def test_slice_iter(
     step: Optional[int],
 ) -> None:
     """It yields the expected items."""
-    s = lazysequence(range(size))
-    s = s[start:stop:step]
-    result = list(iter(s))  # using `iter` explicitly avoids `len(s)`
-    expected = list(range(size))[start:stop:step]
-    assert expected == result
+    lazy, strict = createslices(size, start, stop, step)
+    assert strict == list(iter(lazy))  # using `iter` explicitly avoids `len(s)`
 
 
 @pytest.mark.parametrize(
@@ -234,10 +248,8 @@ def test_slice_bool(
     step: Optional[int],
 ) -> None:
     """It returns the expected result."""
-    s = lazysequence(range(size))
-    s = s[start:stop:step]
-    expected = bool(list(range(size))[start:stop:step])
-    assert bool(s) is expected
+    lazy, strict = createslices(size, start, stop, step)
+    assert bool(strict) is bool(lazy)
 
 
 @pytest.mark.parametrize(SLICE_TEST_PARAMS, SLICE_TEST_CASES)
@@ -248,11 +260,8 @@ def test_slice_release(
     step: Optional[int],
 ) -> None:
     """."""
-    s = lazysequence(range(size))
-    s = s[start:stop:step]
-    result = list(s.release())
-    expected = list(range(size))[start:stop:step]
-    assert expected == result
+    lazy, strict = createslices(size, start, stop, step)
+    assert strict == list(lazy.release())
 
 
 @pytest.mark.parametrize(
@@ -312,10 +321,8 @@ def test_slice_len(
     step: Optional[int],
 ) -> None:
     """."""
-    s = lazysequence(range(size))
-    s = s[start:stop:step]
-    expected = len(list(range(size))[start:stop:step])
-    assert expected == len(s)
+    lazy, strict = createslices(size, start, stop, step)
+    assert len(strict) == len(lazy)
 
 
 @pytest.mark.parametrize(
@@ -389,10 +396,8 @@ def test_slice_getitem(
     index: int,
 ) -> None:
     """."""
-    s = lazysequence(range(size))
-    s = s[start:stop:step]
-    expected = list(range(size))[start:stop:step][index]
-    assert expected == s[index]
+    lazy, strict = createslices(size, start, stop, step)
+    assert strict[index] == lazy[index]
 
 
 @pytest.mark.parametrize(
@@ -492,8 +497,5 @@ def test_slice_of_slice(
     indices: slice,
 ) -> None:
     """."""
-    s = lazysequence(range(size))
-    s = s[start:stop:step]
-    result = list(s[indices])
-    expected = list(range(size))[start:stop:step][indices]
-    assert expected == result
+    lazy, strict = createslices(size, start, stop, step)
+    assert strict[indices] == list(lazy[indices])
