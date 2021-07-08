@@ -323,11 +323,11 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
             return None
 
-        slice = _slice.fromslice(index)
-        if slice.hasnegativebounds():
-            slice = slice.withpositivebounds(len(self))
+        indices = _slice.fromslice(index)
+        if indices.hasnegativebounds():
+            indices = indices.withpositivebounds(len(self))
 
-        start, stop, step = slice.astuple()
+        start, stop, step = indices.astuple()
 
         start = resolve_start(start, step)
         stop = resolve_stop(stop, step)
