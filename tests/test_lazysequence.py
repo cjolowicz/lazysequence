@@ -457,7 +457,8 @@ def test_slice_len(
 
 
 @pytest.mark.parametrize(
-    ("size", "start", "stop", "step", "index"), SLICE_EXAMPLES_GETITEM
+    SLICE_EXAMPLE_PARAMS + ("index",),
+    SLICE_EXAMPLES_GETITEM,
 )
 def test_slice_getitem(
     size: int,
@@ -472,7 +473,8 @@ def test_slice_getitem(
 
 
 @pytest.mark.parametrize(
-    ("size", "start", "stop", "step", "index"), SLICE_EXAMPLES_GETITEM_RAISES
+    SLICE_EXAMPLE_PARAMS + ("index",),
+    SLICE_EXAMPLES_GETITEM_RAISES,
 )
 def test_slice_getitem_raises(
     size: int,
@@ -489,7 +491,8 @@ def test_slice_getitem_raises(
 
 
 @pytest.mark.parametrize(
-    ("size", "start", "stop", "step", "indices"), SLICE_EXAMPLES_GETSLICE
+    SLICE_EXAMPLE_PARAMS + ("indices",),
+    SLICE_EXAMPLES_GETSLICE,
 )
 def test_slice_of_slice(
     size: int,
