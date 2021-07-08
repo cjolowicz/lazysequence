@@ -130,6 +130,7 @@ class _slice:  # noqa: N801
         return islice(iterable, *self.astuple())
 
     def resolve(self, index: int) -> int:
+        """Resolve index on a forward slice, where start <= stop and step > 0."""
         assert self.step > 0  # noqa: S101
 
         start, stop, step = self.astuple()
@@ -145,6 +146,7 @@ class _slice:  # noqa: N801
         return index
 
     def resolve_noraise(self, index: int) -> Optional[int]:
+        """Resolve index, defaulting to the last valid slot."""
         assert self.step > 0  # noqa: S101
 
         try:
@@ -153,6 +155,7 @@ class _slice:  # noqa: N801
             return self.stop - 1 if self.stop is not None else None
 
     def rresolve(self, index: int, size: int) -> int:
+        """Resolve index on a backward slice, where start >= stop and step < 0."""
         assert self.step < 0  # noqa: S101
 
         start, stop, step = self.astuple()
@@ -170,6 +173,7 @@ class _slice:  # noqa: N801
         return index
 
     def rresolve_noraise(self, index: int, size: int) -> Optional[int]:
+        """Resolve index backwards, defaulting to the first valid slot."""
         try:
             return self.rresolve(index, size)
         except IndexError:
