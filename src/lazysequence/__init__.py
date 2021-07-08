@@ -181,6 +181,9 @@ class _slice:  # noqa: N801
             return self.stop + 1 if self.stop is not None else 0
 
 
+_defaultslice = slice(None)
+
+
 class lazysequence(Sequence[_T_co]):  # noqa: N801
     """A lazy sequence provides sequence operations on an iterable.
 
@@ -196,15 +199,13 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         iterable: Iterable[_T_co],
         *,
         storage: Callable[[], MutableSequence[_T_co]] = deque,
-        start: Optional[int] = None,
-        stop: Optional[int] = None,
-        step: Optional[int] = None,
+        _indices: slice = _defaultslice,
     ) -> None:
         """Initialize."""
         self._iter = iter(iterable)
         self._cache: MutableSequence[_T_co] = storage()
 
-        slice = _slice(start, stop, step)
+        slice = _slice.fromslice(_indices)
 
         if slice.hasnegativebounds():
             self._fill()
@@ -333,7 +334,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         stop = resolve_stop(stop, step)
         step *= self._slice.step
 
-        return _createlazysequence(
+        return lazysequence(
             self._iter, storage=(lambda: self._cache), _indices=slice(start, stop, step)
         )
 
@@ -352,21 +353,3 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         return (
             self._getslice(index) if isinstance(index, slice) else self._getitem(index)
         )
-
-
-_defaultslice = slice(None)
-
-
-def _createlazysequence(
-    iterable: Iterable[_T_co],
-    *,
-    storage: Callable[[], MutableSequence[_T_co]] = deque,
-    _indices: slice = _defaultslice,
-) -> lazysequence[_T_co]:
-    return lazysequence(
-        iterable,
-        storage=storage,
-        start=_indices.start,
-        stop=_indices.stop,
-        step=_indices.step,
-    )
