@@ -108,11 +108,8 @@ class _slice:  # noqa: N801
         start, stop, step = self.astuple()
         step = -step
 
-        if start is None:
-            start = 0
-        else:
-            start = (size - 1) - start
-
+        assert start is not None  # noqa: S101
+        start = (size - 1) - start
         start = max(0, start)
 
         if stop is None:
