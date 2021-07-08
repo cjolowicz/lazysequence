@@ -150,7 +150,7 @@ class _slice:  # noqa: N801
         try:
             return self.resolve(index)
         except IndexError:
-            return self.stop
+            return self.stop - 1 if self.stop is not None else None
 
     def rresolve(self, index: int, size: int) -> int:
         assert self.step < 0  # noqa: S101
@@ -312,19 +312,19 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
             return start
 
-        def resolve_stop(stop: Optional[int]) -> Optional[int]:
+        def resolve_stop(stop: Optional[int], step: int) -> Optional[int]:
             assert stop is None or stop >= 0  # noqa: S101
 
             if stop is not None:
                 return resolve(stop)
 
-            if self._slice.step > 0:
+            if step > 0:
                 return self._slice.stop
 
             if self._slice.start is not None and self._slice.start > 0:
                 return self._slice.start - 1
 
-            return stop
+            return None
 
         slice = _slice.fromslice(index)
         if slice.hasnegativebounds():
@@ -333,7 +333,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         start, stop, step = slice.astuple()
 
         start = resolve_start(start, step)
-        stop = resolve_stop(stop)
+        stop = resolve_stop(stop, step)
         step *= self._slice.step
 
         return lazysequence(
