@@ -295,11 +295,10 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             return self._slice.rresolve_noraise(idx, self._cachesize)
 
         def resolve_start(start: Optional[int], step: int) -> Optional[int]:
+            assert start is None or start >= 0  # noqa: S101
+
             if start is None:
                 start = 0 if step > 0 else len(self) - 1
-
-            if start < 0:
-                start = max(0, start + len(self))
 
             start = resolve(start)
 
