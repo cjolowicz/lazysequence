@@ -74,6 +74,9 @@ class _slice:  # noqa: N801
         object.__setattr__(self, "stop", stop)
         object.__setattr__(self, "step", step)
 
+    def asslice(self) -> slice:
+        return slice(*self.astuple())
+
     def hasnegativebounds(self) -> bool:
         return any(arg < 0 for arg in (self.start, self.stop) if arg is not None)
 
