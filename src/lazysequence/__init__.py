@@ -352,3 +352,14 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         return (
             self._getslice(index) if isinstance(index, slice) else self._getitem(index)
         )
+
+
+def _createlazysequence(
+    iterable: Iterable[_T_co],
+    *,
+    storage: Callable[[], MutableSequence[_T_co]] = deque,
+    start: Optional[int] = None,
+    stop: Optional[int] = None,
+    step: Optional[int] = None,
+) -> lazysequence[_T_co]:
+    return lazysequence(iterable, storage=storage, start=start, stop=stop, step=step)
