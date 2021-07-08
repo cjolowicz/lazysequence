@@ -334,7 +334,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         stop = resolve_stop(stop, step)
         step *= self._slice.step
 
-        indices = slice(start, stop, step)
+        theslice = _slice(start, stop, step)
+        indices = theslice.asslice()
 
         return lazysequence(self._iter, _cache=self._cache, _indices=indices)
 
