@@ -330,9 +330,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         stop = resolve_stop(stop, step)
         step *= self._slice.step
 
-        return lazysequence(
-            self._iter, _cache=self._cache, _indices=slice(start, stop, step)
-        )
+        index = slice(start, stop, step)
+
+        return lazysequence(self._iter, _cache=self._cache, _indices=index)
 
     @overload
     def __getitem__(self, index: int) -> _T_co:
