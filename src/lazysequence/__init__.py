@@ -323,7 +323,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             return start
 
         def resolve_stop(stop: Optional[int]) -> Optional[int]:
-            stop = positive_stop(stop)
+            assert stop is None or stop >= 0  # noqa: S101
 
             if stop is not None:
                 return resolve(stop)
