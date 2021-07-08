@@ -1,5 +1,6 @@
 """Unit tests for lazysequence."""
 from typing import Any
+from typing import List
 
 import pytest
 from _pytest.mark import ParameterSet
@@ -200,7 +201,7 @@ def test_iter_stop(size: int, stop: int, bound: int) -> None:
     ],
 )
 def test_iter_start_and_stop(
-    size: int, start: int, stop: int, expected: list[int]
+    size: int, start: int, stop: int, expected: List[int]
 ) -> None:
     """."""
     s = lazysequence(range(size), start=start, stop=stop)
@@ -222,7 +223,7 @@ def test_iter_start_and_stop(
         (10, -11, [9]),
     ],
 )
-def test_iter_step(size: int, step: int, expected: list[int]) -> None:
+def test_iter_step(size: int, step: int, expected: List[int]) -> None:
     """."""
     s = lazysequence(range(size), step=step)
     assert expected == list(iter(s))  # using iter avoids `len(s)`
@@ -241,7 +242,7 @@ def test_iter_step(size: int, step: int, expected: list[int]) -> None:
     ],
 )
 def test_iter_start_stop_and_step(
-    size: int, start: int, stop: int, step: int, expected: list[int]
+    size: int, start: int, stop: int, step: int, expected: List[int]
 ) -> None:
     """."""
     s = lazysequence(range(size), start=start, stop=stop, step=step)
@@ -339,7 +340,7 @@ def test_release_stop(size: int, stop: int, bound: int) -> None:
         (10, -11, [9]),
     ],
 )
-def test_release_step(size: int, step: int, expected: list[int]) -> None:
+def test_release_step(size: int, step: int, expected: List[int]) -> None:
     """."""
     s = lazysequence(range(size), step=step)
     assert expected == list(s.release())
@@ -358,7 +359,7 @@ def test_release_step(size: int, step: int, expected: list[int]) -> None:
     ],
 )
 def test_release_start_stop_and_step(
-    size: int, start: int, stop: int, step: int, expected: list[int]
+    size: int, start: int, stop: int, step: int, expected: List[int]
 ) -> None:
     """."""
     s = lazysequence(range(size), start=start, stop=stop, step=step)
@@ -677,41 +678,39 @@ def test_getitem_raises_start_stop_and_step(
 @pytest.mark.parametrize(
     ("size", "start", "indices", "expected"),
     [
-        (100, 10, slice(2), (10, 11)),
-        (100, 10, slice(-2, None), (98, 99)),
-        (100, -10, slice(2), (90, 91)),
-        (100, -10, slice(-2, None), (98, 99)),
-        (100, 1000, slice(2), ()),
-        (100, -1000, slice(2), (0, 1)),
+        (100, 10, slice(2), [10, 11]),
+        (100, 10, slice(-2, None), [98, 99]),
+        (100, -10, slice(2), [90, 91]),
+        (100, -10, slice(-2, None), [98, 99]),
+        (100, 1000, slice(2), []),
+        (100, -1000, slice(2), [0, 1]),
     ],
 )
 def test_slice_start(
-    size: int, start: int, indices: slice, expected: tuple[int, ...]
+    size: int, start: int, indices: slice, expected: List[int]
 ) -> None:
     """."""
     s = lazysequence(range(size), start=start)
-    result = tuple(s[indices])
+    result = list(s[indices])
     assert expected == result
 
 
 @pytest.mark.parametrize(
     ("size", "stop", "indices", "expected"),
     [
-        (100, 10, slice(2), (0, 1)),
-        (100, 10, slice(-2, None), (8, 9)),
-        (100, -10, slice(2), (0, 1)),
-        (100, -10, slice(-2, None), (88, 89)),
-        (100, 1000, slice(2), (0, 1)),
-        (100, -1000, slice(2), ()),
-        (100, -1, slice(-2, None), (97, 98)),
+        (100, 10, slice(2), [0, 1]),
+        (100, 10, slice(-2, None), [8, 9]),
+        (100, -10, slice(2), [0, 1]),
+        (100, -10, slice(-2, None), [88, 89]),
+        (100, 1000, slice(2), [0, 1]),
+        (100, -1000, slice(2), []),
+        (100, -1, slice(-2, None), [97, 98]),
     ],
 )
-def test_slice_stop(
-    size: int, stop: int, indices: slice, expected: tuple[int, ...]
-) -> None:
+def test_slice_stop(size: int, stop: int, indices: slice, expected: List[int]) -> None:
     """."""
     s = lazysequence(range(size), stop=stop)
-    result = tuple(s[indices])
+    result = list(s[indices])
     assert expected == result
 
 
@@ -733,7 +732,7 @@ def test_slice_stop(
     ],
 )
 def test_slice_start_and_stop(
-    size: int, start: int, stop: int, indices: slice, expected: list[int]
+    size: int, start: int, stop: int, indices: slice, expected: List[int]
 ) -> None:
     """."""
     s = lazysequence(range(size), start=start, stop=stop)
@@ -752,7 +751,7 @@ def test_slice_start_and_stop(
         (10, -100, slice(2), [9]),
     ],
 )
-def test_slice_step(size: int, step: int, indices: slice, expected: list[int]) -> None:
+def test_slice_step(size: int, step: int, indices: slice, expected: List[int]) -> None:
     """."""
     s = lazysequence(range(size), step=step)
     result = list(s[indices])
@@ -776,7 +775,7 @@ def test_slice_start_stop_and_step(
     stop: int,
     step: int,
     indices: slice,
-    expected: list[int],
+    expected: List[int],
 ) -> None:
     """."""
     s = lazysequence(range(size), start=start, stop=stop, step=step)

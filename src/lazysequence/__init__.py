@@ -43,6 +43,7 @@ from typing import MutableSequence
 from typing import Optional
 from typing import overload
 from typing import Sequence
+from typing import Tuple
 from typing import TypeVar
 from typing import Union
 
@@ -123,7 +124,7 @@ class _slice:  # noqa: N801
 
         return _slice(start, stop, step)
 
-    def astuple(self) -> tuple[Optional[int], Optional[int], int]:
+    def astuple(self) -> Tuple[Optional[int], Optional[int], int]:
         return self.start, self.stop, self.step
 
     def apply(self, iterable: Iterable[_T_co]) -> Iterator[_T_co]:
