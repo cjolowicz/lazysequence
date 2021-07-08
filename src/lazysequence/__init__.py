@@ -316,7 +316,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             if step > 0:
                 return self._slice.stop
 
-            if self._slice.start is None or self._slice.start <= 0:
+            if self._slice.start is None:
                 return None
 
             if self._slice.step < 0:
