@@ -304,17 +304,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             if start is None:
                 start = 0 if step > 0 else len(self) - 1
 
-            start = resolve(start)
-
-            if (
-                start is None
-                and self._slice.step < 0
-                and self._slice.start is not None
-                and self._slice.start > 0
-            ):
-                return self._slice.start - 1
-
-            return start
+            return resolve(start)
 
         def resolve_stop(stop: Optional[int], step: int) -> Optional[int]:
             assert stop is None or stop >= 0  # noqa: S101
