@@ -303,11 +303,6 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
             return start
 
-        def positive_stop(stop: Optional[int]) -> Optional[int]:
-            if stop is not None and stop < 0:
-                return max(0, stop + len(self))
-            return stop
-
         def resolve_start(start: Optional[int], step: int) -> Optional[int]:
             start = positive_start(start, step)
             start = resolve(start)
