@@ -333,8 +333,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         stop = resolve_stop(stop, step)
         step *= self._slice.step
 
-        return lazysequence(
-            self._iter, storage=(lambda: self._cache), start=start, stop=stop, step=step
+        return _createlazysequence(
+            self._iter, storage=(lambda: self._cache), _indices=slice(start, stop, step)
         )
 
     @overload
