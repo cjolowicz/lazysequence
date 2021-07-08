@@ -155,8 +155,8 @@ def test_slice_with_zero_step() -> None:
         s[::0]
 
 
-SLICE_TEST_PARAMS = ("size", "start", "stop", "step")
-SLICE_TEST_CASES = [
+SLICE_EXAMPLE_PARAMS = ("size", "start", "stop", "step")
+SLICE_EXAMPLES = [
     (100, 10, None, None),
     (100, -10, None, None),
     (100, -1000, None, None),
@@ -191,7 +191,7 @@ SLICE_TEST_CASES = [
     (100, 1000, None, None),
 ]
 
-SLICE_TEST_CASES_BOOL = [
+SLICE_EXAMPLES_BOOL = [
     (0, -1, None, None),
     (1, -1, None, None),
     (100, 100, None, None),
@@ -212,7 +212,7 @@ SLICE_TEST_CASES_BOOL = [
     (10, 6, 3, -2),
 ]
 
-SLICE_TEST_CASES_LEN = [
+SLICE_EXAMPLES_LEN = [
     (100, 10, None, None),
     (100, 1000, None, None),
     (100, -10, None, None),
@@ -260,7 +260,7 @@ SLICE_TEST_CASES_LEN = [
     (0, 8, 4, -3),
 ]
 
-SLICE_TEST_CASES_GETITEM = [
+SLICE_EXAMPLES_GETITEM = [
     (100, 10, None, None, 0),
     (100, 10, None, None, -1),
     (100, -10, None, None, 0),
@@ -321,7 +321,7 @@ SLICE_TEST_CASES_GETITEM = [
     (10, 8, 4, -3, -1),
 ]
 
-SLICE_TEST_CASES_GETITEM_RAISES = [
+SLICE_EXAMPLES_GETITEM_RAISES = [
     (100, 1000, None, None, 0),
     (100, 1000, None, None, -1),
     (100, None, 0, None, 0),
@@ -350,7 +350,7 @@ SLICE_TEST_CASES_GETITEM_RAISES = [
     (10, 9, 0, -1, 9),
 ]
 
-SLICE_TEST_CASES_GETSLICE = [
+SLICE_EXAMPLES_GETSLICE = [
     (100, 10, None, None, slice(2)),
     (100, 10, None, None, slice(-2, None)),
     (100, -10, None, None, slice(2)),
@@ -408,7 +408,7 @@ def createslices(
     )
 
 
-@pytest.mark.parametrize(SLICE_TEST_PARAMS, SLICE_TEST_CASES)
+@pytest.mark.parametrize(SLICE_EXAMPLE_PARAMS, SLICE_EXAMPLES)
 def test_slice_iter(
     size: int,
     start: Optional[int],
@@ -420,7 +420,7 @@ def test_slice_iter(
     assert strict == list(iter(lazy))  # using `iter` explicitly avoids `len(s)`
 
 
-@pytest.mark.parametrize(SLICE_TEST_PARAMS, SLICE_TEST_CASES_BOOL)
+@pytest.mark.parametrize(SLICE_EXAMPLE_PARAMS, SLICE_EXAMPLES_BOOL)
 def test_slice_bool(
     size: int,
     start: Optional[int],
@@ -432,7 +432,7 @@ def test_slice_bool(
     assert bool(strict) is bool(lazy)
 
 
-@pytest.mark.parametrize(SLICE_TEST_PARAMS, SLICE_TEST_CASES)
+@pytest.mark.parametrize(SLICE_EXAMPLE_PARAMS, SLICE_EXAMPLES)
 def test_slice_release(
     size: int,
     start: Optional[int],
@@ -444,7 +444,7 @@ def test_slice_release(
     assert strict == list(lazy.release())
 
 
-@pytest.mark.parametrize(SLICE_TEST_PARAMS, SLICE_TEST_CASES_LEN)
+@pytest.mark.parametrize(SLICE_EXAMPLE_PARAMS, SLICE_EXAMPLES_LEN)
 def test_slice_len(
     size: int,
     start: Optional[int],
@@ -457,7 +457,7 @@ def test_slice_len(
 
 
 @pytest.mark.parametrize(
-    ("size", "start", "stop", "step", "index"), SLICE_TEST_CASES_GETITEM
+    ("size", "start", "stop", "step", "index"), SLICE_EXAMPLES_GETITEM
 )
 def test_slice_getitem(
     size: int,
@@ -472,7 +472,7 @@ def test_slice_getitem(
 
 
 @pytest.mark.parametrize(
-    ("size", "start", "stop", "step", "index"), SLICE_TEST_CASES_GETITEM_RAISES
+    ("size", "start", "stop", "step", "index"), SLICE_EXAMPLES_GETITEM_RAISES
 )
 def test_slice_getitem_raises(
     size: int,
@@ -489,7 +489,7 @@ def test_slice_getitem_raises(
 
 
 @pytest.mark.parametrize(
-    ("size", "start", "stop", "step", "indices"), SLICE_TEST_CASES_GETSLICE
+    ("size", "start", "stop", "step", "indices"), SLICE_EXAMPLES_GETSLICE
 )
 def test_slice_of_slice(
     size: int,
