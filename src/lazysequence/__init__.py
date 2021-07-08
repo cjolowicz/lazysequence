@@ -320,11 +320,11 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
             return None
 
-        indices = _slice.fromslice(index)
-        if indices.hasnegativebounds():
-            indices = indices.withpositivebounds(len(self))
+        theslice = _slice.fromslice(index)
+        if theslice.hasnegativebounds():
+            theslice = theslice.withpositivebounds(len(self))
 
-        start, stop, step = indices.astuple()
+        start, stop, step = theslice.astuple()
 
         start = resolve_start(start, step)
         stop = resolve_stop(stop, step)
