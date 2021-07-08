@@ -1,16 +1,9 @@
 """Unit tests for lazysequence."""
-from typing import Any
 from typing import List
 
 import pytest
-from _pytest.mark import ParameterSet
 
 from lazysequence import lazysequence
-
-
-def xfail(*args: Any) -> ParameterSet:
-    """Mark parameters as XFAIL."""
-    return pytest.param(*args, marks=pytest.mark.xfail)
 
 
 def test_init() -> None:
