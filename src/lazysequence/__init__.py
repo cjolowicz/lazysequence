@@ -325,16 +325,21 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             return self._slice.start - 1
 
         theslice = _slice.fromslice(indices)
-        if theslice.hasnegativebounds():
-            theslice = theslice.withpositivebounds(len(self))
 
-        start, stop, step = theslice.astuple()
+        def resolve_slice(theslice: _slice) -> _slice:
+            if theslice.hasnegativebounds():
+                theslice = theslice.withpositivebounds(len(self))
 
-        start = resolve_start(start, step)
-        stop = resolve_stop(stop, step)
-        step *= self._slice.step
+            start, stop, step = theslice.astuple()
 
-        theslice = _slice(start, stop, step)
+            start = resolve_start(start, step)
+            stop = resolve_stop(stop, step)
+            step *= self._slice.step
+
+            theslice = _slice(start, stop, step)
+            return theslice
+
+        theslice = resolve_slice(theslice)
         indices = theslice.asslice()
 
         return lazysequence(self._iter, _cache=self._cache, _indices=indices)
