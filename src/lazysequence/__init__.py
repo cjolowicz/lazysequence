@@ -194,11 +194,12 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         iterable: Iterable[_T_co],
         *,
         storage: Callable[[], MutableSequence[_T_co]] = deque,
+        _cache: Optional[MutableSequence[_T_co]] = None,
         _indices: slice = _defaultslice,
     ) -> None:
         """Initialize."""
         self._iter = iter(iterable)
-        self._cache: MutableSequence[_T_co] = storage()
+        self._cache = storage() if _cache is None else _cache
 
         slice = _slice.fromslice(_indices)
 
@@ -330,7 +331,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         step *= self._slice.step
 
         return lazysequence(
-            self._iter, storage=(lambda: self._cache), _indices=slice(start, stop, step)
+            self._iter, _cache=self._cache, _indices=slice(start, stop, step)
         )
 
     @overload
