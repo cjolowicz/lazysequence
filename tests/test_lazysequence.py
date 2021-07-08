@@ -757,3 +757,24 @@ def test_slice_step(size: int, step: int, indices: slice, expected: list[int]) -
     s = lazysequence(range(size), step=step)
     result = list(s[indices])
     assert expected == result
+
+
+@pytest.mark.parametrize(
+    ("size", "start", "stop", "step", "indices", "expected"),
+    [
+        (10, 9, 0, -1, slice(2), [9, 8]),
+        (10, 9, 0, -1, slice(-2, None), [2, 1]),
+    ],
+)
+def test_slice_start_stop_and_step(
+    size: int,
+    start: int,
+    stop: int,
+    step: int,
+    indices: slice,
+    expected: list[int],
+) -> None:
+    """."""
+    s = lazysequence(range(size), start=start, stop=stop, step=step)
+    result = list(s[indices])
+    assert expected == result
