@@ -228,7 +228,10 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         return len(self._cache)
 
     def _iterate(self, iterator: Iterator[_T_co]) -> Iterator[_T_co]:
-        slice = self._slice
+        slice = self.__slice
+        if slice.hasnegativebounds():
+            self._fill()
+            slice = slice.withpositivebounds(self._cachesize)
 
         if slice.step < 0:
             self._fill()
