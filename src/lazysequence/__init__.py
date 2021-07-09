@@ -283,7 +283,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             raise IndexError("lazysequence index out of range")
 
         slice = self.__slice
-        if slice.hasnegativebounds():
+        if slice.hasnegativebounds():  # pragma: no cover
             self._fill()
             slice = slice.withpositivebounds(self._cachesize)
 
