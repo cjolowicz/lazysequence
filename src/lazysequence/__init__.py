@@ -205,18 +205,15 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         """Initialize."""
         self._iter = iter(iterable)
         self._cache = storage() if _cache is None else _cache
-
-        slice = _slice.fromslice(_indices)
-
-        if slice.hasnegativebounds():
-            self._fill()
-            self.__slice = slice.withpositivebounds(self._cachesize)
-        else:
-            self.__slice = slice
+        self.__slice = _slice.fromslice(_indices)
 
     @property
     def _slice(self) -> _slice:
-        return self.__slice
+        slice = self.__slice
+        if slice.hasnegativebounds():
+            self._fill()
+            slice = slice.withpositivebounds(self._cachesize)
+        return slice
 
     def _consume(self) -> Iterator[_T_co]:
         for item in self._iter:
