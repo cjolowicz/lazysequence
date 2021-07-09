@@ -344,8 +344,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             return origin.start - 1
 
         def resolve_slice(aslice: _slice) -> _slice:
-            if aslice.hasnegativebounds():
-                aslice = aslice.withpositivebounds(len(self))
+            aslice = aslice.positive(self)
 
             start, stop, step = aslice.astuple()
 
