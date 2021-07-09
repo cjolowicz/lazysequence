@@ -268,7 +268,6 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         self._fill()
 
         if slice.hasnegativebounds():
-            self._fill()
             slice = slice.withpositivebounds(self._cachesize)
 
         if slice.step < 0:
