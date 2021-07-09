@@ -307,11 +307,11 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def _getslice(self, indices: slice) -> lazysequence[_T_co]:  # noqa: C901
         def resolve(index: int) -> Optional[int]:
-            if self._slice.step > 0:
-                return self._slice.resolve_noraise(index)
+            if origin.step > 0:
+                return origin.resolve_noraise(index)
 
             self._fill()
-            return self._slice.rresolve_noraise(index, self._cachesize)
+            return origin.rresolve_noraise(index, self._cachesize)
 
         def resolve_start(start: Optional[int], step: int) -> Optional[int]:
             assert start is None or start >= 0  # noqa: S101
@@ -328,15 +328,15 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
                 return resolve(stop)
 
             if step > 0:
-                return self._slice.stop
+                return origin.stop
 
-            if self._slice.start is None:
+            if origin.start is None:
                 return None
 
-            if self._slice.step < 0:
-                return self._slice.start + 1
+            if origin.step < 0:
+                return origin.start + 1
 
-            return self._slice.start - 1
+            return origin.start - 1
 
         def resolve_slice(aslice: _slice) -> _slice:
             if aslice.hasnegativebounds():
@@ -346,10 +346,11 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
             start = resolve_start(start, step)
             stop = resolve_stop(stop, step)
-            step *= self._slice.step
+            step *= origin.step
 
             return _slice(start, stop, step)
 
+        origin = self._slice
         theslice = resolve_slice(_slice.fromslice(indices))
 
         return lazysequence(self._iter, _cache=self._cache, _indices=theslice.asslice())
