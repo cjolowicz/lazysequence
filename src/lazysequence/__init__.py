@@ -263,7 +263,10 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def __len__(self) -> int:
         """Return the number of items in the sequence."""
-        slice = self._slice
+        slice = self.__slice
+        if slice.hasnegativebounds():
+            self._fill()
+            slice = slice.withpositivebounds(self._cachesize)
 
         self._fill()
 
