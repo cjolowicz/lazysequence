@@ -207,14 +207,6 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         self._cache = storage() if _cache is None else _cache
         self.__slice = _slice.fromslice(_indices)
 
-    @property
-    def _slice(self) -> _slice:
-        slice = self.__slice
-        if slice.hasnegativebounds():
-            self._fill()
-            slice = slice.withpositivebounds(self._cachesize)
-        return slice
-
     def _consume(self) -> Iterator[_T_co]:
         for item in self._iter:
             self._cache.append(item)
