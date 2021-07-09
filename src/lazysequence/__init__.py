@@ -282,11 +282,13 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if index < 0:
             raise IndexError("lazysequence index out of range")
 
-        if self._slice.step >= 0:
-            index = self._slice.resolve(index)
+        slice = self._slice
+
+        if slice.step >= 0:
+            index = slice.resolve(index)
         else:
             self._fill()
-            index = self._slice.rresolve(index, self._cachesize)
+            index = slice.rresolve(index, self._cachesize)
 
         try:
             return self._cache[index]
