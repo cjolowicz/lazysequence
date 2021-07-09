@@ -210,9 +210,13 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         if slice.hasnegativebounds():
             self._fill()
-            self._slice = slice.withpositivebounds(self._cachesize)
+            self.__slice = slice.withpositivebounds(self._cachesize)
         else:
-            self._slice = slice
+            self.__slice = slice
+
+    @property
+    def _slice(self) -> _slice:
+        return self.__slice
 
     def _consume(self) -> Iterator[_T_co]:
         for item in self._iter:
