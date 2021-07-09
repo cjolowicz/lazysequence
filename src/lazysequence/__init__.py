@@ -205,7 +205,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         """Initialize."""
         self._iter = iter(iterable)
         self._cache = storage() if _cache is None else _cache
-        self.__slice = _slice.fromslice(_indices)
+        self._slice = _slice.fromslice(_indices)
 
     def _consume(self) -> Iterator[_T_co]:
         for item in self._iter:
@@ -220,7 +220,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         return len(self._cache)
 
     def _iterate(self, iterator: Iterator[_T_co]) -> Iterator[_T_co]:
-        slice = self.__slice
+        slice = self._slice
         if slice.hasnegativebounds():
             self._fill()
             slice = slice.withpositivebounds(self._cachesize)
@@ -255,7 +255,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def __len__(self) -> int:
         """Return the number of items in the sequence."""
-        slice = self.__slice
+        slice = self._slice
 
         self._fill()
 
@@ -274,7 +274,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if index < 0:
             raise IndexError("lazysequence index out of range")
 
-        slice = self.__slice
+        slice = self._slice
         if slice.hasnegativebounds():  # pragma: no cover
             self._fill()
             slice = slice.withpositivebounds(self._cachesize)
@@ -342,7 +342,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
             return _slice(start, stop, step)
 
-        origin = self.__slice
+        origin = self._slice
         if origin.hasnegativebounds():  # pragma: no cover
             self._fill()
             origin = origin.withpositivebounds(self._cachesize)
