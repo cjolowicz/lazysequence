@@ -350,7 +350,11 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
             return _slice(start, stop, step)
 
-        origin = self._slice
+        origin = self.__slice
+        if origin.hasnegativebounds():  # pragma: no cover
+            self._fill()
+            origin = origin.withpositivebounds(self._cachesize)
+
         theslice = resolve_slice(_slice.fromslice(indices))
 
         return lazysequence(self._iter, _cache=self._cache, _indices=theslice.asslice())
