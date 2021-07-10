@@ -96,11 +96,15 @@ class _slice:  # noqa: N801
 
     def positivestop(self, sized: Sized) -> Optional[int]:
         stop = self.stop
-        if stop is not None and stop < 0:
-            stop += len(sized)
-            if stop < 0:
-                stop = None if self.step < 0 else 0
-        return stop
+
+        if stop is None or stop >= 0:
+            return stop
+
+        stop += len(sized)
+        if stop >= 0:
+            return stop
+
+        return 0 if self.step > 0 else None
 
     def length(self, sized: Sized) -> int:
         start, stop, step = self.positive(sized).astuple()
