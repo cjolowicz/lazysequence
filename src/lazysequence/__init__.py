@@ -326,9 +326,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             return origin.start - 1
 
         def resolve_slice(origin: _slice, aslice: _slice) -> _slice:
-            origin = origin.positive(self._total)
             start, stop, step = aslice.positive(self).astuple()
 
+            origin = origin.positive(self._total)
             start = resolve_start(origin, start, step)
             stop = resolve_stop(origin, stop, step)
             step *= origin.step
