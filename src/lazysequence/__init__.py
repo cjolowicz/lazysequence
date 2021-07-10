@@ -184,6 +184,27 @@ class _slice:  # noqa: N801
 
         return index
 
+    def resolve_stop(
+        self, stop: Optional[int], step: int, sized: Sized
+    ) -> Optional[int]:
+        assert stop is None or stop >= 0  # noqa: S101
+
+        if stop is not None:
+            return self.resolve(stop, sized, strict=False)
+
+        self = self.positive(sized)
+
+        if step > 0:
+            return self.stop
+
+        if self.start is None:
+            return None
+
+        if self.step < 0:
+            return self.start + 1
+
+        return self.start - 1
+
 
 _defaultslice = slice(None)
 
@@ -302,32 +323,11 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
             return origin.resolve(start, self._total, strict=False)
 
-        def resolve_stop(
-            origin: _slice, stop: Optional[int], step: int
-        ) -> Optional[int]:
-            assert stop is None or stop >= 0  # noqa: S101
-
-            if stop is not None:
-                return origin.resolve(stop, self._total, strict=False)
-
-            origin = origin.positive(self._total)
-
-            if step > 0:
-                return origin.stop
-
-            if origin.start is None:
-                return None
-
-            if origin.step < 0:
-                return origin.start + 1
-
-            return origin.start - 1
-
         def resolve_slice(origin: _slice, aslice: _slice) -> _slice:
             start, stop, step = aslice.positive(self).astuple()
 
             start = resolve_start(origin, start, step)
-            stop = resolve_stop(origin, stop, step)
+            stop = origin.resolve_stop(stop, step, self._total)
             step *= origin.step
 
             return _slice(start, stop, step)
