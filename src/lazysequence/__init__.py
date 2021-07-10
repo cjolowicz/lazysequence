@@ -91,7 +91,9 @@ class _slice:  # noqa: N801
 
         return _slice(start, stop, step)
 
-    def length(self, size: int) -> int:
+    def length(self, sized: Sized) -> int:
+        size = len(sized)
+
         if self.stop is not None:
             size = min(size, self.stop)
 
@@ -265,7 +267,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if slice.step < 0:
             slice = slice.reverse(self._cachesize)
 
-        return slice.length(self._cachesize)
+        return slice.length(self._total)
 
     def _getitem(self, index: int) -> _T_co:
         if index < 0:
