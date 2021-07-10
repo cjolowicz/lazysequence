@@ -227,14 +227,14 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         self._cache.extend(self._iter)
 
     def _iterate(self, iterator: Iterator[_T_co]) -> Iterator[_T_co]:
-        slice = self._slice.positive(self._total)
-
-        if slice.step < 0:
+        if self._slice.step < 0:
+            slice = self._slice.positive(self._total)
             slice = slice.reverse(self._total)
 
             self._fill()
             iterable: Iterable[_T_co] = reversed(self._cache)
         else:
+            slice = self._slice.positive(self._total)
             iterable = chain(self._cache, iterator)
 
         return slice.apply(iterable)
