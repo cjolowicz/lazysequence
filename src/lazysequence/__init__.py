@@ -143,10 +143,9 @@ class _slice:  # noqa: N801
 
     def _resolve_forward(self, index: int, sized: Sized, *, strict: bool = True) -> int:
         """Resolve index on a forward slice, where start <= stop and step > 0."""
-        self = self.positive(sized)
         assert self.step > 0  # noqa: S101
 
-        start, stop, step = self.astuple()
+        start, stop, step = self.positive(sized).astuple()
 
         if start is None:
             start = 0
