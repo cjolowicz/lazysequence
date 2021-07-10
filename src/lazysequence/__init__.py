@@ -153,10 +153,6 @@ class _slice:  # noqa: N801
 
         return index
 
-    def resolve_noraise(self, index: int) -> Optional[int]:
-        """Resolve index, defaulting to the last valid slot."""
-        return self.resolve(index, strict=False)
-
     def rresolve(self, index: int, sized: Sized) -> int:
         """Resolve index on a backward slice, where start >= stop and step < 0."""
         assert self.step < 0  # noqa: S101
@@ -296,7 +292,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
     def _getslice(self, indices: slice) -> lazysequence[_T_co]:  # noqa: C901
         def resolve(index: int) -> Optional[int]:
             if origin.step > 0:
-                return origin.resolve_noraise(index)
+                return origin.resolve(index, strict=False)
 
             return origin.rresolve_noraise(index, self._total)
 
