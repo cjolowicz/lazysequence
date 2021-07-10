@@ -107,9 +107,10 @@ class _slice:  # noqa: N801
 
         return size
 
-    def reverse(self, size: int) -> _slice:
+    def reverse(self, sized: Sized) -> _slice:
         assert self.step < 0  # noqa: S101
 
+        size = len(sized)
         start, stop, step = self.astuple()
         step = -step
 
@@ -232,7 +233,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         if slice.step < 0:
             self._fill()
-            slice = slice.reverse(self._cachesize)
+            slice = slice.reverse(self._total)
             return slice.apply(reversed(self._cache))
 
         return slice.apply(chain(self._cache, iterator))
@@ -265,7 +266,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         self._fill()
 
         if slice.step < 0:
-            slice = slice.reverse(self._cachesize)
+            slice = slice.reverse(self._total)
 
         return slice.length(self._total)
 
