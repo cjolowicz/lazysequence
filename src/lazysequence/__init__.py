@@ -232,8 +232,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         slice = self._slice.positive(self._total)
 
         if slice.step < 0:
-            self._fill()
             slice = slice.reverse(self._total)
+
+            self._fill()
             return slice.apply(reversed(self._cache))
 
         return slice.apply(chain(self._cache, iterator))
