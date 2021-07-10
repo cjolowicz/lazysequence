@@ -199,6 +199,7 @@ SLICE_EXAMPLES = [
     (10, None, None, 11),
     (10, None, None, 11),
     (10, None, None, 100),
+    (10, None, -11, -1),
     (10, -5, -1, None),
     (10, -5, 9, None),
     (10, -1, -5, None),

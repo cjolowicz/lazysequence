@@ -87,7 +87,9 @@ class _slice:  # noqa: N801
             start = max(0, start + size)
 
         if stop is not None and stop < 0:
-            stop = max(0, stop + size)
+            stop += size
+            if stop < 0:
+                stop = None if step < 0 else 0
 
         return _slice(start, stop, step)
 
