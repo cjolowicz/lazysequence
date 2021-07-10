@@ -85,17 +85,22 @@ class _slice:  # noqa: N801
         return islice(iterable, *self.positive(sized).astuple())
 
     def positive(self, sized: Sized) -> _slice:
-        start, stop, step = self.astuple()
+        start, _, step = self.astuple()
 
         if start is not None and start < 0:
             start = max(0, start + len(sized))
 
+        stop = self.positivestop(sized)
+
+        return _slice(start, stop, step)
+
+    def positivestop(self, sized: Sized) -> Optional[int]:
+        stop = self.stop
         if stop is not None and stop < 0:
             stop += len(sized)
             if stop < 0:
-                stop = None if step < 0 else 0
-
-        return _slice(start, stop, step)
+                stop = None if self.step < 0 else 0
+        return stop
 
     def length(self, sized: Sized) -> int:
         start, stop, step = self.positive(sized).astuple()
