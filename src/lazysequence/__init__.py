@@ -311,10 +311,11 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         ) -> Optional[int]:
             assert stop is None or stop >= 0  # noqa: S101
 
-            origin = origin.positive(self._total)
-
             if stop is not None:
+                origin = origin.positive(self._total)
                 return origin.resolve(stop, self._total, strict=False)
+
+            origin = origin.positive(self._total)
 
             if step > 0:
                 return origin.stop
