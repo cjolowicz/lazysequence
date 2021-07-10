@@ -136,9 +136,6 @@ class _slice:  # noqa: N801
 
     def resolve2(self, index: int, sized: Sized, *, strict: bool = True) -> int:
         self = self.positive(sized)
-        return self.resolve(index, sized, strict=strict)
-
-    def resolve(self: _slice, index: int, sized: Sized, *, strict: bool = True) -> int:
         return (
             self._resolve_forward(index, strict=strict)
             if self.step > 0
