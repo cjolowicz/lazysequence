@@ -137,12 +137,12 @@ class _slice:  # noqa: N801
     def resolve(self, index: int, sized: Sized, *, strict: bool = True) -> int:
         self = self.positive(sized)
         return (
-            self._resolve_forward(index, strict=strict)
+            self._resolve_forward(index, sized, strict=strict)
             if self.step > 0
             else self._resolve_backward(index, sized, strict=strict)
         )
 
-    def _resolve_forward(self, index: int, *, strict: bool = True) -> int:
+    def _resolve_forward(self, index: int, sized: Sized, *, strict: bool = True) -> int:
         """Resolve index on a forward slice, where start <= stop and step > 0."""
         assert self.step > 0  # noqa: S101
 
