@@ -210,7 +210,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         class _Total(Sized):
             def __len__(self) -> int:
                 parent._fill()
-                return parent._cachesize
+                return len(parent._cache)
 
         self._iter = iter(iterable)
         self._cache = storage() if _cache is None else _cache
@@ -224,10 +224,6 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def _fill(self) -> None:
         self._cache.extend(self._iter)
-
-    @property
-    def _cachesize(self) -> int:
-        return len(self._cache)
 
     def _iterate(self, iterator: Iterator[_T_co]) -> Iterator[_T_co]:
         slice = self._slice.positive(self._total)
@@ -289,7 +285,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         except IndexError:
             pass
 
-        index -= self._cachesize
+        index -= len(self._cache)
 
         try:
             return next(islice(self._consume(), index, None))
