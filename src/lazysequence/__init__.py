@@ -153,7 +153,9 @@ class _slice:  # noqa: N801
 
         return index
 
-    def rresolve(self, index: int, sized: Sized, *, strict: bool = True) -> int:
+    def _resolve_backward(
+        self, index: int, sized: Sized, *, strict: bool = True
+    ) -> int:
         """Resolve index on a backward slice, where start >= stop and step < 0."""
         assert self.step < 0  # noqa: S101
 
@@ -272,7 +274,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if slice.step >= 0:
             index = slice._resolve_forward(index)
         else:
-            index = slice.rresolve(index, self._total)
+            index = slice._resolve_backward(index, self._total)
 
         try:
             return self._cache[index]
@@ -291,7 +293,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             if origin.step > 0:
                 return origin._resolve_forward(index, strict=False)
 
-            return origin.rresolve(index, self._total, strict=False)
+            return origin._resolve_backward(index, self._total, strict=False)
 
         def resolve_start(start: Optional[int], step: int) -> Optional[int]:
             assert start is None or start >= 0  # noqa: S101
