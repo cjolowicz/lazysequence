@@ -98,6 +98,8 @@ class _slice:  # noqa: N801
         return _slice(start, stop, step)
 
     def length(self, sized: Sized) -> int:
+        self = self.positive(sized)
+
         size = len(sized)
 
         if self.stop is not None:
@@ -266,8 +268,6 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         if slice.step < 0:
             slice = slice.reverse(self._total)
-
-        slice = slice.positive(self._total)
 
         return slice.length(self._total)
 
