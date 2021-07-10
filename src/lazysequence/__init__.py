@@ -262,10 +262,12 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def __len__(self) -> int:
         """Return the number of items in the sequence."""
-        if self._slice.step < 0:
-            slice = self._slice.reverse(self._total)
+        slice = self._slice
+
+        if slice.step < 0:
+            slice = slice.reverse(self._total)
         else:
-            slice = self._slice.positive(self._total)
+            slice = slice.positive(self._total)
 
         return slice.length(self._total)
 
