@@ -81,6 +81,9 @@ class _slice:  # noqa: N801
     def astuple(self) -> Tuple[Optional[int], Optional[int], int]:
         return self.start, self.stop, self.step
 
+    def apply(self, iterable: Iterable[_T_co]) -> Iterator[_T_co]:
+        return islice(iterable, *self.astuple())
+
     def positive(self, sized: Sized) -> _slice:
         start, stop, step = self.astuple()
 
@@ -129,9 +132,6 @@ class _slice:  # noqa: N801
         stop = max(0, stop)
 
         return _slice(start, stop, step)
-
-    def apply(self, iterable: Iterable[_T_co]) -> Iterator[_T_co]:
-        return islice(iterable, *self.astuple())
 
     def resolve(self, index: int) -> int:
         """Resolve index on a forward slice, where start <= stop and step > 0."""
