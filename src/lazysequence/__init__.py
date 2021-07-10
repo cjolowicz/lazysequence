@@ -229,13 +229,13 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
     def _iterate(self, iterator: Iterator[_T_co]) -> Iterator[_T_co]:
         slice = self._slice
 
-        if slice.step < 0:
+        if slice.step > 0:
+            iterable: Iterable[_T_co] = chain(self._cache, iterator)
+        else:
             slice = slice.reverse(self._total)
 
             self._fill()
-            iterable: Iterable[_T_co] = reversed(self._cache)
-        else:
-            iterable = chain(self._cache, iterator)
+            iterable = reversed(self._cache)
 
         return slice.apply(iterable, self._total)
 
