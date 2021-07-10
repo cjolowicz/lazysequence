@@ -158,10 +158,11 @@ class _slice:  # noqa: N801
         except IndexError:
             return self.stop - 1 if self.stop is not None else None
 
-    def rresolve(self, index: int, size: int) -> int:
+    def rresolve(self, index: int, sized: Sized) -> int:
         """Resolve index on a backward slice, where start >= stop and step < 0."""
         assert self.step < 0  # noqa: S101
 
+        size = len(sized)
         start, stop, step = self.astuple()
 
         assert start is not None  # noqa: S101
@@ -177,7 +178,7 @@ class _slice:  # noqa: N801
     def rresolve_noraise(self, index: int, sized: Sized) -> int:
         """Resolve index backwards, defaulting to the first valid slot."""
         try:
-            return self.rresolve(index, len(sized))
+            return self.rresolve(index, sized)
         except IndexError:
             return self.stop + 1 if self.stop is not None else 0
 
@@ -281,8 +282,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if slice.step >= 0:
             index = slice.resolve(index)
         else:
-            self._fill()
-            index = slice.rresolve(index, self._cachesize)
+            index = slice.rresolve(index, self._total)
 
         try:
             return self._cache[index]
