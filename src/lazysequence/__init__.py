@@ -228,13 +228,17 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
     def _iterate(self, iterator: Iterator[_T_co]) -> Iterator[_T_co]:
         slice = self._slice.positive(self._total)
 
+        iterable: Iterable[_T_co]
+
         if slice.step < 0:
             slice = slice.reverse(self._total)
 
             self._fill()
-            return slice.apply(reversed(self._cache))
+            iterable = reversed(self._cache)
+            return slice.apply(iterable)
 
-        return slice.apply(chain(self._cache, iterator))
+        iterable = chain(self._cache, iterator)
+        return slice.apply(iterable)
 
     def __iter__(self) -> Iterator[_T_co]:
         """Iterate over the items in the sequence."""
