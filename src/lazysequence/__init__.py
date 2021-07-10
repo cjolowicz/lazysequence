@@ -304,8 +304,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             if start is None:
                 start = 0 if step > 0 else len(self) - 1
 
-            origin = origin.positive(self._total)
-            return origin.resolve(start, self._total, strict=False)
+            return origin.resolve2(start, self._total, strict=False)
 
         def resolve_stop(
             origin: _slice, stop: Optional[int], step: int
