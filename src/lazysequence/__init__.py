@@ -292,10 +292,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def _getslice(self, indices: slice) -> lazysequence[_T_co]:  # noqa: C901
         def resolve(index: int) -> Optional[int]:
-            if origin.step > 0:
-                return origin._resolve_forward(index, strict=False)
-
-            return origin._resolve_backward(index, self._total, strict=False)
+            return origin.resolve(index, self._total, strict=False)
 
         def resolve_start(start: Optional[int], step: int) -> Optional[int]:
             assert start is None or start >= 0  # noqa: S101
