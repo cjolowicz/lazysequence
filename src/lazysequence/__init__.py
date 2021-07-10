@@ -230,14 +230,14 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         slice = self._slice
 
         if slice.step > 0:
-            iterable: Iterable[_T_co] = chain(self._cache, iterator)
+            iterator = chain(self._cache, iterator)
         else:
             slice = slice.reverse(self._total)
 
             self._fill()
-            iterable = reversed(self._cache)
+            iterator = reversed(self._cache)
 
-        return slice.apply(iterable, self._total)
+        return slice.apply(iterator, self._total)
 
     def __iter__(self) -> Iterator[_T_co]:
         """Iterate over the items in the sequence."""
