@@ -266,8 +266,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         if slice.step < 0:
             slice = slice.reverse(self._total)
-        else:
-            slice = slice.positive(self._total)
+
+        slice = slice.positive(self._total)
 
         return slice.length(self._total)
 
