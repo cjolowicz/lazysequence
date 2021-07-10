@@ -336,9 +336,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             return _slice(start, stop, step)
 
         origin = self._slice.positive(self._total)
-        theslice = resolve_slice(_slice.fromslice(indices))
+        slice = resolve_slice(_slice.fromslice(indices))
 
-        return lazysequence(self._iter, _cache=self._cache, _indices=theslice.asslice())
+        return lazysequence(self._iter, _cache=self._cache, _indices=slice.asslice())
 
     @overload
     def __getitem__(self, index: int) -> _T_co:
