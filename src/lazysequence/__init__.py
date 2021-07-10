@@ -165,11 +165,10 @@ class _slice:  # noqa: N801
         self, index: int, sized: Sized, *, strict: bool = True
     ) -> int:
         """Resolve index on a backward slice, where start >= stop and step < 0."""
-        self = self.positive(sized)
         assert self.step < 0  # noqa: S101
 
         size = len(sized)
-        start, stop, step = self.astuple()
+        start, stop, step = self.positive(sized).astuple()
 
         assert start is not None  # noqa: S101
 
