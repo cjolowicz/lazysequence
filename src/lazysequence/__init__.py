@@ -98,20 +98,19 @@ class _slice:  # noqa: N801
         return _slice(start, stop, step)
 
     def length(self, sized: Sized) -> int:
-        self = self.positive(sized)
-
+        start, stop, step = self.positive(sized).astuple()
         size = len(sized)
 
-        if self.stop is not None:
-            size = min(size, self.stop)
+        if stop is not None:
+            size = min(size, stop)
 
-        if self.start is not None:
-            size = max(0, size - self.start)
+        if start is not None:
+            size = max(0, size - start)
 
         if size > 0:
             # This is equivalent to `math.ceil(result / step)`, but avoids
             # floating-point operations and importing `math`.
-            size = 1 + (size - 1) // self.step
+            size = 1 + (size - 1) // step
 
         return size
 
