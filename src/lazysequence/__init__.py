@@ -133,6 +133,11 @@ class _slice:  # noqa: N801
 
         return _slice(start, stop, step)
 
+    def resolve(self: _slice, index: int, sized: Sized) -> int:
+        if self.step >= 0:
+            return self._resolve_forward(index)
+        return self._resolve_backward(index, sized)
+
     def _resolve_forward(self, index: int, *, strict: bool = True) -> int:
         """Resolve index on a forward slice, where start <= stop and step > 0."""
         assert self.step > 0  # noqa: S101
@@ -271,10 +276,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         slice = self._slice.positive(self._total)
 
-        if slice.step >= 0:
-            index = slice._resolve_forward(index)
-        else:
-            index = slice._resolve_backward(index, self._total)
+        index = slice.resolve(index, self._total)
 
         try:
             return self._cache[index]
