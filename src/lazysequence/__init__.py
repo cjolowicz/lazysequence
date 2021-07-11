@@ -78,6 +78,12 @@ class _slice:  # noqa: N801
     def asslice(self) -> slice:
         return slice(*self.astuple())
 
+    def astuple(self) -> Tuple[Optional[int], Optional[int], int]:
+        return self.start, self.stop, self.step
+
+    def apply(self, iterable: Iterable[_T_co]) -> Iterator[_T_co]:
+        return islice(iterable, *self.astuple())
+
     def positive(self, sized: Sized) -> _slice:
         start, stop, step = self.astuple()
 
@@ -126,12 +132,6 @@ class _slice:  # noqa: N801
         stop = max(0, stop)
 
         return _slice(start, stop, step)
-
-    def astuple(self) -> Tuple[Optional[int], Optional[int], int]:
-        return self.start, self.stop, self.step
-
-    def apply(self, iterable: Iterable[_T_co]) -> Iterator[_T_co]:
-        return islice(iterable, *self.astuple())
 
     def resolve(self, index: int) -> int:
         """Resolve index on a forward slice, where start <= stop and step > 0."""
@@ -232,9 +232,11 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             slice = slice.reverse(self._total)
 
             self._fill()
-            return slice.apply(reversed(self._cache))
+            iterable: Iterable[_T_co] = reversed(self._cache)
+        else:
+            iterable = chain(self._cache, iterator)
 
-        return slice.apply(chain(self._cache, iterator))
+        return slice.apply(iterable)
 
     def __iter__(self) -> Iterator[_T_co]:
         """Iterate over the items in the sequence."""
@@ -325,9 +327,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             return origin.start - 1
 
         def resolve_slice(aslice: _slice) -> _slice:
-            aslice = aslice.positive(self)
-
-            start, stop, step = aslice.astuple()
+            start, stop, step = aslice.positive(self).astuple()
 
             start = resolve_start(start, step)
             stop = resolve_stop(stop, step)
@@ -336,9 +336,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             return _slice(start, stop, step)
 
         origin = self._slice.positive(self._total)
-        theslice = resolve_slice(_slice.fromslice(indices))
+        slice = resolve_slice(_slice.fromslice(indices))
 
-        return lazysequence(self._iter, _cache=self._cache, _indices=theslice.asslice())
+        return lazysequence(self._iter, _cache=self._cache, _indices=slice.asslice())
 
     @overload
     def __getitem__(self, index: int) -> _T_co:
