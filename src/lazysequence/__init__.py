@@ -131,7 +131,9 @@ class _slice:  # noqa: N801
         size = len(sized)
         step = -step
 
-        assert start is not None  # noqa: S101
+        if start is None:
+            start = size - 1
+
         start = (size - 1) - start
         start = max(0, start)
 
