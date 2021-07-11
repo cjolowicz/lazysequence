@@ -202,10 +202,10 @@ class _slice:  # noqa: N801
         if stop is not None:
             return self.resolve(stop, sized, strict=False)
 
-        start = self.positivestart(sized)
-
         if step > 0:
             return self.positivestop(sized)
+
+        start = self.positivestart(sized)
 
         if start is None:
             return None
