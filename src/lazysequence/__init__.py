@@ -169,7 +169,7 @@ class _slice:  # noqa: N801
                 raise IndexError("lazysequence index out of range")
 
             # Default to the last valid slot.
-            return stop - 1
+            return max(0, stop - 1)
 
         return index
 
