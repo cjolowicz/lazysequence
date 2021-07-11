@@ -133,7 +133,14 @@ class _slice:  # noqa: N801
 
         return _slice(start, stop, step)
 
-    def resolve(self, index: int) -> int:
+    def resolve(self: _slice, index: int, sized: Sized, *, strict: bool = True) -> int:
+        return (
+            self._resolve_forward(index, strict=strict)
+            if self.step > 0
+            else self._resolve_backward(index, sized, strict=strict)
+        )
+
+    def _resolve_forward(self, index: int, *, strict: bool = True) -> int:
         """Resolve index on a forward slice, where start <= stop and step > 0."""
         assert self.step > 0  # noqa: S101
 
@@ -145,20 +152,17 @@ class _slice:  # noqa: N801
         index = start + index * step
 
         if stop is not None and index >= stop:
-            raise IndexError("lazysequence index out of range")
+            if strict:
+                raise IndexError("lazysequence index out of range")
+
+            # Defaulting to the last valid slot.
+            return stop - 1
 
         return index
 
-    def resolve_noraise(self, index: int) -> Optional[int]:
-        """Resolve index, defaulting to the last valid slot."""
-        assert self.step > 0  # noqa: S101
-
-        try:
-            return self.resolve(index)
-        except IndexError:
-            return self.stop - 1 if self.stop is not None else None
-
-    def rresolve(self, index: int, sized: Sized) -> int:
+    def _resolve_backward(
+        self, index: int, sized: Sized, *, strict: bool = True
+    ) -> int:
         """Resolve index on a backward slice, where start >= stop and step < 0."""
         assert self.step < 0  # noqa: S101
 
@@ -171,16 +175,13 @@ class _slice:  # noqa: N801
         index = start + index * step
 
         if index < 0 or stop is not None and index <= stop:
-            raise IndexError("lazysequence index out of range")
+            if strict:
+                raise IndexError("lazysequence index out of range")
+
+            # Defaulting to the first valid slot.
+            return stop + 1 if stop is not None else 0
 
         return index
-
-    def rresolve_noraise(self, index: int, sized: Sized) -> int:
-        """Resolve index backwards, defaulting to the first valid slot."""
-        try:
-            return self.rresolve(index, sized)
-        except IndexError:
-            return self.stop + 1 if self.stop is not None else 0
 
 
 _defaultslice = slice(None)
@@ -277,10 +278,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         slice = self._slice.positive(self._total)
 
-        if slice.step >= 0:
-            index = slice.resolve(index)
-        else:
-            index = slice.rresolve(index, self._total)
+        index = slice.resolve(index, self._total)
 
         try:
             return self._cache[index]
@@ -295,25 +293,19 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             raise IndexError("lazysequence index out of range") from None
 
     def _getslice(self, indices: slice) -> lazysequence[_T_co]:  # noqa: C901
-        def resolve(index: int) -> Optional[int]:
-            if origin.step > 0:
-                return origin.resolve_noraise(index)
-
-            return origin.rresolve_noraise(index, self._total)
-
         def resolve_start(start: Optional[int], step: int) -> Optional[int]:
             assert start is None or start >= 0  # noqa: S101
 
             if start is None:
                 start = 0 if step > 0 else len(self) - 1
 
-            return resolve(start)
+            return origin.resolve(start, self._total, strict=False)
 
         def resolve_stop(stop: Optional[int], step: int) -> Optional[int]:
             assert stop is None or stop >= 0  # noqa: S101
 
             if stop is not None:
-                return resolve(stop)
+                return origin.resolve(stop, self._total, strict=False)
 
             if step > 0:
                 return origin.stop
