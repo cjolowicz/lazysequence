@@ -204,18 +204,17 @@ class _slice:  # noqa: N801
 
         start = self.positivestart(sized)
         stop = self.positivestop(sized)
-        self = _slice(start, stop, self.step)
 
         if step > 0:
-            return self.stop
+            return stop
 
-        if self.start is None:
+        if start is None:
             return None
 
         if self.step < 0:
-            return self.start + 1
+            return start + 1
 
-        return self.start - 1
+        return start - 1
 
 
 _defaultslice = slice(None)
