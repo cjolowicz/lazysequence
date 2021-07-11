@@ -81,8 +81,8 @@ class _slice:  # noqa: N801
     def astuple(self) -> Tuple[Optional[int], Optional[int], int]:
         return self.start, self.stop, self.step
 
-    def apply(self, iterable: Iterable[_T_co]) -> Iterator[_T_co]:
-        return islice(iterable, *self.astuple())
+    def apply(self, iterable: Iterable[_T_co], sized: Sized) -> Iterator[_T_co]:
+        return islice(iterable, *self.positive(sized).astuple())
 
     def positive(self, sized: Sized) -> _slice:
         start, stop, step = self.astuple()
@@ -98,26 +98,27 @@ class _slice:  # noqa: N801
         return _slice(start, stop, step)
 
     def length(self, sized: Sized) -> int:
+        start, stop, step = self.positive(sized).astuple()
         size = len(sized)
 
-        if self.stop is not None:
-            size = min(size, self.stop)
+        if stop is not None:
+            size = min(size, stop)
 
-        if self.start is not None:
-            size = max(0, size - self.start)
+        if start is not None:
+            size = max(0, size - start)
 
         if size > 0:
             # This is equivalent to `math.ceil(result / step)`, but avoids
             # floating-point operations and importing `math`.
-            size = 1 + (size - 1) // self.step
+            size = 1 + (size - 1) // step
 
         return size
 
     def reverse(self, sized: Sized) -> _slice:
         assert self.step < 0  # noqa: S101
 
+        start, stop, step = self.positive(sized).astuple()
         size = len(sized)
-        start, stop, step = self.astuple()
         step = -step
 
         assert start is not None  # noqa: S101
@@ -133,18 +134,18 @@ class _slice:  # noqa: N801
 
         return _slice(start, stop, step)
 
-    def resolve(self: _slice, index: int, sized: Sized, *, strict: bool = True) -> int:
+    def resolve(self, index: int, sized: Sized, *, strict: bool = True) -> int:
         return (
-            self._resolve_forward(index, strict=strict)
+            self._resolve_forward(index, sized, strict=strict)
             if self.step > 0
             else self._resolve_backward(index, sized, strict=strict)
         )
 
-    def _resolve_forward(self, index: int, *, strict: bool = True) -> int:
+    def _resolve_forward(self, index: int, sized: Sized, *, strict: bool = True) -> int:
         """Resolve index on a forward slice, where start <= stop and step > 0."""
         assert self.step > 0  # noqa: S101
 
-        start, stop, step = self.astuple()
+        start, stop, step = self.positive(sized).astuple()
 
         if start is None:
             start = 0
@@ -167,7 +168,7 @@ class _slice:  # noqa: N801
         assert self.step < 0  # noqa: S101
 
         size = len(sized)
-        start, stop, step = self.astuple()
+        start, stop, step = self.positive(sized).astuple()
 
         assert start is not None  # noqa: S101
 
@@ -182,6 +183,27 @@ class _slice:  # noqa: N801
             return stop + 1 if stop is not None else 0
 
         return index
+
+    def resolve_stop(
+        self, stop: Optional[int], step: int, sized: Sized
+    ) -> Optional[int]:
+        assert stop is None or stop >= 0  # noqa: S101
+
+        if stop is not None:
+            return self.resolve(stop, sized, strict=False)
+
+        self = self.positive(sized)
+
+        if step > 0:
+            return self.stop
+
+        if self.start is None:
+            return None
+
+        if self.step < 0:
+            return self.start + 1
+
+        return self.start - 1
 
 
 _defaultslice = slice(None)
@@ -227,17 +249,17 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         self._cache.extend(self._iter)
 
     def _iterate(self, iterator: Iterator[_T_co]) -> Iterator[_T_co]:
-        slice = self._slice.positive(self._total)
+        slice = self._slice
 
-        if slice.step < 0:
+        if slice.step > 0:
+            iterator = chain(self._cache, iterator)
+        else:
             slice = slice.reverse(self._total)
 
             self._fill()
-            iterable: Iterable[_T_co] = reversed(self._cache)
-        else:
-            iterable = chain(self._cache, iterator)
+            iterator = reversed(self._cache)
 
-        return slice.apply(iterable)
+        return slice.apply(iterator, self._total)
 
     def __iter__(self) -> Iterator[_T_co]:
         """Iterate over the items in the sequence."""
@@ -262,7 +284,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def __len__(self) -> int:
         """Return the number of items in the sequence."""
-        slice = self._slice.positive(self._total)
+        slice = self._slice
 
         if slice.step < 0:
             slice = slice.reverse(self._total)
@@ -276,9 +298,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if index < 0:
             raise IndexError("lazysequence index out of range")
 
-        slice = self._slice.positive(self._total)
-
-        index = slice.resolve(index, self._total)
+        index = self._slice.resolve(index, self._total)
 
         try:
             return self._cache[index]
@@ -293,7 +313,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             raise IndexError("lazysequence index out of range") from None
 
     def _getslice(self, indices: slice) -> lazysequence[_T_co]:  # noqa: C901
-        def resolve_start(start: Optional[int], step: int) -> Optional[int]:
+        def resolve_start(
+            origin: _slice, start: Optional[int], step: int
+        ) -> Optional[int]:
             assert start is None or start >= 0  # noqa: S101
 
             if start is None:
@@ -301,34 +323,16 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
             return origin.resolve(start, self._total, strict=False)
 
-        def resolve_stop(stop: Optional[int], step: int) -> Optional[int]:
-            assert stop is None or stop >= 0  # noqa: S101
-
-            if stop is not None:
-                return origin.resolve(stop, self._total, strict=False)
-
-            if step > 0:
-                return origin.stop
-
-            if origin.start is None:
-                return None
-
-            if origin.step < 0:
-                return origin.start + 1
-
-            return origin.start - 1
-
-        def resolve_slice(aslice: _slice) -> _slice:
+        def resolve_slice(origin: _slice, aslice: _slice) -> _slice:
             start, stop, step = aslice.positive(self).astuple()
 
-            start = resolve_start(start, step)
-            stop = resolve_stop(stop, step)
+            start = resolve_start(origin, start, step)
+            stop = origin.resolve_stop(stop, step, self._total)
             step *= origin.step
 
             return _slice(start, stop, step)
 
-        origin = self._slice.positive(self._total)
-        slice = resolve_slice(_slice.fromslice(indices))
+        slice = resolve_slice(self._slice, _slice.fromslice(indices))
 
         return lazysequence(self._iter, _cache=self._cache, _indices=slice.asslice())
 
