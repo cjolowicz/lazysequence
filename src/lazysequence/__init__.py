@@ -91,7 +91,9 @@ class _slice:  # noqa: N801
 
         return _slice(start, stop, step)
 
-    def length(self, size: int) -> int:
+    def length(self, sized: Sized) -> int:
+        size = len(sized)
+
         if self.stop is not None:
             size = min(size, self.stop)
 
@@ -105,9 +107,10 @@ class _slice:  # noqa: N801
 
         return size
 
-    def reverse(self, size: int) -> _slice:
+    def reverse(self, sized: Sized) -> _slice:
         assert self.step < 0  # noqa: S101
 
+        size = len(sized)
         start, stop, step = self.astuple()
         step = -step
 
@@ -155,10 +158,11 @@ class _slice:  # noqa: N801
         except IndexError:
             return self.stop - 1 if self.stop is not None else None
 
-    def rresolve(self, index: int, size: int) -> int:
+    def rresolve(self, index: int, sized: Sized) -> int:
         """Resolve index on a backward slice, where start >= stop and step < 0."""
         assert self.step < 0  # noqa: S101
 
+        size = len(sized)
         start, stop, step = self.astuple()
 
         assert start is not None  # noqa: S101
@@ -171,10 +175,10 @@ class _slice:  # noqa: N801
 
         return index
 
-    def rresolve_noraise(self, index: int, size: int) -> int:
+    def rresolve_noraise(self, index: int, sized: Sized) -> int:
         """Resolve index backwards, defaulting to the first valid slot."""
         try:
-            return self.rresolve(index, size)
+            return self.rresolve(index, sized)
         except IndexError:
             return self.stop + 1 if self.stop is not None else 0
 
@@ -206,7 +210,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         class _Total(Sized):
             def __len__(self) -> int:
                 parent._fill()
-                return parent._cachesize
+                return len(parent._cache)
 
         self._iter = iter(iterable)
         self._cache = storage() if _cache is None else _cache
@@ -221,16 +225,13 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
     def _fill(self) -> None:
         self._cache.extend(self._iter)
 
-    @property
-    def _cachesize(self) -> int:
-        return len(self._cache)
-
     def _iterate(self, iterator: Iterator[_T_co]) -> Iterator[_T_co]:
         slice = self._slice.positive(self._total)
 
         if slice.step < 0:
+            slice = slice.reverse(self._total)
+
             self._fill()
-            slice = slice.reverse(self._cachesize)
             return slice.apply(reversed(self._cache))
 
         return slice.apply(chain(self._cache, iterator))
@@ -260,12 +261,10 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         """Return the number of items in the sequence."""
         slice = self._slice.positive(self._total)
 
-        self._fill()
-
         if slice.step < 0:
-            slice = slice.reverse(self._cachesize)
+            slice = slice.reverse(self._total)
 
-        return slice.length(self._cachesize)
+        return slice.length(self._total)
 
     def _getitem(self, index: int) -> _T_co:
         if index < 0:
@@ -279,15 +278,14 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if slice.step >= 0:
             index = slice.resolve(index)
         else:
-            self._fill()
-            index = slice.rresolve(index, self._cachesize)
+            index = slice.rresolve(index, self._total)
 
         try:
             return self._cache[index]
         except IndexError:
             pass
 
-        index -= self._cachesize
+        index -= len(self._cache)
 
         try:
             return next(islice(self._consume(), index, None))
@@ -299,8 +297,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             if origin.step > 0:
                 return origin.resolve_noraise(index)
 
-            self._fill()
-            return origin.rresolve_noraise(index, self._cachesize)
+            return origin.rresolve_noraise(index, self._total)
 
         def resolve_start(start: Optional[int], step: int) -> Optional[int]:
             assert start is None or start >= 0  # noqa: S101
