@@ -182,7 +182,8 @@ class _slice:  # noqa: N801
         size = len(sized)
         start, stop, step = self.positive(sized).astuple()
 
-        assert start is not None  # noqa: S101
+        if start is None:
+            start = size - 1
 
         start = min(start, size - 1)
         index = start + index * step
