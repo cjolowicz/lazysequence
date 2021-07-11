@@ -328,10 +328,19 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         ) -> Optional[int]:
             assert start is None or start >= 0  # noqa: S101
 
-            if start is None:
-                start = 0 if step > 0 else len(self) - 1
+            if start is not None:
+                return origin.resolve(start, self._total, strict=False)
 
-            return origin.resolve(start, self._total, strict=False)
+            if step > 0:
+                return origin.positivestart(self._total)
+
+            if origin.stop is None:
+                return None
+
+            stop = origin.positivestop(self._total)
+
+            assert stop is not None  # noqa: S101
+            return stop + 1 if origin.step < 0 else stop - 1
 
         def resolve_slice(origin: _slice, aslice: _slice) -> _slice:
             start, stop, step = aslice.positive(self).astuple()
