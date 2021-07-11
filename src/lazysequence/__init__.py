@@ -205,14 +205,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         """Initialize."""
         self._iter = iter(iterable)
         self._cache = storage() if _cache is None else _cache
-
-        slice = _slice.fromslice(_indices)
-
-        if slice.hasnegativebounds():
-            self._fill()
-            self._slice = slice.withpositivebounds(self._cachesize)
-        else:
-            self._slice = slice
+        self._slice = _slice.fromslice(_indices)
 
     def _consume(self) -> Iterator[_T_co]:
         for item in self._iter:
@@ -228,6 +221,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def _iterate(self, iterator: Iterator[_T_co]) -> Iterator[_T_co]:
         slice = self._slice
+        if slice.hasnegativebounds():
+            self._fill()
+            slice = slice.withpositivebounds(self._cachesize)
 
         if slice.step < 0:
             self._fill()
@@ -263,6 +259,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         self._fill()
 
+        if slice.hasnegativebounds():
+            slice = slice.withpositivebounds(self._cachesize)
+
         if slice.step < 0:
             slice = slice.reverse(self._cachesize)
 
@@ -275,11 +274,16 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if index < 0:
             raise IndexError("lazysequence index out of range")
 
-        if self._slice.step >= 0:
-            index = self._slice.resolve(index)
+        slice = self._slice
+        if slice.hasnegativebounds():  # pragma: no cover
+            self._fill()
+            slice = slice.withpositivebounds(self._cachesize)
+
+        if slice.step >= 0:
+            index = slice.resolve(index)
         else:
             self._fill()
-            index = self._slice.rresolve(index, self._cachesize)
+            index = slice.rresolve(index, self._cachesize)
 
         try:
             return self._cache[index]
@@ -295,11 +299,11 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def _getslice(self, indices: slice) -> lazysequence[_T_co]:  # noqa: C901
         def resolve(index: int) -> Optional[int]:
-            if self._slice.step > 0:
-                return self._slice.resolve_noraise(index)
+            if origin.step > 0:
+                return origin.resolve_noraise(index)
 
             self._fill()
-            return self._slice.rresolve_noraise(index, self._cachesize)
+            return origin.rresolve_noraise(index, self._cachesize)
 
         def resolve_start(start: Optional[int], step: int) -> Optional[int]:
             assert start is None or start >= 0  # noqa: S101
@@ -316,15 +320,15 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
                 return resolve(stop)
 
             if step > 0:
-                return self._slice.stop
+                return origin.stop
 
-            if self._slice.start is None:
+            if origin.start is None:
                 return None
 
-            if self._slice.step < 0:
-                return self._slice.start + 1
+            if origin.step < 0:
+                return origin.start + 1
 
-            return self._slice.start - 1
+            return origin.start - 1
 
         def resolve_slice(aslice: _slice) -> _slice:
             if aslice.hasnegativebounds():
@@ -334,9 +338,14 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
             start = resolve_start(start, step)
             stop = resolve_stop(stop, step)
-            step *= self._slice.step
+            step *= origin.step
 
             return _slice(start, stop, step)
+
+        origin = self._slice
+        if origin.hasnegativebounds():  # pragma: no cover
+            self._fill()
+            origin = origin.withpositivebounds(self._cachesize)
 
         theslice = resolve_slice(_slice.fromslice(indices))
 
