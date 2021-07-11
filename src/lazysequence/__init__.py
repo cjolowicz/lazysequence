@@ -210,10 +210,7 @@ class _slice:  # noqa: N801
         if start is None:
             return None
 
-        if self.step < 0:
-            return start + 1
-
-        return start - 1
+        return start + 1 if self.step < 0 else start - 1
 
 
 _defaultslice = slice(None)
