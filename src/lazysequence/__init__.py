@@ -200,13 +200,13 @@ class _slice:  # noqa: N801
     def resolve_slice(self, aslice: _slice, sized: Sized) -> _slice:
         start, stop, step = aslice.astuple()
 
-        start = self.resolve_start(start, step, sized)
+        start = self._resolve_start(start, step, sized)
         stop = self.resolve_stop(stop, step, sized)
         step *= self.step
 
         return _slice(start, stop, step)
 
-    def resolve_start(
+    def _resolve_start(
         self, start: Optional[int], step: int, sized: Sized
     ) -> Optional[int]:
         assert start is None or start >= 0  # noqa: S101
