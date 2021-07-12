@@ -197,6 +197,15 @@ class _slice:  # noqa: N801
 
         return index
 
+    def resolve_slice(self, aslice: _slice, sized: Sized) -> _slice:
+        start, stop, step = aslice.astuple()
+
+        start = self.resolve_start(start, step, sized)
+        stop = self.resolve_stop(stop, step, sized)
+        step *= self.step
+
+        return _slice(start, stop, step)
+
     def resolve_start(
         self, start: Optional[int], step: int, sized: Sized
     ) -> Optional[int]:
@@ -341,16 +350,9 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             raise IndexError("lazysequence index out of range") from None
 
     def _getslice(self, indices: slice) -> lazysequence[_T_co]:  # noqa: C901
-        def resolve_slice(origin: _slice, aslice: _slice) -> _slice:
-            start, stop, step = aslice.positive(self).astuple()
-
-            start = origin.resolve_start(start, step, self._total)
-            stop = origin.resolve_stop(stop, step, self._total)
-            step *= origin.step
-
-            return _slice(start, stop, step)
-
-        slice = resolve_slice(self._slice, _slice.fromslice(indices))
+        slice = self._slice.resolve_slice(
+            _slice.fromslice(indices).positive(self), self._total
+        )
 
         return lazysequence(self._iter, _cache=self._cache, _indices=slice.asslice())
 
