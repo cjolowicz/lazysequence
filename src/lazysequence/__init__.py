@@ -110,7 +110,7 @@ class _slice:  # noqa: N801
         if size > 0:
             # This is equivalent to `math.ceil(result / step)`, but avoids
             # floating-point operations and importing `math`.
-            size = 1 + (size - 1) // step
+            size = 1 + (size - 1) // abs(step)
 
         return size
 
