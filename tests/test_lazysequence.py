@@ -448,6 +448,7 @@ def test_slice_getitem_raises(
 @pytest.mark.parametrize(
     SLICE_EXAMPLE_PARAMS + ("indices",),
     SLICE_EXAMPLES_GETSLICE,
+    ids=str,
 )
 def test_slice_of_slice(
     size: int,
