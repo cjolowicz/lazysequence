@@ -201,7 +201,7 @@ class _slice:  # noqa: N801
         start, stop, step = aslice.astuple()
 
         start = self._resolve_start(start, step, sized)
-        stop = self.resolve_stop(stop, step, sized)
+        stop = self._resolve_stop(stop, step, sized)
         step *= self.step
 
         return _slice(start, stop, step)
@@ -224,7 +224,7 @@ class _slice:  # noqa: N801
 
         return stop + 1 if self.step < 0 else stop - 1
 
-    def resolve_stop(
+    def _resolve_stop(
         self, stop: Optional[int], step: int, sized: Sized
     ) -> Optional[int]:
         assert stop is None or stop >= 0  # noqa: S101
