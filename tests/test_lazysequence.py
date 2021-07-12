@@ -304,6 +304,8 @@ SLICE_EXAMPLES_GETITEM_RAISES = [
 
 
 SLICE_EXAMPLES_GETSLICE = [
+    (10, None, None, None, slice(None, None, None)),
+    (10, None, 0, None, slice(None, None, None)),
     (10, None, None, -100, slice(None, 2, None)),
     (10, None, None, -2, slice(None, 2, None)),
     (10, None, None, -2, slice(-2, None, None)),
@@ -311,6 +313,8 @@ SLICE_EXAMPLES_GETSLICE = [
     (10, None, None, 2, slice(None, 2, None)),
     (10, None, None, 2, slice(-2, None, None)),
     (10, None, None, 100, slice(None, 2, None)),
+    (10, None, 9, None, slice(None, None, -1)),
+    (10, None, 9, None, slice(None, 2, -1)),
     (10, -5, -1, None, slice(None, 2, None)),
     (10, -5, -1, None, slice(-2, None, None)),
     (10, -5, 9, None, slice(None, 2, None)),

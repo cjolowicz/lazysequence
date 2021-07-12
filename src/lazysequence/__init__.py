@@ -131,7 +131,9 @@ class _slice:  # noqa: N801
         size = len(sized)
         step = -step
 
-        assert start is not None  # noqa: S101
+        if start is None:
+            start = size - 1
+
         start = (size - 1) - start
         start = max(0, start)
 
@@ -166,8 +168,8 @@ class _slice:  # noqa: N801
             if strict:
                 raise IndexError("lazysequence index out of range")
 
-            # Defaulting to the last valid slot.
-            return stop - 1
+            # Default to the last valid slot.
+            return max(0, stop - 1)
 
         return index
 
@@ -180,7 +182,8 @@ class _slice:  # noqa: N801
         size = len(sized)
         start, stop, step = self.positive(sized).astuple()
 
-        assert start is not None  # noqa: S101
+        if start is None:
+            start = size - 1
 
         start = min(start, size - 1)
         index = start + index * step
@@ -189,7 +192,7 @@ class _slice:  # noqa: N801
             if strict:
                 raise IndexError("lazysequence index out of range")
 
-            # Defaulting to the first valid slot.
+            # Default to the first valid slot.
             return stop + 1 if stop is not None else 0
 
         return index
@@ -325,10 +328,18 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         ) -> Optional[int]:
             assert start is None or start >= 0  # noqa: S101
 
-            if start is None:
-                start = 0 if step > 0 else len(self) - 1
+            if start is not None:
+                return origin.resolve(start, self._total, strict=False)
 
-            return origin.resolve(start, self._total, strict=False)
+            if step > 0:
+                return origin.positivestart(self._total)
+
+            stop = origin.positivestop(self._total)
+
+            if stop is None:
+                return None
+
+            return stop + 1 if origin.step < 0 else stop - 1
 
         def resolve_slice(origin: _slice, aslice: _slice) -> _slice:
             start, stop, step = aslice.positive(self).astuple()
