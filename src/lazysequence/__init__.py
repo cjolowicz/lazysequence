@@ -360,9 +360,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         stop = slice.stop
 
-        if stop is None or stop >= 0:
-            pass
-        else:
+        if stop is not None and stop < 0:
             stop += len(self)
             if stop >= 0:
                 pass
