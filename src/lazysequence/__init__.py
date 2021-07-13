@@ -348,11 +348,11 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         """Iterate over the items in the sequence."""
 
         def generate() -> Iterator[_T_co]:
+            yield from self._cache
+
+            offset = len(self._cache) + 1
+
             try:
-                yield from self._cache
-
-                offset = len(self._cache) + 1
-
                 yield next(self._consume())
 
                 for index in count(offset):
