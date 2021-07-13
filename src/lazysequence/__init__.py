@@ -170,12 +170,12 @@ class _slice:  # noqa: N801
         In pseudo-code: ``s[slice][index] === s[slice.resolve(index)]``
         """
         return (
-            self._resolve_forward(index, sized, strict=strict)
+            self._resolveforward(index, sized, strict=strict)
             if self.step > 0
-            else self._resolve_backward(index, sized, strict=strict)
+            else self._resolvebackward(index, sized, strict=strict)
         )
 
-    def _resolve_forward(self, index: int, sized: Sized, *, strict: bool = True) -> int:
+    def _resolveforward(self, index: int, sized: Sized, *, strict: bool = True) -> int:
         """Resolve index on a forward slice, where start <= stop and step > 0."""
         assert self.step > 0  # noqa: S101
 
@@ -195,9 +195,7 @@ class _slice:  # noqa: N801
 
         return index
 
-    def _resolve_backward(
-        self, index: int, sized: Sized, *, strict: bool = True
-    ) -> int:
+    def _resolvebackward(self, index: int, sized: Sized, *, strict: bool = True) -> int:
         """Resolve index on a backward slice, where start >= stop and step < 0."""
         assert self.step < 0  # noqa: S101
 
