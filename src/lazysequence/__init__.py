@@ -90,9 +90,6 @@ class _slice:  # noqa: N801
         object.__setattr__(self, "stop", stop)
         object.__setattr__(self, "step", step)
 
-    def asslice(self) -> slice:
-        return slice(*self.astuple())
-
     def astuple(self) -> Tuple[Optional[int], Optional[int], int]:
         return self.start, self.stop, self.step
 
