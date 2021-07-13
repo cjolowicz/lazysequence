@@ -73,10 +73,6 @@ class _slice:  # noqa: N801
     stop: Optional[int]
     step: int
 
-    @classmethod
-    def fromslice(cls, aslice: slice) -> _slice:
-        return cls(aslice.start, aslice.stop, aslice.step)
-
     def __init__(
         self, start: Optional[int], stop: Optional[int], step: Optional[int]
     ) -> None:
@@ -89,9 +85,6 @@ class _slice:  # noqa: N801
         object.__setattr__(self, "start", start)
         object.__setattr__(self, "stop", stop)
         object.__setattr__(self, "step", step)
-
-    def asslice(self) -> slice:
-        return slice(*self.astuple())
 
     def astuple(self) -> Tuple[Optional[int], Optional[int], int]:
         return self.start, self.stop, self.step
@@ -238,7 +231,7 @@ class _slice:  # noqa: N801
         return self.start + 1 if self.step < 0 else self.start - 1
 
 
-_defaultslice = slice(None)
+_defaultslice = _slice(None, None, None)
 
 
 class lazysequence(Sequence[_T_co]):  # noqa: N801
@@ -257,7 +250,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         *,
         storage: Callable[[], MutableSequence[_T_co]] = deque,
         _cache: Optional[MutableSequence[_T_co]] = None,
-        _indices: slice = _defaultslice,
+        _slice: _slice = _defaultslice,
     ) -> None:
         """Initialize."""
         parent = self
@@ -269,7 +262,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         self._iter = iter(iterable)
         self._cache = storage() if _cache is None else _cache
-        self._slice = _slice.fromslice(_indices)
+        self._slice = _slice
         self._total = _Total()
 
     def _consume(self) -> Iterator[_T_co]:
@@ -340,10 +333,10 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             raise IndexError("lazysequence index out of range") from None
 
     def _getslice(self, indices: slice) -> lazysequence[_T_co]:  # noqa: C901
-        slice = _slice.fromslice(indices)
+        slice = _slice(indices.start, indices.stop, indices.step)
         slice = self._slice.resolve_slice(slice, self._total)
 
-        return lazysequence(self._iter, _cache=self._cache, _indices=slice.asslice())
+        return lazysequence(self._iter, _cache=self._cache, _slice=slice)
 
     @overload
     def __getitem__(self, index: int) -> _T_co:
