@@ -73,10 +73,6 @@ class _slice:  # noqa: N801
     stop: Optional[int]
     step: int
 
-    @classmethod
-    def fromslice(cls, aslice: slice) -> _slice:
-        return cls(aslice.start, aslice.stop, aslice.step)
-
     def __init__(
         self, start: Optional[int], stop: Optional[int], step: Optional[int]
     ) -> None:
@@ -337,7 +333,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             raise IndexError("lazysequence index out of range") from None
 
     def _getslice(self, indices: slice) -> lazysequence[_T_co]:  # noqa: C901
-        slice = _slice.fromslice(indices)
+        slice = _slice(indices.start, indices.stop, indices.step)
         slice = self._slice.resolve_slice(slice, self._total)
 
         return lazysequence(self._iter, _cache=self._cache, _slice=slice)
