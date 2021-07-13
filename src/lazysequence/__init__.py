@@ -352,7 +352,12 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
     def _getslice(self, indices: slice) -> lazysequence[_T_co]:  # noqa: C901
         slice = _slice.fromslice(indices)
 
-        start = slice.positivestart(self)
+        start: Optional[int]
+        if slice.start is not None and slice.start < 0:
+            start = max(0, slice.start + len(self))
+        else:
+            start = slice.start
+
         stop = slice.positivestop(self)
 
         slice = _slice(start, stop, slice.step)
