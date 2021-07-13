@@ -219,7 +219,7 @@ class _slice:  # noqa: N801
 
         return index
 
-    def resolve_slice(self, slice: _slice, sized: Sized) -> _slice:
+    def resolveslice(self, slice: _slice, sized: Sized) -> _slice:
         """Return the equivalent slice on the underlying sequence.
 
         In pseudo-code: ``s[slice0][slice1] === s[slice0.resolve(slice1)]``
@@ -375,7 +375,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
     def _getslice(self, indices: slice) -> lazysequence[_T_co]:  # noqa: C901
         """Return a slice of the sequence."""
         slice = _slice(indices.start, indices.stop, indices.step)
-        slice = self._slice.resolve_slice(slice, self._total)
+        slice = self._slice.resolveslice(slice, self._total)
 
         return lazysequence(self._iter, _cache=self._cache, _slice=slice)
 
