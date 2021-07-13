@@ -348,18 +348,14 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         """Iterate over the items in the sequence."""
 
         def generate() -> Iterator[_T_co]:
-            for index in count():
-                try:
-                    yield self._cache[index]
-                except IndexError:
-                    pass
-                else:
-                    continue
-
-                try:
-                    yield next(self._consume())
-                except StopIteration:
-                    break
+            try:
+                for index in count():
+                    try:
+                        yield self._cache[index]
+                    except IndexError:
+                        yield next(self._consume())
+            except StopIteration:
+                pass
 
         return self._iterate(generate())
 
