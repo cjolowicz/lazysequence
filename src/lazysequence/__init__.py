@@ -205,7 +205,7 @@ class _slice:  # noqa: N801
     def resolve_slice(self, slice: _slice, sized: Sized) -> _slice:
         start, stop, step = slice.astuple()
 
-        start = self._resolve_start2(start, step, sized)
+        start = self._resolve_start(start, step, sized)
 
         if stop is not None and stop < 0:
             stop += self.length(sized)
@@ -217,7 +217,7 @@ class _slice:  # noqa: N801
 
         return _slice(start, stop, step)
 
-    def _resolve_start2(
+    def _resolve_start(
         self, start: Optional[int], step: int, sized: Sized
     ) -> Optional[int]:
         if start is not None and start < 0:
