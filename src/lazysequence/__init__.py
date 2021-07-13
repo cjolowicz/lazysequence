@@ -52,6 +52,11 @@ from typing import Union
 _T_co = TypeVar("_T_co", covariant=True)
 
 
+def _positivestart(start: int, size: int) -> int:
+    assert start < 0  # noqa: S101
+    return max(0, start + size)
+
+
 @dataclass(frozen=True)
 class _slice:  # noqa: N801
     start: Optional[int]
@@ -92,7 +97,7 @@ class _slice:  # noqa: N801
 
     def _positivestart(self, sized: Sized) -> Optional[int]:
         if self.start is not None and self.start < 0:
-            return max(0, self.start + len(sized))
+            return _positivestart(self.start, len(sized))
         return self.start
 
     def _positivestop(self, sized: Sized) -> Optional[int]:
