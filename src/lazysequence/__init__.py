@@ -357,7 +357,6 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             yield from self._cache
 
             offset = len(self._cache) + 1
-
             consumer = self._consume()
 
             try:
