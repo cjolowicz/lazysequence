@@ -239,8 +239,6 @@ class _slice:  # noqa: N801
             if stop < 0:
                 stop = 0 if step > 0 else None
 
-        assert stop is None or stop >= 0  # noqa: S101
-
         if stop is not None:
             return self.resolve(stop, sized, strict=False)
 
