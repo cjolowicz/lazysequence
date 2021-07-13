@@ -245,9 +245,7 @@ class _slice:  # noqa: N801
         self, stop: Optional[int], step: int, sized: Sized
     ) -> Optional[int]:
         if stop is not None and stop < 0:
-            stop += self.length(sized)
-            if stop < 0:
-                stop = 0 if step > 0 else None
+            stop = _positivestop(stop, self.length(sized), step)
 
         if stop is not None:
             return self.resolve(stop, sized, strict=False)
