@@ -165,6 +165,10 @@ class _slice:  # noqa: N801
         return _slice(start, stop, step)
 
     def resolve(self, index: int, sized: Sized) -> int:
+        """Return the equivalent index on the underlying sequence.
+
+        In pseudo-code: ``s[slice][index] === s[slice.resolve(index)]``
+        """
         if index < 0:
             index += self.length(sized)
 
@@ -174,10 +178,6 @@ class _slice:  # noqa: N801
         return self._resolve(index, sized, strict=True)
 
     def _resolve(self, index: int, sized: Sized, *, strict: bool = True) -> int:
-        """Return the equivalent index on the underlying sequence.
-
-        In pseudo-code: ``s[slice][index] === s[slice.resolve(index)]``
-        """
         assert index >= 0  # noqa: S101
         return (
             self._resolve_forward(index, sized, strict=strict)
