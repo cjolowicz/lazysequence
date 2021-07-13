@@ -86,7 +86,7 @@ class _slice:  # noqa: N801
 
     def positive(self, sized: Sized) -> _slice:
         start = self._positivestart(sized)
-        stop = self.positivestop(sized)
+        stop = self._positivestop(sized)
 
         return _slice(start, stop, self.step)
 
@@ -95,7 +95,7 @@ class _slice:  # noqa: N801
             return max(0, self.start + len(sized))
         return self.start
 
-    def positivestop(self, sized: Sized) -> Optional[int]:
+    def _positivestop(self, sized: Sized) -> Optional[int]:
         stop = self.stop
 
         if stop is None or stop >= 0:
@@ -224,7 +224,7 @@ class _slice:  # noqa: N801
         if step > 0:
             return self._positivestart(sized)
 
-        stop = self.positivestop(sized)
+        stop = self._positivestop(sized)
 
         if stop is None:
             return None
@@ -243,7 +243,7 @@ class _slice:  # noqa: N801
             return self.resolve(stop, sized, strict=False)
 
         if step > 0:
-            return self.positivestop(sized)
+            return self._positivestop(sized)
 
         start = self._positivestart(sized)
 
