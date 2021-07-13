@@ -1,11 +1,14 @@
 lazysequence
 ============
 
-|PyPI| |Python Version| |License| |Read the Docs| |Tests| |Codecov|
+|PyPI| |Status| |Python Version| |License| |Read the Docs| |Tests| |Codecov|
 
 .. |PyPI| image:: https://img.shields.io/pypi/v/lazysequence.svg
    :target: https://pypi.org/project/lazysequence/
    :alt: PyPI
+.. |Status| image:: https://img.shields.io/pypi/status/lazysequence.svg
+   :target: https://pypi.org/project/lazysequence/
+   :alt: Status
 .. |Python Version| image:: https://img.shields.io/pypi/pyversions/lazysequence
    :target: https://pypi.org/project/lazysequence
    :alt: Python Version

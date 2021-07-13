@@ -8,6 +8,7 @@ readme = "README.rst"
 homepage = "https://github.com/cjolowicz/lazysequence"
 repository = "https://github.com/cjolowicz/lazysequence"
 documentation = "https://lazysequence.readthedocs.io"
+classifiers = ["Development Status :: 3 - Alpha"]
 
 [tool.poetry.urls]
 Changelog = "https://github.com/cjolowicz/lazysequence/releases"
