@@ -52,6 +52,21 @@ from typing import Union
 _T_co = TypeVar("_T_co", covariant=True)
 
 
+def _positive(index: int, size: int) -> int:
+    """Convert a negative index to a non-negative integer.
+
+    The index is interpreted relative to the position after the last item. If
+    the index is smaller than ``-size``, IndexError is raised.
+    """
+    assert index < 0  # noqa: S101
+    index += size
+
+    if index < 0:
+        raise IndexError("lazysequence index out of range")
+
+    return index
+
+
 def _positivestart(start: int, size: int) -> int:
     """Convert a negative start index to a non-negative integer.
 
@@ -170,10 +185,7 @@ class _slice:  # noqa: N801
         In pseudo-code: ``s[slice][index] === s[slice.resolve(index)]``
         """
         if index < 0:
-            index += self.length(sized)
-
-        if index < 0:
-            raise IndexError("lazysequence index out of range")
+            index = _positive(index, self.length(sized))
 
         return self._resolve(index, sized, strict=True)
 
