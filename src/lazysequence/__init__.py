@@ -52,6 +52,21 @@ from typing import Union
 _T_co = TypeVar("_T_co", covariant=True)
 
 
+def _positivestart(start: int, size: int) -> int:
+    assert start < 0  # noqa: S101
+    return max(0, start + size)
+
+
+def _positivestop(stop: int, size: int, step: int) -> Optional[int]:
+    assert stop < 0  # noqa: S101
+
+    stop += size
+    if stop >= 0:
+        return stop
+
+    return 0 if step > 0 else None
+
+
 @dataclass(frozen=True)
 class _slice:  # noqa: N801
     start: Optional[int]
@@ -82,30 +97,7 @@ class _slice:  # noqa: N801
         return self.start, self.stop, self.step
 
     def apply(self, iterable: Iterable[_T_co], sized: Sized) -> Iterator[_T_co]:
-        return islice(iterable, *self.positive(sized).astuple())
-
-    def positive(self, sized: Sized) -> _slice:
-        start = self.positivestart(sized)
-        stop = self.positivestop(sized)
-
-        return _slice(start, stop, self.step)
-
-    def positivestart(self, sized: Sized) -> Optional[int]:
-        if self.start is not None and self.start < 0:
-            return max(0, self.start + len(sized))
-        return self.start
-
-    def positivestop(self, sized: Sized) -> Optional[int]:
-        stop = self.stop
-
-        if stop is None or stop >= 0:
-            return stop
-
-        stop += len(sized)
-        if stop >= 0:
-            return stop
-
-        return 0 if self.step > 0 else None
+        return islice(iterable, *self.astuple())
 
     def length(self, sized: Sized) -> int:
         origin = self
@@ -113,7 +105,7 @@ class _slice:  # noqa: N801
         if origin.step < 0:
             origin = origin.reverse(sized)
 
-        start, stop, step = origin.positive(sized).astuple()
+        start, stop, step = origin.astuple()
         size = len(sized)
 
         if stop is not None:
@@ -132,7 +124,7 @@ class _slice:  # noqa: N801
     def reverse(self, sized: Sized) -> _slice:
         assert self.step < 0  # noqa: S101
 
-        start, stop, step = self.positive(sized).astuple()
+        start, stop, step = self.astuple()
         size = len(sized)
         step = -step
 
@@ -162,7 +154,7 @@ class _slice:  # noqa: N801
         """Resolve index on a forward slice, where start <= stop and step > 0."""
         assert self.step > 0  # noqa: S101
 
-        start, stop, step = self.positive(sized).astuple()
+        start, stop, step = self.astuple()
 
         if start is None:
             start = 0
@@ -185,7 +177,7 @@ class _slice:  # noqa: N801
         assert self.step < 0  # noqa: S101
 
         size = len(sized)
-        start, stop, step = self.positive(sized).astuple()
+        start, stop, step = self.astuple()
 
         if start is None:
             start = size - 1
@@ -202,8 +194,8 @@ class _slice:  # noqa: N801
 
         return index
 
-    def resolve_slice(self, aslice: _slice, sized: Sized) -> _slice:
-        start, stop, step = aslice.astuple()
+    def resolve_slice(self, slice: _slice, sized: Sized) -> _slice:
+        start, stop, step = slice.astuple()
 
         start = self._resolve_start(start, step, sized)
         stop = self._resolve_stop(stop, step, sized)
@@ -214,38 +206,36 @@ class _slice:  # noqa: N801
     def _resolve_start(
         self, start: Optional[int], step: int, sized: Sized
     ) -> Optional[int]:
-        assert start is None or start >= 0  # noqa: S101
+        if start is not None and start < 0:
+            start = _positivestart(start, self.length(sized))
 
         if start is not None:
             return self.resolve(start, sized, strict=False)
 
         if step > 0:
-            return self.positivestart(sized)
+            return self.start
 
-        stop = self.positivestop(sized)
-
-        if stop is None:
+        if self.stop is None:
             return None
 
-        return stop + 1 if self.step < 0 else stop - 1
+        return self.stop + 1 if self.step < 0 else self.stop - 1
 
     def _resolve_stop(
         self, stop: Optional[int], step: int, sized: Sized
     ) -> Optional[int]:
-        assert stop is None or stop >= 0  # noqa: S101
+        if stop is not None and stop < 0:
+            stop = _positivestop(stop, self.length(sized), step)
 
         if stop is not None:
             return self.resolve(stop, sized, strict=False)
 
         if step > 0:
-            return self.positivestop(sized)
+            return self.stop
 
-        start = self.positivestart(sized)
-
-        if start is None:
+        if self.start is None:
             return None
 
-        return start + 1 if self.step < 0 else start - 1
+        return self.start + 1 if self.step < 0 else self.start - 1
 
 
 _defaultslice = slice(None)
@@ -350,7 +340,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             raise IndexError("lazysequence index out of range") from None
 
     def _getslice(self, indices: slice) -> lazysequence[_T_co]:  # noqa: C901
-        slice = _slice.fromslice(indices).positive(self)
+        slice = _slice.fromslice(indices)
         slice = self._slice.resolve_slice(slice, self._total)
 
         return lazysequence(self._iter, _cache=self._cache, _indices=slice.asslice())
