@@ -206,10 +206,10 @@ class _slice:  # noqa: N801
     def _resolve_start(
         self, start: Optional[int], step: int, sized: Sized
     ) -> Optional[int]:
-        if start is not None:
-            if start < 0:
-                start = _positivestart(start, self.length(sized))
+        if start is not None and start < 0:
+            start = _positivestart(start, self.length(sized))
 
+        if start is not None:
             return self.resolve(start, sized, strict=False)
 
         if step > 0:
