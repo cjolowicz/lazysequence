@@ -169,6 +169,7 @@ class _slice:  # noqa: N801
 
         In pseudo-code: ``s[slice][index] === s[slice.resolve(index)]``
         """
+        assert index >= 0  # noqa: S101
         return (
             self._resolve_forward(index, sized, strict=strict)
             if self.step > 0
