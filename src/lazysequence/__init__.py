@@ -218,8 +218,6 @@ class _slice:  # noqa: N801
             size = self.length(sized)
             start = max(0, start + size)
 
-        assert start is None or start >= 0  # noqa: S101
-
         if start is not None:
             return self.resolve(start, sized, strict=False)
 
