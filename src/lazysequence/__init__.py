@@ -351,7 +351,11 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def _getslice(self, indices: slice) -> lazysequence[_T_co]:  # noqa: C901
         slice = _slice.fromslice(indices)
-        slice = slice.positive(self)
+
+        start = slice.positivestart(self)
+        stop = slice.positivestop(self)
+
+        slice = _slice(start, stop, slice.step)
         slice = self._slice.resolve_slice(slice, self._total)
 
         return lazysequence(self._iter, _cache=self._cache, _indices=slice.asslice())
