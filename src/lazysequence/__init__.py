@@ -357,9 +357,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
                     continue
 
                 try:
-                    item = next(self._iter)
-                    self._cache.append(item)
-                    yield item
+                    yield next(self._consume())
                 except StopIteration:
                     break
 
