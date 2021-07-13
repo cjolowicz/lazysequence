@@ -203,9 +203,7 @@ class _slice:  # noqa: N801
         return index
 
     def resolve_slice(self, slice: _slice, sized: Sized) -> _slice:
-        start = slice.start
-        stop = slice.stop
-        step = slice.step
+        start, stop, step = slice.astuple()
 
         if start is not None and start < 0:
             size = self.length(sized)
