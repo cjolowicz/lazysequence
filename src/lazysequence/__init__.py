@@ -221,8 +221,7 @@ class _slice:  # noqa: N801
     ) -> Optional[int]:
         if start is not None:
             if start < 0:
-                size = self.length(sized)
-                start = max(0, start + size)
+                start = _positivestart(start, self.length(sized))
 
             return self.resolve(start, sized, strict=False)
 
