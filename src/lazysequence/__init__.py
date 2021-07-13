@@ -348,6 +348,12 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         """Iterate over the items in the sequence."""
 
         def generate() -> Iterator[_T_co]:
+            """Essentially the same as ``chain(self._cache, self._consume())``.
+
+            Other instances may be consuming items from the iterator though, so
+            after each ``next()`` on the iterator, try the cache again. Also,
+            yield from the cache first, as it's much faster than the loop below.
+            """
             yield from self._cache
 
             offset = len(self._cache) + 1
