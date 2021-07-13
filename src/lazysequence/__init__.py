@@ -108,7 +108,12 @@ class _slice:  # noqa: N801
         return 0 if self.step > 0 else None
 
     def length(self, sized: Sized) -> int:
-        start, stop, step = self.positive(sized).astuple()
+        origin = self
+
+        if origin.step < 0:
+            origin = origin.reverse(sized)
+
+        start, stop, step = origin.positive(sized).astuple()
         size = len(sized)
 
         if stop is not None:
@@ -321,12 +326,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def __len__(self) -> int:
         """Return the number of items in the sequence."""
-        slice = self._slice
-
-        if slice.step < 0:
-            slice = slice.reverse(self._total)
-
-        return slice.length(self._total)
+        return self._slice.length(self._total)
 
     def _getitem(self, index: int) -> _T_co:
         if index < 0:
