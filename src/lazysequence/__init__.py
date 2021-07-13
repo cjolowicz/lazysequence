@@ -202,7 +202,7 @@ class _slice:  # noqa: N801
 
         return index
 
-    def resolve_slice2(self, slice: _slice, sized: Sized) -> _slice:
+    def resolve_slice(self, slice: _slice, sized: Sized) -> _slice:
         start: Optional[int]
         if slice.start is not None and slice.start < 0:
             size = self.length(sized)
@@ -367,7 +367,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def _getslice(self, indices: slice) -> lazysequence[_T_co]:  # noqa: C901
         slice = _slice.fromslice(indices)
-        slice = self._slice.resolve_slice2(slice, self._total)
+        slice = self._slice.resolve_slice(slice, self._total)
 
         return lazysequence(self._iter, _cache=self._cache, _indices=slice.asslice())
 
