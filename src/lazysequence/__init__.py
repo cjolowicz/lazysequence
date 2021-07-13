@@ -52,6 +52,21 @@ from typing import Union
 _T_co = TypeVar("_T_co", covariant=True)
 
 
+def _positive(index: int, size: int) -> int:
+    """Convert a negative index to a non-negative integer.
+
+    The index is interpreted relative to the position after the last item. If
+    the index is smaller than ``-size``, IndexError is raised.
+    """
+    assert index < 0  # noqa: S101
+    index += size
+
+    if index < 0:
+        raise IndexError("lazysequence index out of range")
+
+    return index
+
+
 def _positivestart(start: int, size: int) -> int:
     """Convert a negative start index to a non-negative integer.
 
@@ -164,11 +179,18 @@ class _slice:  # noqa: N801
 
         return _slice(start, stop, step)
 
-    def resolve(self, index: int, sized: Sized, *, strict: bool = True) -> int:
+    def resolve(self, index: int, sized: Sized) -> int:
         """Return the equivalent index on the underlying sequence.
 
         In pseudo-code: ``s[slice][index] === s[slice.resolve(index)]``
         """
+        if index < 0:
+            index = _positive(index, self.length(sized))
+
+        return self._resolve(index, sized, strict=True)
+
+    def _resolve(self, index: int, sized: Sized, *, strict: bool = True) -> int:
+        assert index >= 0  # noqa: S101
         return (
             self._resolve_forward(index, sized, strict=strict)
             if self.step > 0
@@ -239,7 +261,7 @@ class _slice:  # noqa: N801
             start = _positivestart(start, self.length(sized))
 
         if start is not None:
-            return self.resolve(start, sized, strict=False)
+            return self._resolve(start, sized, strict=False)
 
         if step > 0:
             return self.start
@@ -256,7 +278,7 @@ class _slice:  # noqa: N801
             stop = _positivestop(stop, self.length(sized), step)
 
         if stop is not None:
-            return self.resolve(stop, sized, strict=False)
+            return self._resolve(stop, sized, strict=False)
 
         if step > 0:
             return self.stop
@@ -352,12 +374,6 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def _getitem(self, index: int) -> _T_co:
         """Return the item at the given index."""
-        if index < 0:
-            index += len(self)
-
-        if index < 0:
-            raise IndexError("lazysequence index out of range")
-
         index = self._slice.resolve(index, self._total)
 
         try:
