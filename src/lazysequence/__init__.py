@@ -358,7 +358,16 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         else:
             start = slice.start
 
-        stop = slice.positivestop(self)
+        stop = slice.stop
+
+        if stop is None or stop >= 0:
+            pass
+        else:
+            stop += len(self)
+            if stop >= 0:
+                pass
+            else:
+                stop = 0 if slice.step > 0 else None
 
         slice = _slice(start, stop, slice.step)
         slice = self._slice.resolve_slice(slice, self._total)
