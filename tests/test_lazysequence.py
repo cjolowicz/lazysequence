@@ -1,6 +1,7 @@
 """Unit tests for lazysequence."""
 from typing import List
 from typing import Optional
+from typing import Sequence
 from typing import Tuple
 
 import pytest
@@ -460,3 +461,13 @@ def test_slice_of_slice(
     """It contains the same items as a list."""
     lazy, strict = createslices(size, start, stop, step)
     assert strict[indices] == list(lazy[indices])
+
+
+def test_interleaved_iteration() -> None:
+    """It allows simultaneous iteration over multiple related instances."""
+    lazy, strict = lazysequence(range(5)), list(range(5))
+
+    def transform(s: Sequence[int]) -> List[Tuple[int, int]]:
+        return list(zip(s, s[1:]))
+
+    assert transform(strict) == transform(lazy)
