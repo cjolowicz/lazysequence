@@ -215,12 +215,10 @@ class _slice:  # noqa: N801
         if step > 0:
             return self.start
 
-        stop = self.stop
-
-        if stop is None:
+        if self.stop is None:
             return None
 
-        return stop + 1 if self.step < 0 else stop - 1
+        return self.stop + 1 if self.step < 0 else self.stop - 1
 
     def _resolve_stop(
         self, stop: Optional[int], step: int, sized: Sized
