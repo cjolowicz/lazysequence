@@ -53,11 +53,24 @@ _T_co = TypeVar("_T_co", covariant=True)
 
 
 def _positivestart(start: int, size: int) -> int:
+    """Convert a negative start index to a non-negative integer.
+
+    The index is interpreted relative to the position after the last item. If
+    the index is smaller than ``-size``, zero is returned.
+    """
     assert start < 0  # noqa: S101
     return max(0, start + size)
 
 
 def _positivestop(stop: int, size: int, step: int) -> Optional[int]:
+    """Convert a negative stop index to a non-negative integer.
+
+    The index is interpreted relative to the position after the last item. If
+    the index is smaller than ``-size``, the return value depends on ``step``.
+    If ``step`` is positive, zero is returned. If ``step`` is negative, None is
+    returned. Returning None for reverse slices ensures that an expression such
+    as ``s[:-1000:-1]`` includes the first element of ``s``.
+    """
     assert stop < 0  # noqa: S101
 
     stop += size
@@ -69,6 +82,16 @@ def _positivestop(stop: int, size: int, step: int) -> Optional[int]:
 
 @dataclass(frozen=True)
 class _slice:  # noqa: N801
+    """Slice representation.
+
+    Attributes:
+        start: The position of the first item, either None or a non-negative
+            integer.
+        stop: The position after the last item, either None or a non-negative
+            integer.
+        step: The distance between successive items, any integer except zero.
+    """
+
     start: Optional[int]
     stop: Optional[int]
     step: int
@@ -76,6 +99,7 @@ class _slice:  # noqa: N801
     def __init__(
         self, start: Optional[int], stop: Optional[int], step: Optional[int]
     ) -> None:
+        """Initialize."""
         if step == 0:
             raise ValueError("slice step cannot be zero")
 
@@ -87,12 +111,15 @@ class _slice:  # noqa: N801
         object.__setattr__(self, "step", step)
 
     def astuple(self) -> Tuple[Optional[int], Optional[int], int]:
+        """Return the attributes as a tuple."""
         return self.start, self.stop, self.step
 
     def apply(self, iterable: Iterable[_T_co], sized: Sized) -> Iterator[_T_co]:
+        """Yield items from the iterable corresponding to this slice."""
         return islice(iterable, *self.astuple())
 
     def length(self, sized: Sized) -> int:
+        """Return the number of items corresponding to this slice."""
         origin = self
 
         if origin.step < 0:
@@ -115,6 +142,7 @@ class _slice:  # noqa: N801
         return size
 
     def reverse(self, sized: Sized) -> _slice:
+        """Return the equivalent slice for a reversed sequence."""
         assert self.step < 0  # noqa: S101
 
         start, stop, step = self.astuple()
@@ -137,6 +165,10 @@ class _slice:  # noqa: N801
         return _slice(start, stop, step)
 
     def resolve(self, index: int, sized: Sized, *, strict: bool = True) -> int:
+        """Return the equivalent index on the underlying sequence.
+
+        In pseudo-code: ``s[slice][index] === s[slice.resolve(index)]``
+        """
         return (
             self._resolve_forward(index, sized, strict=strict)
             if self.step > 0
@@ -188,6 +220,10 @@ class _slice:  # noqa: N801
         return index
 
     def resolve_slice(self, slice: _slice, sized: Sized) -> _slice:
+        """Return the equivalent slice on the underlying sequence.
+
+        In pseudo-code: ``s[slice0][slice1] === s[slice0.resolve(slice1)]``
+        """
         start, stop, step = slice.astuple()
 
         start = self._resolve_start(start, step, sized)
@@ -266,14 +302,17 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         self._total = _Total()
 
     def _consume(self) -> Iterator[_T_co]:
+        """Yield from the iterator, adding each item to the cache."""
         for item in self._iter:
             self._cache.append(item)
             yield item
 
     def _fill(self) -> None:
+        """Add all items from the iterator to the cache."""
         self._cache.extend(self._iter)
 
     def _iterate(self, iterator: Iterator[_T_co]) -> Iterator[_T_co]:
+        """Iterate over the items in the sequence."""
         slice = self._slice
 
         if slice.step > 0:
@@ -312,6 +351,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         return self._slice.length(self._total)
 
     def _getitem(self, index: int) -> _T_co:
+        """Return the item at the given index."""
         if index < 0:
             index += len(self)
 
@@ -333,6 +373,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             raise IndexError("lazysequence index out of range") from None
 
     def _getslice(self, indices: slice) -> lazysequence[_T_co]:  # noqa: C901
+        """Return a slice of the sequence."""
         slice = _slice(indices.start, indices.stop, indices.step)
         slice = self._slice.resolve_slice(slice, self._total)
 
@@ -349,7 +390,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
     def __getitem__(
         self, index: Union[int, slice]
     ) -> Union[_T_co, lazysequence[_T_co]]:
-        """Return the item at the given index."""
+        """Return the item at the given index, or a slice of the sequence."""
         return (
             self._getslice(index) if isinstance(index, slice) else self._getitem(index)
         )
