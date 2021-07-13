@@ -214,7 +214,7 @@ class _slice:  # noqa: N801
         if stop is not None and stop < 0:
             stop += self.length(sized)
             if stop < 0:
-                stop = 0 if slice.step > 0 else None
+                stop = 0 if step > 0 else None
 
         start = self._resolve_start(start, step, sized)
         stop = self._resolve_stop(stop, step, sized)
