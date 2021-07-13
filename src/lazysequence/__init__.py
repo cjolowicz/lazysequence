@@ -354,7 +354,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
     def _getitem(self, index: int) -> _T_co:
         """Return the item at the given index."""
         if index < 0:
-            index += len(self)
+            index += self._slice.length(self._total)
 
         if index < 0:
             raise IndexError("lazysequence index out of range")
