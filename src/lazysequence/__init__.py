@@ -192,12 +192,12 @@ class _slice:  # noqa: N801
     def _resolve(self, index: int, sized: Sized, *, strict: bool = True) -> int:
         assert index >= 0  # noqa: S101
         return (
-            self._resolve_forward(index, sized, strict=strict)
+            self._resolveforward(index, sized, strict=strict)
             if self.step > 0
-            else self._resolve_backward(index, sized, strict=strict)
+            else self._resolvebackward(index, sized, strict=strict)
         )
 
-    def _resolve_forward(self, index: int, sized: Sized, *, strict: bool = True) -> int:
+    def _resolveforward(self, index: int, sized: Sized, *, strict: bool = True) -> int:
         """Resolve index on a forward slice, where start <= stop and step > 0."""
         assert self.step > 0  # noqa: S101
 
@@ -217,9 +217,7 @@ class _slice:  # noqa: N801
 
         return index
 
-    def _resolve_backward(
-        self, index: int, sized: Sized, *, strict: bool = True
-    ) -> int:
+    def _resolvebackward(self, index: int, sized: Sized, *, strict: bool = True) -> int:
         """Resolve index on a backward slice, where start >= stop and step < 0."""
         assert self.step < 0  # noqa: S101
 
@@ -241,20 +239,20 @@ class _slice:  # noqa: N801
 
         return index
 
-    def resolve_slice(self, slice: _slice, sized: Sized) -> _slice:
+    def resolveslice(self, slice: _slice, sized: Sized) -> _slice:
         """Return the equivalent slice on the underlying sequence.
 
         In pseudo-code: ``s[slice0][slice1] === s[slice0.resolve(slice1)]``
         """
         start, stop, step = slice.astuple()
 
-        start = self._resolve_start(start, step, sized)
-        stop = self._resolve_stop(stop, step, sized)
+        start = self._resolvestart(start, step, sized)
+        stop = self._resolvestop(stop, step, sized)
         step *= self.step
 
         return _slice(start, stop, step)
 
-    def _resolve_start(
+    def _resolvestart(
         self, start: Optional[int], step: int, sized: Sized
     ) -> Optional[int]:
         if start is not None and start < 0:
@@ -271,7 +269,7 @@ class _slice:  # noqa: N801
 
         return self.stop + 1 if self.step < 0 else self.stop - 1
 
-    def _resolve_stop(
+    def _resolvestop(
         self, stop: Optional[int], step: int, sized: Sized
     ) -> Optional[int]:
         if stop is not None and stop < 0:
@@ -391,7 +389,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
     def _getslice(self, indices: slice) -> lazysequence[_T_co]:  # noqa: C901
         """Return a slice of the sequence."""
         slice = _slice(indices.start, indices.stop, indices.step)
-        slice = self._slice.resolve_slice(slice, self._total)
+        slice = self._slice.resolveslice(slice, self._total)
 
         return lazysequence(self._iter, _cache=self._cache, _slice=slice)
 
