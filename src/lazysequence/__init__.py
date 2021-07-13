@@ -218,10 +218,8 @@ class _slice:  # noqa: N801
                 stop = 0 if slice.step > 0 else None
 
         slice = _slice(start, stop, slice.step)
-        return self.resolve_slice(slice, sized)
 
-    def resolve_slice(self, aslice: _slice, sized: Sized) -> _slice:
-        start, stop, step = aslice.astuple()
+        start, stop, step = slice.astuple()
 
         start = self._resolve_start(start, step, sized)
         stop = self._resolve_stop(stop, step, sized)
