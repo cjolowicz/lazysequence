@@ -106,17 +106,10 @@ class _slice:  # noqa: N801
         return _slice(start, stop, self.step)
 
     def _positivestart(self, sized: Sized) -> Optional[int]:
-        if self.start is not None and self.start < 0:
-            return _positivestart(self.start, len(sized))
         return self.start
 
     def _positivestop(self, sized: Sized) -> Optional[int]:
-        stop = self.stop
-
-        if stop is None or stop >= 0:
-            return stop
-
-        return _positivestop(stop, len(sized), self.step)
+        return self.stop
 
     def length(self, sized: Sized) -> int:
         origin = self
