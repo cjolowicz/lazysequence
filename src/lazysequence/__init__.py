@@ -35,6 +35,7 @@ from __future__ import annotations
 from collections import deque
 from dataclasses import dataclass
 from itertools import chain
+from itertools import count
 from itertools import islice
 from typing import Callable
 from typing import Iterable
@@ -345,8 +346,24 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def __iter__(self) -> Iterator[_T_co]:
         """Iterate over the items in the sequence."""
-        iterator = chain(self._cache, self._consume())
-        return self._iterate(iterator)
+
+        def generate() -> Iterator[_T_co]:
+            for index in count():
+                try:
+                    yield self._cache[index]
+                except IndexError:
+                    pass
+                else:
+                    continue
+
+                try:
+                    item = next(self._iter)
+                    self._cache.append(item)
+                    yield item
+                except StopIteration:
+                    break
+
+        return self._iterate(generate())
 
     def release(self) -> Iterator[_T_co]:
         """Iterate over the sequence without caching additional items.
