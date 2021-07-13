@@ -349,7 +349,13 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         def generate() -> Iterator[_T_co]:
             try:
-                for index in count():
+                yield from self._cache
+
+                offset = len(self._cache) + 1
+
+                yield next(self._consume())
+
+                for index in count(offset):
                     try:
                         yield self._cache[index]
                     except IndexError:
