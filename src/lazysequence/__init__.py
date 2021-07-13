@@ -203,12 +203,11 @@ class _slice:  # noqa: N801
         return index
 
     def resolve_slice(self, slice: _slice, sized: Sized) -> _slice:
-        start: Optional[int]
+        start = slice.start
+
         if slice.start is not None and slice.start < 0:
             size = self.length(sized)
             start = max(0, slice.start + size)
-        else:
-            start = slice.start
 
         stop = slice.stop
 
