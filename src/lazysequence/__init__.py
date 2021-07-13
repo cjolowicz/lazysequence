@@ -82,9 +82,9 @@ class _slice:  # noqa: N801
         return self.start, self.stop, self.step
 
     def apply(self, iterable: Iterable[_T_co], sized: Sized) -> Iterator[_T_co]:
-        return islice(iterable, *self.positive(sized).astuple())
+        return islice(iterable, *self._positive(sized).astuple())
 
-    def positive(self, sized: Sized) -> _slice:
+    def _positive(self, sized: Sized) -> _slice:
         start = self._positivestart(sized)
         stop = self._positivestop(sized)
 
@@ -113,7 +113,7 @@ class _slice:  # noqa: N801
         if origin.step < 0:
             origin = origin.reverse(sized)
 
-        start, stop, step = origin.positive(sized).astuple()
+        start, stop, step = origin._positive(sized).astuple()
         size = len(sized)
 
         if stop is not None:
@@ -132,7 +132,7 @@ class _slice:  # noqa: N801
     def reverse(self, sized: Sized) -> _slice:
         assert self.step < 0  # noqa: S101
 
-        start, stop, step = self.positive(sized).astuple()
+        start, stop, step = self._positive(sized).astuple()
         size = len(sized)
         step = -step
 
@@ -162,7 +162,7 @@ class _slice:  # noqa: N801
         """Resolve index on a forward slice, where start <= stop and step > 0."""
         assert self.step > 0  # noqa: S101
 
-        start, stop, step = self.positive(sized).astuple()
+        start, stop, step = self._positive(sized).astuple()
 
         if start is None:
             start = 0
@@ -185,7 +185,7 @@ class _slice:  # noqa: N801
         assert self.step < 0  # noqa: S101
 
         size = len(sized)
-        start, stop, step = self.positive(sized).astuple()
+        start, stop, step = self._positive(sized).astuple()
 
         if start is None:
             start = size - 1
