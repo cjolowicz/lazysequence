@@ -164,6 +164,15 @@ class _slice:  # noqa: N801
 
         return _slice(start, stop, step)
 
+    def resolve(self, index: int, sized: Sized) -> int:
+        if index < 0:
+            index += self.length(sized)
+
+        if index < 0:
+            raise IndexError("lazysequence index out of range")
+
+        return self._resolve(index, sized, strict=True)
+
     def _resolve(self, index: int, sized: Sized, *, strict: bool = True) -> int:
         """Return the equivalent index on the underlying sequence.
 
@@ -353,13 +362,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     def _getitem(self, index: int) -> _T_co:
         """Return the item at the given index."""
-        if index < 0:
-            index += self._slice.length(self._total)
-
-        if index < 0:
-            raise IndexError("lazysequence index out of range")
-
-        index = self._slice._resolve(index, self._total)
+        index = self._slice.resolve(index, self._total)
 
         try:
             return self._cache[index]
