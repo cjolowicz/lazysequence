@@ -164,7 +164,7 @@ class _slice:  # noqa: N801
 
         return _slice(start, stop, step)
 
-    def resolve(self, index: int, sized: Sized, *, strict: bool = True) -> int:
+    def _resolve(self, index: int, sized: Sized, *, strict: bool = True) -> int:
         """Return the equivalent index on the underlying sequence.
 
         In pseudo-code: ``s[slice][index] === s[slice.resolve(index)]``
@@ -239,7 +239,7 @@ class _slice:  # noqa: N801
             start = _positivestart(start, self.length(sized))
 
         if start is not None:
-            return self.resolve(start, sized, strict=False)
+            return self._resolve(start, sized, strict=False)
 
         if step > 0:
             return self.start
@@ -256,7 +256,7 @@ class _slice:  # noqa: N801
             stop = _positivestop(stop, self.length(sized), step)
 
         if stop is not None:
-            return self.resolve(stop, sized, strict=False)
+            return self._resolve(stop, sized, strict=False)
 
         if step > 0:
             return self.stop
@@ -358,7 +358,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         if index < 0:
             raise IndexError("lazysequence index out of range")
 
-        index = self._slice.resolve(index, self._total)
+        index = self._slice._resolve(index, self._total)
 
         try:
             return self._cache[index]
