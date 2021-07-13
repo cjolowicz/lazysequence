@@ -57,6 +57,16 @@ def _positivestart(start: int, size: int) -> int:
     return max(0, start + size)
 
 
+def _positivestop(stop: int, size: int, step: int) -> Optional[int]:
+    assert stop < 0  # noqa: S101
+
+    stop += size
+    if stop >= 0:
+        return stop
+
+    return 0 if step > 0 else None
+
+
 @dataclass(frozen=True)
 class _slice:  # noqa: N801
     start: Optional[int]
@@ -106,11 +116,7 @@ class _slice:  # noqa: N801
         if stop is None or stop >= 0:
             return stop
 
-        stop += len(sized)
-        if stop >= 0:
-            return stop
-
-        return 0 if self.step > 0 else None
+        return _positivestop(stop, len(sized), self.step)
 
     def length(self, sized: Sized) -> int:
         origin = self
