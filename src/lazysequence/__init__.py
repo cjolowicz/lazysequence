@@ -99,9 +99,6 @@ class _slice:  # noqa: N801
     def apply(self, iterable: Iterable[_T_co], sized: Sized) -> Iterator[_T_co]:
         return islice(iterable, *self.astuple())
 
-    def _positivestop(self, sized: Sized) -> Optional[int]:
-        return self.stop
-
     def length(self, sized: Sized) -> int:
         origin = self
 
@@ -218,7 +215,7 @@ class _slice:  # noqa: N801
         if step > 0:
             return self.start
 
-        stop = self._positivestop(sized)
+        stop = self.stop
 
         if stop is None:
             return None
@@ -235,7 +232,7 @@ class _slice:  # noqa: N801
             return self.resolve(stop, sized, strict=False)
 
         if step > 0:
-            return self._positivestop(sized)
+            return self.stop
 
         start = self.start
 
