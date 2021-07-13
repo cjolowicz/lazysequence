@@ -257,7 +257,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         *,
         storage: Callable[[], MutableSequence[_T_co]] = deque,
         _cache: Optional[MutableSequence[_T_co]] = None,
-        _indices: _slice = _defaultslice,
+        _slice: _slice = _defaultslice,
     ) -> None:
         """Initialize."""
         parent = self
@@ -269,7 +269,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         self._iter = iter(iterable)
         self._cache = storage() if _cache is None else _cache
-        self._slice = _indices
+        self._slice = _slice
         self._total = _Total()
 
     def _consume(self) -> Iterator[_T_co]:
@@ -343,7 +343,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
         slice = _slice.fromslice(indices)
         slice = self._slice.resolve_slice(slice, self._total)
 
-        return lazysequence(self._iter, _cache=self._cache, _indices=slice)
+        return lazysequence(self._iter, _cache=self._cache, _slice=slice)
 
     @overload
     def __getitem__(self, index: int) -> _T_co:
