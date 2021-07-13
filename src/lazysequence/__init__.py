@@ -113,10 +113,7 @@ class _slice:  # noqa: N801
         if origin.step < 0:
             origin = origin.reverse(sized)
 
-        return origin.length(sized)
-
-    def length(self, sized: Sized) -> int:
-        start, stop, step = self.positive(sized).astuple()
+        start, stop, step = origin.positive(sized).astuple()
         size = len(sized)
 
         if stop is not None:
