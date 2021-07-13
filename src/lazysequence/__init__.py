@@ -352,14 +352,16 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
             offset = len(self._cache) + 1
 
+            consumer = self._consume()
+
             try:
-                yield next(self._consume())
+                yield next(consumer)
 
                 for index in count(offset):
                     try:
                         yield self._cache[index]
                     except IndexError:
-                        yield next(self._consume())
+                        yield next(consumer)
             except StopIteration:
                 pass
 
