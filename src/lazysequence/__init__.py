@@ -354,7 +354,8 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
         start: Optional[int]
         if slice.start is not None and slice.start < 0:
-            start = max(0, slice.start + len(self))
+            size = len(self)
+            start = max(0, slice.start + size)
         else:
             start = slice.start
 
