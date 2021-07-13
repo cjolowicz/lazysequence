@@ -206,12 +206,6 @@ class _slice:  # noqa: N801
         start, stop, step = slice.astuple()
 
         start = self._resolve_start(start, step, sized)
-
-        if stop is not None and stop < 0:
-            stop += self.length(sized)
-            if stop < 0:
-                stop = 0 if step > 0 else None
-
         stop = self._resolve_stop(stop, step, sized)
         step *= self.step
 
@@ -242,6 +236,11 @@ class _slice:  # noqa: N801
     def _resolve_stop(
         self, stop: Optional[int], step: int, sized: Sized
     ) -> Optional[int]:
+        if stop is not None and stop < 0:
+            stop += self.length(sized)
+            if stop < 0:
+                stop = 0 if step > 0 else None
+
         assert stop is None or stop >= 0  # noqa: S101
 
         if stop is not None:
