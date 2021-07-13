@@ -362,7 +362,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
             try:
                 yield next(consumer)
 
-                for index in count(offset):
+                for index in count(offset):  # pragma: no branch
                     try:
                         yield self._cache[index]
                     except IndexError:
