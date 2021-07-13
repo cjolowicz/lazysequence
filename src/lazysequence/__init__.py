@@ -209,12 +209,13 @@ class _slice:  # noqa: N801
             size = self.length(sized)
             start = max(0, start + size)
 
+        start = self._resolve_start(start, step, sized)
+
         if stop is not None and stop < 0:
             stop += self.length(sized)
             if stop < 0:
                 stop = 0 if step > 0 else None
 
-        start = self._resolve_start(start, step, sized)
         stop = self._resolve_stop(stop, step, sized)
         step *= self.step
 
