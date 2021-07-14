@@ -37,7 +37,6 @@ from dataclasses import dataclass
 from itertools import chain
 from itertools import count
 from itertools import islice
-from typing import Callable
 from typing import Iterable
 from typing import Iterator
 from typing import MutableSequence
@@ -296,16 +295,12 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
 
     Args:
         iterable: The iterable being wrapped.
-        storage: A class or callable used to create the internal cache for
-            items consumed from the iterator. By default, ``collections.deque``
-            is used.
     """
 
     def __init__(
         self,
         iterable: Iterable[_T_co],
         *,
-        storage: Callable[[], MutableSequence[_T_co]] = deque,
         _cache: Optional[MutableSequence[_T_co]] = None,
         _slice: _slice = _defaultslice,
     ) -> None:
@@ -318,7 +313,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
                 return len(parent._cache)
 
         self._iter = iter(iterable)
-        self._cache = storage() if _cache is None else _cache
+        self._cache = deque() if _cache is None else _cache
         self._slice = _slice
         self._total = _Total()
 
