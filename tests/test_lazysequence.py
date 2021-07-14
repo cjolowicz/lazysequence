@@ -14,13 +14,6 @@ def test_init() -> None:
     lazysequence([])
 
 
-def test_init_storage() -> None:
-    """It uses the factory to create its cache."""
-    s = lazysequence([1, 2, 3], storage=list)
-    a, b, c = s
-    assert (1, 2, 3) == (a, b, c)
-
-
 def test_len() -> None:
     """It returns the number of items."""
     s: lazysequence[int] = lazysequence([])
