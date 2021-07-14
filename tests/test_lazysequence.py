@@ -464,3 +464,13 @@ def test_interleaved_iteration() -> None:
         return list(zip(s, s[1:]))
 
     assert transform(strict) == transform(lazy)
+
+
+def test_cache_mutation_during_iteration() -> None:
+    """It allows the cache to be mutated during iteration."""
+    s = lazysequence(range(5))
+    a, b = iter(s), iter(s)
+    next(a)
+    next(b)
+    next(a)
+    next(b)

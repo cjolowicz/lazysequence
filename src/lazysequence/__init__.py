@@ -32,7 +32,6 @@ record 9
 """
 from __future__ import annotations
 
-from collections import deque
 from dataclasses import dataclass
 from itertools import chain
 from itertools import count
@@ -313,7 +312,7 @@ class lazysequence(Sequence[_T_co]):  # noqa: N801
                 return len(parent._cache)
 
         self._iter = iter(iterable)
-        self._cache = deque() if _cache is None else _cache
+        self._cache = [] if _cache is None else _cache
         self._slice = _slice
         self._total = _Total()
 
